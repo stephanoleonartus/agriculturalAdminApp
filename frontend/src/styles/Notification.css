@@ -1,0 +1,58 @@
+.notification-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .notification-icon {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  /* Red dot to show unread */
+  .dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 10px;
+    width: 10px;
+    background-color: red;
+    border-radius: 50%;
+  }
+  
+  /* Notification panel */
+  .notification-panel {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background-color: white;
+    width: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border-radius: 6px;
+    z-index: 10;
+    padding: 15px;
+  }
+  
+  .notification-panel h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+  }
+  
+  .notification-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .notification-panel li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  
+  .notification-panel li:last-child {
+    border-bottom: none;
+  }
+  

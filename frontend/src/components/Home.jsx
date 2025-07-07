@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/home.css";
+import Navigation from "./Navigation";
 
 const items = [
   "Fresh Apples",
@@ -64,16 +65,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      {/* Top Navigation */}
-      <div className="navbar">
-        <div className="logo">🌾 AgriLink.com</div>
-        <div className="menu">
-          <span>Products</span>
-          <span>Manufacturers</span>
-          <span>Regional Supplies</span>
-          <span>Insights</span>
-        </div>
-      </div>
+      <Navigation />
 
       {/* Welcome message */}
       <div className="welcome-msg">Welcome to AgriLink.com, Stephano</div>

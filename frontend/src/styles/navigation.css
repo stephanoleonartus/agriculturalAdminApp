@@ -1,0 +1,19 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgb(46, 209, 54);
+    color: white;
+    padding: 12px 20px;
+    font-size: 18px;
+  }
+  
+  .navbar .menu span {
+    margin: 0 15px;
+    cursor: pointer;
+  }
+  
+  .logo {
+    font-weight: bold;
+    font-size: 24px;
+  }
