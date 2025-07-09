@@ -1,0 +1,19 @@
+.product-card {
+    border: 1px solid #ddd;
+    padding: 1em;
+    margin: 1em;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px #aaa;
+  }
+  
+  .add-product-form input {
+    margin: 5px;
+    padding: 8px;
+  }
+  
+  button {
+    margin: 5px;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  

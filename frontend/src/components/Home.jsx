@@ -65,7 +65,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      <Navigation />
+      {/* <Navigation /> */}
 
       {/* Welcome message */}
       <div className="welcome-msg">Welcome to AgriLink.com, Stephano</div>

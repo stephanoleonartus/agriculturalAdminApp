@@ -1,18 +1,26 @@
 import React from "react";
-import '../styles/navigation.css'; // Link to CSS
+import { Link } from "react-router-dom";
+import '../styles/navigation.css';
 import Notification from "./Notification";
+import Profile from "./Profile";
 
 function Navigation() {
   return (
-    //  Top Navigation
     <div className="navbar">
-      <div className="logo">🌾 AgriLink.com</div>
+      {/* Home link on logo */}
+      <div className="logo">
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          🌾 AgriLink.com
+        </Link>
+      </div>
+
+      {/* Menu navigation */}
       <div className="menu">
-        <span>Products</span>
-        <span>Farmers</span>
-        <span>Region Supplies</span>
-        <span>Insights</span>
+        <Link to="/products" className="nav-item">Products</Link>
+        <Link to="/farmers" className="nav-item">Farmers</Link>
+        <Link to="/supplies" className="nav-item">Region Supplier</Link>
         <Notification />
+        <Profile />
       </div>
     </div>
   );
