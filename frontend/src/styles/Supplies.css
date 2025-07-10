@@ -1,0 +1,43 @@
+.supplies-page {
+    padding: 2rem;
+    background-color: #f0fff4;
+  }
+  
+  .region-section {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1rem;
+  }
+  
+  .region-section h2 {
+    color: #2e7d32;
+  }
+  
+  .category-section h3 {
+    color: #388e3c;
+    margin-top: 1rem;
+  }
+  
+  .supplier-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 0.5rem;
+  }
+  
+  .supplier-card {
+    background-color: #fff;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    cursor: pointer;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+  }
+  
+  .supplier-card:hover {
+    transform: scale(1.05);
+    border-color: #4caf50;
+  }
+  
