@@ -1,8 +1,9 @@
 # orders/models.py
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
+from django.utils import timezone
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
@@ -23,8 +24,8 @@ class Order(models.Model):
     ]
     
     order_id = models.CharField(max_length=100, unique=True, editable=False)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customer_orders')
-    supplier = models.ForeignKey(User, on_delete=models.CASCADE, related_name='supplier_orders')
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer_orders')
+    supplier = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='supplier_orders')
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='pending')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
@@ -64,7 +65,7 @@ class OrderHistory(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='history')
     status = models.CharField(max_length=20)
     comment = models.TextField(blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
