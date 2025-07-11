@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchBar from './SearchBar'; // Import the new SearchBar
+import SearchBar from './SearchBar';
+import { useLocation } from '../contexts/LocationContext'; // Import useLocation
 
 const items = [
   "Fresh Apples",
@@ -148,8 +149,18 @@ function Home() {
   });
   
   const navigate = useNavigate();
+  const { location, locationError, locationLoading, permissionStatus, fetchLocation } = useLocation();
 
-  // Counter animation effect - FIXED
+  useEffect(() => {
+    // Request location when component mounts, or user can trigger it via a button
+    // For now, let's try fetching on mount if permission was previously granted or is prompt
+    if (permissionStatus !== 'denied') {
+        // fetchLocation(); // Uncomment to fetch on mount
+    }
+  }, [permissionStatus, fetchLocation]);
+
+
+  // Counter animation effect
   useEffect(() => {
     const targetValues = {
       products: 1250,
@@ -369,6 +380,24 @@ function Home() {
       {/* Welcome message from backend */}
       <div className="welcome-msg">
         Welcome back, {userName}! 👋 Ready to explore fresh opportunities?
+      </div>
+
+      {/* Location Info Display & Fetch Button */}
+      <div className="location-info-section" style={{ textAlign: 'center', margin: '20px', padding: '10px', background: '#f0f0f0', borderRadius: '8px' }}>
+        <h4>Geolocation Status:</h4>
+        {locationLoading && <p>Loading location...</p>}
+        {locationError && <p style={{ color: 'red' }}>Error: {locationError}</p>}
+        {location && (
+          <p>
+            Your current location: Latitude: {location.latitude.toFixed(4)}, Longitude: {location.longitude.toFixed(4)}
+          </p>
+        )}
+        {permissionStatus && <p>Permission: {permissionStatus}</p>}
+        {(permissionStatus === 'prompt' || permissionStatus === null || permissionStatus === 'denied') && !locationLoading && (
+          <button onClick={fetchLocation} style={{padding: '8px 15px', cursor: 'pointer'}}>
+            {permissionStatus === 'denied' ? 'Enable Location (Update Settings)' : 'Get My Location'}
+          </button>
+        )}
       </div>
 
       {/* New Alibaba-style Search Bar */}

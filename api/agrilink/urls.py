@@ -19,16 +19,30 @@ from django.urls import path, include # Added include
 from django.conf import settings # Added settings
 from django.conf.urls.static import static # Added static
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Unified API URLs
     path('api/accounts/', include('accounts.urls')),
     path('api/products/', include('products.urls')),
-    # Add other app urls here e.g.
-    path('api/orders/', include('orders.urls')),
-    path('api/chat/', include('chat.urls')),
-    # path('api/notifications/', include('notifications.urls')),
-    path('api/analytics/', include('analytics.urls')),
-    path('api/reviews/', include('reviews.urls')),
+
+    # Chat
+    path('api/v1/chat/', include('chat.urls')),
+    # Orders
+    path('api/v1/orders/', include('orders.urls')),
+    # Analytics
+    path('api/v1/analytics/', include('analytics.urls')),
+    # Reviews
+    path('api/v1/reviews/', include('reviews.urls')),
+    # Notifications
+    path('api/v1/notifications/', include('notifications.urls')),
+
+    # Add other apps here...
 ]
 
 if settings.DEBUG:
