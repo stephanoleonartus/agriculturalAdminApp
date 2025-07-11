@@ -1,6 +1,6 @@
 # products/serializers.py
 from rest_framework import serializers
-from .models import Category, Product, ProductImage, Cart, CartItem, Wishlist
+from .models import Category, Product, ProductImage, ProductVideo, Cart, CartItem, Wishlist # Added ProductVideo
 
 class CategorySerializer(serializers.ModelSerializer):
     product_count = serializers.SerializerMethodField()
@@ -17,14 +17,30 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = ['id', 'image', 'alt_text', 'is_primary']
 
+class ProductVideoSerializer(serializers.ModelSerializer): # Added ProductVideoSerializer
+    class Meta:
+        model = ProductVideo # Assuming ProductVideo model exists
+        fields = ['id', 'video_url', 'video_file', 'alt_text', 'is_primary']
+
 class ProductSerializer(serializers.ModelSerializer):
     farmer_name = serializers.CharField(source='farmer.get_full_name', read_only=True)
     farmer_region = serializers.CharField(source='farmer.region', read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
     images = ProductImageSerializer(many=True, read_only=True)
+    videos = ProductVideoSerializer(many=True, read_only=True) # Added videos
     average_rating = serializers.ReadOnlyField()
     is_available = serializers.ReadOnlyField()
     is_wishlisted = serializers.SerializerMethodField()
+
+    # Write-only fields for uploads
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False, use_url=False),
+        write_only=True, required=False
+    )
+    uploaded_videos = serializers.ListField(
+        child=serializers.FileField(allow_empty_file=False, use_url=False), # Assuming FileField for videos
+        write_only=True, required=False
+    )
     
     class Meta:
         model = Product
@@ -32,7 +48,9 @@ class ProductSerializer(serializers.ModelSerializer):
             'id', 'name', 'description', 'category', 'category_name', 'farmer', 
             'farmer_name', 'farmer_region', 'price', 'unit', 'quantity_available',
             'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 
-            'origin_region', 'is_organic', 'slug', 'tags', 'images', 
+            'origin_region', 'is_organic', 'slug', 'tags',
+            'images', 'videos', # Added videos to fields
+            'uploaded_images', 'uploaded_videos', # Added upload fields
             'average_rating', 'is_available', 'is_wishlisted', 'created_at', 'updated_at'
         ]
         read_only_fields = ['farmer', 'slug', 'created_at', 'updated_at']
@@ -43,9 +61,49 @@ class ProductSerializer(serializers.ModelSerializer):
             return Wishlist.objects.filter(user=request.user, product=obj).exists()
         return False
     
+    def _handle_media_uploads(self, product, uploaded_media, MediaModel, media_field_name):
+        # Helper to handle both image and video uploads
+        if uploaded_media:
+            # Clear existing media if needed (e.g., for updates) or handle appending
+            # For simplicity in create, we just add. For update, one might clear existing first.
+            # MediaModel.objects.filter(product=product).delete() # Optional: clear existing
+
+            for index, media_file in enumerate(uploaded_media):
+                media_data = {
+                    'product': product,
+                    media_field_name: media_file,
+                    'is_primary': index == 0 # Set the first uploaded media as primary
+                }
+                MediaModel.objects.create(**media_data)
+
     def create(self, validated_data):
+        uploaded_images_data = validated_data.pop('uploaded_images', [])
+        uploaded_videos_data = validated_data.pop('uploaded_videos', [])
+
         validated_data['farmer'] = self.context['request'].user
-        return super().create(validated_data)
+        product = super().create(validated_data) # Creates the Product instance
+
+        self._handle_media_uploads(product, uploaded_images_data, ProductImage, 'image')
+        self._handle_media_uploads(product, uploaded_videos_data, ProductVideo, 'video_file') # Assuming 'video_file' is the field on ProductVideo model
+
+        return product
+
+    def update(self, instance, validated_data):
+        uploaded_images_data = validated_data.pop('uploaded_images', None) # Use None to detect if provided
+        uploaded_videos_data = validated_data.pop('uploaded_videos', None)
+
+        product = super().update(instance, validated_data)
+
+        if uploaded_images_data is not None: # If field was provided (even if empty list)
+            # Clear existing images before adding new ones for simplicity
+            instance.images.all().delete()
+            self._handle_media_uploads(product, uploaded_images_data, ProductImage, 'image')
+
+        if uploaded_videos_data is not None: # If field was provided
+            instance.videos.all().delete()
+            self._handle_media_uploads(product, uploaded_videos_data, ProductVideo, 'video_file')
+
+        return product
 
 class ProductListSerializer(serializers.ModelSerializer):
     farmer_name = serializers.CharField(source='farmer.get_full_name', read_only=True)

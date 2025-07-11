@@ -6,6 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
 from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta
 from .models import User, UserProfile, FarmerProfile, SupplierProfile
 from .serializers import (
     UserRegistrationSerializer, 

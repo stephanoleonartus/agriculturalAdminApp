@@ -1,6 +1,6 @@
 # reviews/models.py
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Review(models.Model):
@@ -10,8 +10,8 @@ class Review(models.Model):
         ('service', 'Service Review'),
     ]
     
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='given_reviews')
-    reviewee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_reviews')
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='given_reviews')
+    reviewee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_reviews')
     review_type = models.CharField(max_length=20, choices=REVIEW_TYPE_CHOICES)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     title = models.CharField(max_length=200)
@@ -33,7 +33,7 @@ class Review(models.Model):
 class ReviewResponse(models.Model):
     review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name='response')
     response_text = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -41,7 +41,7 @@ class ReviewResponse(models.Model):
 
 class ReviewHelpful(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='helpful_votes')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_helpful = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
     

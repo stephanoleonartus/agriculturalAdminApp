@@ -44,6 +44,15 @@ class User(AbstractUser):
     
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='customer')
     region = models.CharField(max_length=20, choices=REGIONS, null=True, blank=True)
+
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ]
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
+
     phone_number = models.CharField(
         max_length=15,
         validators=[RegexValidator(r'^\+?1?\d{9,15}$', 'Enter a valid phone number.')],

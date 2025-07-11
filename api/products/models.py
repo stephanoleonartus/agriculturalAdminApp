@@ -96,6 +96,20 @@ class ProductImage(models.Model):
     def __str__(self):
         return f"Image for {self.product.name}"
 
+class ProductVideo(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='videos')
+    video_url = models.URLField(blank=True, help_text="URL to the video (e.g., YouTube, Vimeo)")
+    video_file = models.FileField(upload_to='product_videos/', blank=True, null=True, help_text="Or upload a video file")
+    alt_text = models.CharField(max_length=200, blank=True)
+    is_primary = models.BooleanField(default=False) # If multiple videos, one can be primary
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-is_primary', 'created_at']
+
+    def __str__(self):
+        return f"Video for {self.product.name}"
+
 class ProductView(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='views')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
