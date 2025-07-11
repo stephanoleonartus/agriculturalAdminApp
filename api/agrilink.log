@@ -163,3 +163,18 @@ Not Found: /api/analytics
 "GET /api/analytics HTTP/1.1" 404 3485
 Not Found: /api/reviews
 "GET /api/reviews HTTP/1.1" 404 3479
+Watching for file changes with StatReloader
+Unauthorized: /api/products/
+"GET /api/products/ HTTP/1.1" 401 5054
+Unauthorized: /api/products/
+"GET /api/products/ HTTP/1.1" 401 5054
+Unauthorized: /api/products/
+"GET /api/products/ HTTP/1.1" 401 5054
+Unauthorized: /api/products/
+"GET /api/products/ HTTP/1.1" 401 5054
+Unauthorized: /api/accounts/dashboard-stats/
+"GET /api/accounts/dashboard-stats/ HTTP/1.1" 401 5170
+Not Found: /api/accounts/
+"GET /api/accounts/ HTTP/1.1" 404 6987
+Unauthorized: /api/accounts/profile/
+"GET /api/accounts/profile/ HTTP/1.1" 401 5130
