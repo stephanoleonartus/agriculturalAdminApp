@@ -24,11 +24,11 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/products/', include('products.urls')),
     # Add other app urls here e.g.
-    # path('api/orders/', include('orders.urls')),
-    # path('api/chat/', include('chat.urls')),
+    path('api/orders/', include('orders.urls')),
+    path('api/chat/', include('chat.urls')),
     # path('api/notifications/', include('notifications.urls')),
-    # path('api/analytics/', include('analytics.urls')),
-    # path('api/reviews/', include('reviews.urls')),
+    path('api/analytics/', include('analytics.urls')),
+    path('api/reviews/', include('reviews.urls')),
 ]
 
 if settings.DEBUG:

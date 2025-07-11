@@ -7,6 +7,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
 from django.db import transaction
 from django.utils import timezone
+
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+
 from datetime import timedelta
 from .models import User, UserProfile, FarmerProfile, SupplierProfile
 from .serializers import (
@@ -253,7 +257,7 @@ class SearchRecommendationsView(generics.ListAPIView):
         # from products.models import Category as CategoryModel
         # category_qs = CategoryModel.objects.filter(name__icontains=query)[:limit]
         # for category_item in category_qs:
-        //     suggestions.append({
+        # /     suggestions.append({
         #         'type': 'Category',
         #         'id': category_item.id,
         #         'name': category_item.name
