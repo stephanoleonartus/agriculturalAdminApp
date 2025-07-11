@@ -6,10 +6,12 @@ import Home from './components/Home';
 import Products from './components/Products';
 import Farmers from './components/Farmers';
 import Supplies from './components/Supplies';
+import Signup from './components/Signup';
 
 function App() {
   return (
     <div className="App">
+      
       <Router>
         <Navigation />
 
