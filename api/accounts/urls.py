@@ -12,7 +12,8 @@ from .views import (
     SupplierProfileView,
     logout_view,
     verify_user,
-    dashboard_stats
+    dashboard_stats,
+    SearchRecommendationsView # Added SearchRecommendationsView
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('supplier-profile/', SupplierProfileView.as_view(), name='supplier-profile'),
     path('verify-user/<int:user_id>/', verify_user, name='verify-user'),
     path('dashboard-stats/', dashboard_stats, name='dashboard-stats'),
+    path('search/recommendations/', SearchRecommendationsView.as_view(), name='search-recommendations'), # Added URL
 ]

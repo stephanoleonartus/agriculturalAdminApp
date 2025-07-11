@@ -67,18 +67,34 @@ class UserListView(generics.ListAPIView):
     ordering_fields = ['created_at', 'username']
 
 class FarmerListView(generics.ListAPIView):
-    queryset = User.objects.filter(user_type='farmer')
+    queryset = User.objects.filter(user_type='farmer').select_related('farmer_profile', 'profile')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ['region', 'is_verified']
-    search_fields = ['username', 'first_name', 'last_name']
+    permission_classes = [permissions.AllowAny] # Changed to AllowAny
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter] # Ensure all filters are available
+    filterset_fields = ['region', 'is_verified', 'farmer_profile__farm_type', 'farmer_profile__certifications']
+    search_fields = [
+        'username', 'first_name', 'last_name', 'email',
+        'farmer_profile__farm_name',
+        'farmer_profile__farm_type',
+        'farmer_profile__crops_grown', # Assumes JSONField is text searchable or custom filter needed
+        'farmer_profile__livestock_types' # Same as above
+    ]
+    ordering_fields = ['username', 'first_name', 'created_at', 'farmer_profile__farm_name']
+
 
 class SupplierListView(generics.ListAPIView):
-    queryset = User.objects.filter(user_type='supplier')
+    queryset = User.objects.filter(user_type='supplier').select_related('supplier_profile', 'profile')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filterset_fields = ['region', 'is_verified']
-    search_fields = ['username', 'first_name', 'last_name']
+    permission_classes = [permissions.AllowAny] # Changed to AllowAny
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter] # Ensure all filters are available
+    filterset_fields = ['region', 'is_verified', 'supplier_profile__supplier_type']
+    search_fields = [
+        'username', 'first_name', 'last_name', 'email',
+        'supplier_profile__business_name',
+        'supplier_profile__supplier_type',
+        'supplier_profile__products_categories' # Assumes JSONField is text searchable or custom filter needed
+    ]
+    ordering_fields = ['username', 'first_name', 'created_at', 'supplier_profile__business_name']
 
 class FarmerProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = FarmerProfileSerializer
@@ -158,3 +174,93 @@ def dashboard_stats(request):
     }
     
     return Response(stats, status=status.HTTP_200_OK)
+
+# Search Recommendations View
+from django.db import models # Added for Q objects
+from products.models import Product as ProductModel
+# from products.serializers import ProductListSerializer # Not directly used for final response structure
+
+class SearchRecommendationsView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        # This view doesn't use a single serializer for the combined results directly in DRF's default way.
+        # We construct the response manually.
+        return None
+
+    def list(self, request, *args, **kwargs):
+        query = request.query_params.get('q', '').strip()
+        limit = int(request.query_params.get('limit', 5)) # Limit number of suggestions per type
+        suggestions = []
+
+        if not query or len(query) < 2: # Minimum query length
+            return Response(suggestions)
+
+        # Product Suggestions
+        # Using ProductListSerializer to get a consistent structure if needed, or simplify
+        product_qs = ProductModel.objects.filter(name__icontains=query, status='available')[:limit]
+        for product in product_qs:
+            suggestions.append({
+                'type': 'Product',
+                'id': product.id,
+                'name': product.name,
+                'category': product.category.name if product.category else None,
+                'image_url': product.images.filter(is_primary=True).first().image.url if product.images.filter(is_primary=True).exists() else None,
+                # 'url': f'/products/{product.slug}/' # Example URL
+            })
+
+        # Farmer Suggestions
+        farmer_qs = User.objects.filter(
+            user_type='farmer', is_active=True, is_verified=True
+        ).filter(
+            models.Q(username__icontains=query) |
+            models.Q(first_name__icontains=query) |
+            models.Q(last_name__icontains=query) |
+            models.Q(farmer_profile__farm_name__icontains=query)
+        ).distinct()[:limit]
+
+        for user in farmer_qs:
+            suggestions.append({
+                'type': 'Farmer',
+                'id': user.id,
+                'name': user.farmer_profile.farm_name if hasattr(user, 'farmer_profile') and user.farmer_profile.farm_name else user.get_full_name() or user.username,
+                'region': user.region,
+                'image_url': user.profile_picture.url if user.profile_picture else None,
+                # 'url': f'/farmers/{user.id}/' # Example URL
+            })
+
+        # Supplier Suggestions
+        supplier_qs = User.objects.filter(
+            user_type='supplier', is_active=True, is_verified=True
+        ).filter(
+            models.Q(username__icontains=query) |
+            models.Q(first_name__icontains=query) |
+            models.Q(last_name__icontains=query) |
+            models.Q(supplier_profile__business_name__icontains=query)
+        ).distinct()[:limit]
+
+        for user in supplier_qs:
+            suggestions.append({
+                'type': 'Supplier',
+                'id': user.id,
+                'name': user.supplier_profile.business_name if hasattr(user, 'supplier_profile') and user.supplier_profile.business_name else user.get_full_name() or user.username,
+                'region': user.region,
+                'image_url': user.profile_picture.url if user.profile_picture else None,
+                # 'url': f'/suppliers/{user.id}/' # Example URL
+            })
+
+        # Could add category suggestions too if needed
+        # from products.models import Category as CategoryModel
+        # category_qs = CategoryModel.objects.filter(name__icontains=query)[:limit]
+        # for category_item in category_qs:
+        //     suggestions.append({
+        #         'type': 'Category',
+        #         'id': category_item.id,
+        #         'name': category_item.name
+        #     })
+
+        # Sort suggestions? Or keep them grouped by type? For now, grouped.
+        # Randomize or limit total number of suggestions if too many types
+        # suggestions = suggestions[:total_limit]
+
+        return Response(suggestions)

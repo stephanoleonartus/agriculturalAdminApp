@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SearchBar from './SearchBar'; // Import the new SearchBar
 
 const items = [
   "Fresh Apples",
@@ -368,6 +369,12 @@ function Home() {
       {/* Welcome message from backend */}
       <div className="welcome-msg">
         Welcome back, {userName}! 👋 Ready to explore fresh opportunities?
+      </div>
+
+      {/* New Alibaba-style Search Bar */}
+      <div className="alibaba-search-bar-section" style={{ margin: '40px 20px' }}>
+        {/* Optionally add a title here like "Find Exactly What You Need" */}
+        <SearchBar />
       </div>
 
       {/* Category Filters */}
