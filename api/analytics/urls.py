@@ -9,5 +9,5 @@ router.register(r'users', UserAnalyticsViewSet, basename='user-analytics')
 router.register(r'sales', SalesAnalyticsViewSet, basename='sales-analytics')
 
 urlpatterns = [
-    path('api/v1/analytics/', include(router.urls)),
+    path('', include(router.urls)), # Removed 'api/v1/analytics/'
 ]

@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from .views import ChatRoomViewSet
 
 router = DefaultRouter()
-router.register(r'chat', ChatRoomViewSet, basename='chatroom')
+router.register(r'rooms', ChatRoomViewSet, basename='chatroom') # Changed base path to 'rooms'
 
 urlpatterns = [
-    path('api/v1/', include(router.urls)),
+    path('', include(router.urls)), # Removed 'api/v1/' prefix from here
 ]

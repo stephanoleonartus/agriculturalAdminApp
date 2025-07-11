@@ -23,12 +23,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/products/', include('products.urls')),
+    path('api/v1/chat/', include('chat.urls')),
+    path('api/v1/orders/', include('orders.urls')),
+    path('api/v1/analytics/', include('analytics.urls')),
+    path('api/v1/reviews/', include('reviews.urls')),
+    path('api/v1/notifications/', include('notifications.urls')), # Added notifications.urls
     # Add other app urls here e.g.
-    # path('api/orders/', include('orders.urls')),
-    # path('api/chat/', include('chat.urls')),
-    # path('api/notifications/', include('notifications.urls')),
-    # path('api/analytics/', include('analytics.urls')),
-    # path('api/reviews/', include('reviews.urls')),
 ]
 
 if settings.DEBUG:

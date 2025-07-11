@@ -2,6 +2,8 @@
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend # Added
+from rest_framework.filters import SearchFilter, OrderingFilter # Added
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
@@ -253,7 +255,7 @@ class SearchRecommendationsView(generics.ListAPIView):
         # from products.models import Category as CategoryModel
         # category_qs = CategoryModel.objects.filter(name__icontains=query)[:limit]
         # for category_item in category_qs:
-        //     suggestions.append({
+        #     suggestions.append({
         #         'type': 'Category',
         #         'id': category_item.id,
         #         'name': category_item.name

@@ -5,107 +5,172 @@ import "../styles/Chat.css";
 function Chat() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null); // Changed from selectedUser
+  const [chatRooms, setChatRooms] = useState([]); // Changed from onlineUsers
   const [searchTerm, setSearchTerm] = useState("");
   const messagesEndRef = useRef(null);
+  const [loadingRooms, setLoadingRooms] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null); // To determine 'isMine' for messages
+
+  // TODO: Fetch current user ID (e.g., from auth context or /api/accounts/profile/)
+  useEffect(() => {
+    // Placeholder for fetching current user's ID.
+    // This is crucial for determining if a message is 'mine' or 'theirs'.
+    // For now, assuming a mock ID or that sender ID from message can be compared.
+    // const fetchUser = async () => {
+    //   try {
+    //     const response = await axios.get("http://localhost:8000/api/accounts/profile/", {
+    //       headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }
+    //     });
+    //     setCurrentUserId(response.data.id);
+    //   } catch (error) {
+    //     console.error("Error fetching current user profile:", error);
+    //   }
+    // };
+    // fetchUser();
+    setCurrentUserId(1); // Mock: Assume current user ID is 1
+  }, []);
+
 
   useEffect(() => {
-    // TODO: Replace with Django API and WebSocket connection
-    fetchOnlineUsers();
-    if (selectedUser) {
-      fetchMessages(selectedUser.id);
+    fetchChatRooms();
+  }, []);
+
+  useEffect(() => {
+    if (selectedRoom) {
+      fetchMessages(selectedRoom.id);
+    } else {
+      setMessages([]); // Clear messages if no room is selected
     }
-  }, [selectedUser]);
+  }, [selectedRoom]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const fetchOnlineUsers = async () => {
-    // TODO: API call to Django backend
-    // const response = await fetch('http://localhost:8000/api/chat/users/');
-    // const data = await response.json();
-    // setOnlineUsers(data);
-    
-    // Mock data
-    setOnlineUsers([
-      { id: 1, name: "John Mwakyusa", role: "Farmer", region: "Mbeya", online: true, lastSeen: "now" },
-      { id: 2, name: "Asha Komba", role: "Farmer", region: "Morogoro", online: false, lastSeen: "2 hours ago" },
-      { id: 3, name: "Peter Supplier", role: "Supplier", region: "Arusha", online: true, lastSeen: "now" },
-      { id: 4, name: "Mary Customer", role: "Customer", region: "Dodoma", online: true, lastSeen: "now" }
-    ]);
+  const fetchChatRooms = async () => {
+    setLoadingRooms(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get("http://localhost:8000/api/v1/chat/rooms/", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data && Array.isArray(response.data.results)) {
+        setChatRooms(response.data.results);
+      } else if (Array.isArray(response.data)) { // Non-paginated fallback
+        setChatRooms(response.data);
+      } else {
+        setChatRooms([]);
+      }
+    } catch (error) {
+      console.error("Error fetching chat rooms:", error);
+      // Handle error (e.g., display message to user)
+    } finally {
+      setLoadingRooms(false);
+    }
   };
 
-  const fetchMessages = async (userId) => {
-    // TODO: API call to Django backend
-    // const response = await fetch(`http://localhost:8000/api/chat/messages/${userId}/`);
-    // const data = await response.json();
-    // setMessages(data);
-    
-    // Mock data
-    setMessages([
-      { id: 1, sender: "John Mwakyusa", content: "Hello! I have fresh apples available", timestamp: "10:30 AM", isMine: false },
-      { id: 2, sender: "You", content: "That's great! What's the price per kg?", timestamp: "10:32 AM", isMine: true },
-      { id: 3, sender: "John Mwakyusa", content: "2000 Tzs per kg. Quality is excellent!", timestamp: "10:35 AM", isMine: false },
-      { id: 4, sender: "You", content: "Can I get 50kg? When can I pick up?", timestamp: "10:37 AM", isMine: true }
-    ]);
+  const fetchMessages = async (roomId) => {
+    setLoadingMessages(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`http://localhost:8000/api/v1/chat/rooms/${roomId}/messages/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Assuming messages are directly in response.data or response.data.results
+      const fetchedMessages = response.data.results || response.data || [];
+      setMessages(fetchedMessages.map(msg => ({
+        ...msg,
+        isMine: msg.sender === currentUserId // Determine if message is from current user
+      })));
+    } catch (error) {
+      console.error(`Error fetching messages for room ${roomId}:`, error);
+      setMessages([]); // Clear messages on error
+    } finally {
+      setLoadingMessages(false);
+    }
   };
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedUser) return;
+    if (!newMessage.trim() || !selectedRoom) return;
+    const token = localStorage.getItem("accessToken");
 
-    const messageData = {
-      content: newMessage,
-      recipient: selectedUser.id,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/chat/rooms/${selectedRoom.id}/send_message/`,
+        { content: newMessage },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Add new message to state (or refetch messages for simplicity, though less optimal)
+      // For optimistic update:
+      const sentMessage = {
+        ...response.data, // Assuming backend returns the created message object
+        isMine: response.data.sender === currentUserId
+      };
+      setMessages(prev => [...prev, sentMessage]);
+      setNewMessage("");
+      // Update last_message in the chatRooms list for the current room
+      setChatRooms(prevRooms => prevRooms.map(room =>
+        room.id === selectedRoom.id ? { ...room, last_message: response.data, last_message_at: response.data.created_at } : room
+      ));
 
-    // TODO: Send to Django backend via WebSocket or API
-    // await fetch('http://localhost:8000/api/chat/send/', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(messageData)
-    // });
-
-    // Update UI immediately
-    setMessages(prev => [...prev, {
-      id: Date.now(),
-      sender: "You",
-      content: newMessage,
-      timestamp: messageData.timestamp,
-      isMine: true
-    }]);
-
-    setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error.response?.data || error.message);
+      // Handle send error (e.g., display to user)
+    }
   };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const filteredUsers = onlineUsers.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.region.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // TODO: Adapt filtering for chatRooms (e.g., by participant names)
+  const filteredRooms = chatRooms.filter(room => {
+    const roomName = room.name || (room.participants_names ? room.participants_names.join(', ') : 'Unnamed Room');
+    return roomName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
-  const UserItem = ({ user, isSelected, onClick }) => (
-    <div 
-      className={`user-item ${isSelected ? 'selected' : ''}`}
-      onClick={() => onClick(user)}
-    >
-      <div className="user-avatar">
-        <img src={`https://i.pravatar.cc/40?img=${user.id}`} alt={user.name} />
-        <div className={`status-indicator ${user.online ? 'online' : 'offline'}`}></div>
+  const ChatRoomItem = ({ room, isSelected, onClick }) => {
+    // For a private chat, derive the other participant's name
+    // This logic assumes participants_names contains names of all participants including current user.
+    // And currentUserId is known.
+    // A more robust way might be for backend to provide a 'display_name' for the room.
+    let displayName = room.name;
+    if (room.room_type === 'private' && room.participants_names) {
+        // This is a simplified way to get the "other" user.
+        // Backend `ChatRoomSerializer` could provide a field `other_participant_name` or `display_name`
+        // For now, just join names, or if you have current user's name, filter it out.
+        displayName = room.participants_names.filter(name => name !== "current_username_placeholder").join(', ') || "Private Chat";
+    }
+    displayName = displayName || `Room ${room.id}`;
+    const lastMsg = room.last_message;
+    const lastMsgText = lastMsg ? `${lastMsg.sender_name || 'User'}: ${lastMsg.content.substring(0,25)}...` : 'No messages yet';
+    const lastMsgTime = lastMsg ? new Date(lastMsg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+
+    return (
+      <div
+        className={`user-item ${isSelected ? 'selected' : ''}`} // Reusing .user-item styling
+        onClick={() => onClick(room)}
+      >
+        {/* Placeholder avatar, could use first participant's avatar or a group icon */}
+        <div className="user-avatar">
+          <img src={`https://i.pravatar.cc/40?u=${room.id}`} alt={displayName} />
+        </div>
+        <div className="user-info">
+          <h4>{displayName}</h4>
+          <p className="last-message-preview">{lastMsgText}</p>
+        </div>
+        <div className="room-meta">
+            <span className="last-message-time">{lastMsgTime}</span>
+            {room.unread_count > 0 && <span className="unread-badge">{room.unread_count}</span>}
+        </div>
       </div>
-      <div className="user-info">
-        <h4>{user.name}</h4>
-        <p className="user-role">{user.role} • {user.region}</p>
-        <p className="last-seen">{user.online ? 'Online' : user.lastSeen}</p>
-      </div>
-    </div>
-  );
+    );
+  };
+
 
   const MessageBubble = ({ message }) => (
     <div className={`message ${message.isMine ? 'mine' : 'theirs'}`}>
