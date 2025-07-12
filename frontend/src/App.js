@@ -6,7 +6,8 @@ import Home from './components/Home';
 import Products from './components/Products';
 import Farmers from './components/Farmers';
 import Supplies from './components/Supplies';
-
+import Login from './components/Login';
+import ProfilePage from './components/ProfilePage';
 import Signup from './components/Signup';
 
 
