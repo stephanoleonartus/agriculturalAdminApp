@@ -86,9 +86,9 @@ export const LocationProvider = ({ children }) => {
   };
 
   // Optionally, fetch location automatically on load, or provide a button for user to trigger
-  useEffect(() => {
-    fetchLocation(); // Example: fetch on initial load if desired
-  }, []);
+  // useEffect(() => {
+  //   fetchLocation(); // Example: fetch on initial load if desired
+  // }, []);
 
   const value = {
     location,

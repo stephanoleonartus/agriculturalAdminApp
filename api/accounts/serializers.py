@@ -91,4 +91,7 @@ class UserSerializer(serializers.ModelSerializer):
                  'user_type', 'region', 'phone_number', 'profile_picture', 
                  'address', 'is_verified', 'created_at', 'profile', 
                  'farmer_profile', 'supplier_profile']
-        read_only_fields = ['id', 'created_at', 'is_verified']
+        read_only_fields = ['id', 'created_at', 'is_verified', 'user_type', 'username']
+        extra_kwargs = {
+            'profile_picture': {'required': False}
+        }
