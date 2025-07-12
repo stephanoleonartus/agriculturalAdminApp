@@ -64,6 +64,7 @@ function Navigation() {
         <Notification /> {/* This is for general notifications */}
 
         <Profile />
+
         <div className="auth-links">
           <Link to="/login" className="nav-item">Login</Link>
           <Link to="/signup" className="nav-item">Register</Link>

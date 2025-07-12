@@ -189,6 +189,9 @@ from products.models import Product as ProductModel
 class SearchRecommendationsView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
+    def get_queryset(self):
+        return ProductModel.objects.none() # Return an empty queryset as the list method is customized
+
     def get_serializer_class(self):
         # This view doesn't use a single serializer for the combined results directly in DRF's default way.
         # We construct the response manually.
