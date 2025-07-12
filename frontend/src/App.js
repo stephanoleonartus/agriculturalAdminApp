@@ -6,16 +6,10 @@ import Home from './components/Home';
 import Products from './components/Products';
 import Farmers from './components/Farmers';
 import Supplies from './components/Supplies';
-<<<<<<< HEAD
+
 import Signup from './components/Signup';
 
-function App() {
-  return (
-    <div className="App">
-      
-      <Router>
-        <Navigation />
-=======
+
 import Chat from './components/Chat';
 import CartPage from './components/CartPage';
 import { LocationProvider } from './contexts/LocationContext'; // Import LocationProvider
@@ -26,7 +20,7 @@ function App() {
       <div className="App">
         <Router>
           <Navigation />
->>>>>>> a7b1e01a2a6fddc32d7a4eeff7173f25d609b85e
+
 
           <Routes>
             <Route path="/" element={<Home />} />
