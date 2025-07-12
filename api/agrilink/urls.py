@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include # Added include
+from django.urls import path, include, re_path # Added include
 from django.conf import settings # Added settings
 from django.conf.urls.static import static # Added static
 
@@ -30,6 +30,7 @@ urlpatterns = [
     # Unified API URLs
     path('api/accounts/', include('accounts.urls')),
     path('api/products/', include('products.urls')),
+    path('api/recommendations/', include('recommendations.urls')),
 
     # Chat
     path('api/v1/chat/', include('chat.urls')),
@@ -46,5 +47,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', static.serve, {'document_root': settings.MEDIA_ROOT}),
+        re_path(r'^static/(?P<path>.*)$', static.serve, {'document_root': settings.STATIC_ROOT}),
+    ]
