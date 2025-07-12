@@ -1,88 +1,86 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../styles/Profile.css";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import '../styles/Profile.css';
 
-function Profile() {
+const Profile = () => {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('/api/accounts/profile/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    window.location.href = '/login';
+  };
 
   const toggleProfile = () => {
     setOpen(!open);
   };
 
-  const user = {
-    name: "Stephano Siame",
-    email: "stephano@example.com",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    role: "Farmer",
-    region: "Dar es Salaam"
-  };
-
-  const profileMenuItems = [
-    { icon: "👤", label: "My Profile", link: "/profile" },
-    { icon: "📦", label: "My Orders", link: "/orders" },
-    { icon: "🏪", label: "My Shop", link: "/shop" },
-    { icon: "❤️", label: "Wishlist", link: "/wishlist" },
-    { icon: "💳", label: "Payment Methods", link: "/payments" },
-    { icon: "🏆", label: "Rewards", link: "/rewards" },
-    { icon: "⚙️", label: "Settings", link: "/settings" },
-    { icon: "❓", label: "Help Center", link: "/help" }
-  ];
-
   return (
     <div className="profile-wrapper">
       <div className="profile-trigger" onClick={toggleProfile}>
-        <img
-          src={user.avatar}
-          alt="User Avatar"
-          className="profile-avatar"
-        />
-        <div className="profile-info">
-          <span className="profile-greeting">Hello,</span>
-          <span className="profile-name">{user.name.split(' ')[0]}</span>
+        <div className="profile-avatar">
+          {user?.profile_picture ? (
+            <img src={user.profile_picture} alt="User Avatar" />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          )}
         </div>
-        <svg 
-          width="12" 
-          height="12" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
           strokeWidth="2"
           className={`dropdown-arrow ${open ? 'open' : ''}`}
         >
-          <polyline points="6,9 12,15 18,9"/>
+          <polyline points="6,9 12,15 18,9" />
         </svg>
       </div>
 
       {open && (
         <div className="profile-dropdown">
           <div className="profile-header">
-            <img src={user.avatar} alt="Profile" className="profile-header-avatar" />
-            <div className="profile-header-info">
-              <h3>{user.name}</h3>
-              <p className="profile-role">{user.role} • {user.region}</p>
-              <p className="profile-email">{user.email}</p>
-            </div>
+            <h3>{user?.username}</h3>
           </div>
-
           <div className="profile-menu">
-            {profileMenuItems.map((item, index) => (
-              <a key={index} href={item.link} className="profile-menu-item">
-                <span className="menu-icon">{item.icon}</span>
-                <span className="menu-label">{item.label}</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9,18 15,12 9,6"/>
-                </svg>
-              </a>
-            ))}
+            <Link to="/profile/my-profile" className="profile-menu-item">
+              My Profile
+            </Link>
           </div>
-
           <div className="profile-footer">
-            <button className="switch-account-btn">
-              <span className="menu-icon">🔄</span>
-              Switch Account
-            </button>
-            <button className="logout-btn">
-              <span className="menu-icon">🚪</span>
+            <button onClick={handleLogout} className="logout-btn">
               Sign Out
             </button>
           </div>
@@ -90,6 +88,6 @@ function Profile() {
       )}
     </div>
   );
-}
+};
 
 export default Profile;

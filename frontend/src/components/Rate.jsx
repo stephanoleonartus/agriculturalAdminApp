@@ -23,9 +23,9 @@ function Rate() {
 
   const fetchReviews = async () => {
     // TODO: Replace with Django API call
-      const response = await fetch('http://localhost:8000/api/reviews/');
-      const data = await response.json();
-      setReviews(data);
+    // const response = await fetch('http://localhost:8000/api/reviews/');
+    // const data = await response.json();
+    // setReviews(data);
     
     // Mock data
     setReviews([
@@ -64,9 +64,9 @@ function Rate() {
 
   const fetchProducts = async () => {
     // TODO: Replace with Django API call
-      const response = await fetch('http://localhost:8000/api/products/');
-      const data = await response.json();
-      setProducts(data);
+    // const response = await fetch('http://localhost:8000/api/products/');
+    // const data = await response.json();
+    // setProducts(data);
     
     // Mock data
     setProducts([
@@ -78,9 +78,9 @@ function Rate() {
 
   const fetchFarmers = async () => {
     // TODO: Replace with Django API call
-    const response = await fetch('http://localhost:8000/api/farmers/');
-    const data = await response.json();
-    setFarmers(data);
+    // const response = await fetch('http://localhost:8000/api/farmers/');
+    // const data = await response.json();
+    // setFarmers(data);
     
     // Mock data
     setFarmers([
@@ -96,11 +96,11 @@ function Rate() {
 
     try {
       // TODO: Replace with Django API call
-        const response = await fetch('http://localhost:8000/api/reviews/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newReview)
-        });
+      // const response = await fetch('http://localhost:8000/api/reviews/', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(newReview)
+      // });
 
       // Mock submission
       const review = {
@@ -132,9 +132,9 @@ function Rate() {
 
   const handleHelpful = async (reviewId) => {
     // TODO: Replace with Django API call
-      await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful/`, {
-        method: 'POST'
-      });
+    // await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful/`, {
+    //   method: 'POST'
+    // });
 
     setReviews(prev => prev.map(review => 
       review.id === reviewId 

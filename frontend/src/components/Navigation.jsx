@@ -11,6 +11,12 @@ function Navigation() {
   const messageCount = 0; // Example: replace with actual count from state/context
   const [searchTerm, setSearchTerm] = React.useState('');
   const { location, locationError, locationLoading, permissionStatus, fetchLocation } = useLocation();
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    setIsAuthenticated(!!token);
+  }, []);
 
 
   const handleSearch = () => {
@@ -46,7 +52,7 @@ function Navigation() {
       <div className="menu">
         <Link to="/products" className="nav-item">Products</Link>
         <Link to="/farmers" className="nav-item">Farmers</Link>
-        <Link to="/supplies" className="nav-item">Region Supplier</Link>
+        <Link to="/suppliers" className="nav-item">Region Supplier</Link>
 
         {/* Message Icon */}
         <Link to="/chat" className="nav-item icon-link notification-container">
@@ -63,12 +69,14 @@ function Navigation() {
 
         <Notification /> {/* This is for general notifications */}
 
-        <Profile />
-
-        <div className="auth-links">
-          <Link to="/login" className="nav-item">Login</Link>
-          <Link to="/signup" className="nav-item">Register</Link>
-        </div>
+        {isAuthenticated ? (
+          <Profile />
+        ) : (
+          <div className="auth-links">
+            <Link to="/login" className="nav-item">Login</Link>
+            <Link to="/signup" className="nav-item">Register</Link>
+          </div>
+        )}
       </div>
     </div>
   );
