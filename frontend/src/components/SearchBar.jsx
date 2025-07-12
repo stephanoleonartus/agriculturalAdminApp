@@ -1,14 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 import '../styles/SearchBar.css'; // Import the CSS file
 
 const SearchBar = () => {
   const [activeTab, setActiveTab] = useState('Products'); // Products, Farmers, Suppliers
   const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const searchContainerRef = useRef(null);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (searchTerm.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await axios.get(`/api/accounts/search/recommendations/?q=${searchTerm}`);
+        setSuggestions(response.data);
+      } catch (error) {
+        console.error('Error fetching search suggestions:', error);
+      }
+      setLoading(false);
+    };
+
+    const debounceFetch = setTimeout(() => {
+      fetchSuggestions();
+    }, 300);
+
+    return () => clearTimeout(debounceFetch);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setSuggestions([]);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-    // Potentially clear search term or trigger a new search context
-    console.log(`Switched to ${tabName} tab`);
+    setSearchTerm('');
+    setSuggestions([]);
   };
 
   const handleInputChange = (event) => {
@@ -17,9 +58,8 @@ const SearchBar = () => {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    // TODO: Implement search logic (e.g., navigate to results page or call API)
-    console.log(`Searching for "${searchTerm}" in category "${activeTab}"`);
-    // For now, just logging. Later this will trigger navigation or API calls.
+    // Navigate to a search results page
+    window.location.href = `/search?q=${searchTerm}&type=${activeTab}`;
   };
 
   const getTabStyle = (tabName) => {
@@ -55,35 +95,9 @@ const SearchBar = () => {
     return style;
   };
 
-  const searchBarContainerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    marginBottom: '20px',
-  };
-
-  const tabsContainerStyle = {
-    display: 'flex',
-    marginBottom: '0px', // Tabs will sit directly on top of the input container
-  };
-
-  const inputContainerStyle = {
-    display: 'flex',
-    width: '100%',
-    maxWidth: '700px', // Max width for the search bar itself
-    border: `2px solid ${activeTab === 'Products' ? 'darkgreen' : activeTab === 'Farmers' ? 'green' : 'orange'}`,
-    borderRadius: '0 6px 6px 6px', // Rounded corners except top-left if tabs are flush
-    overflow: 'hidden', // Ensures button stays within rounded corners
-  };
-
-
   return (
-    <div style={searchBarContainerStyle} className="search-bar-container">
-      <div style={tabsContainerStyle} className="search-tabs">
+    <div className="search-bar-container" ref={searchContainerRef}>
+      <div className="search-tabs">
         <div
           style={getTabStyle('Products')}
           onClick={() => handleTabClick('Products')}
@@ -106,33 +120,30 @@ const SearchBar = () => {
           Suppliers
         </div>
       </div>
-      <form onSubmit={handleSearch} style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-        <div style={inputContainerStyle} className="search-input-container">
+      <form onSubmit={handleSearch} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <div className="search-input-container">
           <input
             type="text"
             value={searchTerm}
             onChange={handleInputChange}
             placeholder={`Search for ${activeTab}...`}
-            style={{
-                flexGrow: 1,
-                padding: '12px 15px',
-                border: 'none',
-                outline: 'none',
-                fontSize: '16px'
-            }}
           />
-          <button type="submit" style={{
-            padding: '10px 20px',
-            border: 'none',
-            backgroundColor: activeTab === 'Products' ? 'darkgreen' : activeTab === 'Farmers' ? 'green' : 'orange',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}>
+          <button type="submit">
             Search
           </button>
         </div>
       </form>
+      {suggestions.length > 0 && (
+        <ul className="suggestions-list">
+          {suggestions.map((suggestion, index) => (
+            <li key={index} className="suggestion-item">
+              <Link to={`/${suggestion.type.toLowerCase()}/${suggestion.id}`}>
+                {suggestion.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
