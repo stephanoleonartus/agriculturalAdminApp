@@ -25,7 +25,7 @@ function Products() {
       })
       .catch(err => {
         console.error("Error fetching categories:", err);
-        // setError(err.message || "Failed to fetch categories."); // Optionally set error for categories
+        setError(err.message || "Failed to fetch categories."); // Optionally set error for categories
       });
   }, []);
 
