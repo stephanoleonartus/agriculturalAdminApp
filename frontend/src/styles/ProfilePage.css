@@ -1,0 +1,22 @@
+.profile-page-container {
+  padding: 40px;
+}
+
+.profile-details {
+  display: flex;
+  align-items: center;
+}
+
+.profile-picture {
+  margin-right: 40px;
+}
+
+.profile-picture img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.profile-info p {
+  margin-bottom: 10px;
+}

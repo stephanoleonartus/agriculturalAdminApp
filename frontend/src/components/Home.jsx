@@ -150,6 +150,7 @@ function Home() {
   
   const navigate = useNavigate();
   const { location, locationError, locationLoading, permissionStatus, fetchLocation } = useLocation();
+  const isLoggedIn = true; // Mock variable
 
   useEffect(() => {
     // Request location when component mounts, or user can trigger it via a button
@@ -339,6 +340,7 @@ function Home() {
                 onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                 className="search-input hero-search"
               />
+              <button onClick={() => console.log(searchTerm)}>Search</button>
               {showDropdown && filteredItems.length > 0 && (
                 <ul className="search-suggestions">
                   {filteredItems.map((item, index) => (
@@ -379,26 +381,13 @@ function Home() {
 
       {/* Welcome message from backend */}
       <div className="welcome-msg">
-        Welcome back, {userName}! 👋 Ready to explore fresh opportunities?
+        {isLoggedIn ? (
+          `Welcome back, ${userName}! ? Ready to explore fresh opportunities?`
+        ) : (
+          'Welcome and register your account or login to explore the opportunities.'
+        )}
       </div>
 
-      {/* Location Info Display & Fetch Button */}
-      <div className="location-info-section" style={{ textAlign: 'center', margin: '20px', padding: '10px', background: '#f0f0f0', borderRadius: '8px' }}>
-        <h4>Geolocation Status:</h4>
-        {locationLoading && <p>Loading location...</p>}
-        {locationError && <p style={{ color: 'red' }}>Error: {locationError}</p>}
-        {location && (
-          <p>
-            Your current location: Latitude: {location.latitude.toFixed(4)}, Longitude: {location.longitude.toFixed(4)}
-          </p>
-        )}
-        {permissionStatus && <p>Permission: {permissionStatus}</p>}
-        {(permissionStatus === 'prompt' || permissionStatus === null || permissionStatus === 'denied') && !locationLoading && (
-          <button onClick={fetchLocation} style={{padding: '8px 15px', cursor: 'pointer'}}>
-            {permissionStatus === 'denied' ? 'Enable Location (Update Settings)' : 'Get My Location'}
-          </button>
-        )}
-      </div>
 
       {/* New Alibaba-style Search Bar */}
       <div className="alibaba-search-bar-section" style={{ margin: '40px 20px' }}>
@@ -467,21 +456,21 @@ function Home() {
               </div>
               
               <div className="product-actions">
-                <button 
+                  <button
                   className="view-details-btn"
-                  onClick={() => handleViewDetails(product)}
+                    onClick={() => console.log('View details button clicked')}
                 >
                   View Details
                 </button>
-                <button 
+                  <button
                   className="contact-supplier-btn"
-                  onClick={() => handleContactSupplier(product)}
+                    onClick={() => console.log('Contact info button clicked')}
                 >
-                  Contact {product.supplier_type}
+                    Contact Info
                 </button>
-                <button 
+                  <button
                   className="add-to-cart-btn"
-                  onClick={() => handleAddToCart(product)}
+                    onClick={() => console.log('Add to cart button clicked')}
                 >
                   Add to Cart
                 </button>
