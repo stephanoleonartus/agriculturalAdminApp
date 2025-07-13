@@ -5,7 +5,10 @@ import '../styles/Profile.css';
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    return userInfo ? JSON.parse(userInfo) : null;
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -16,6 +19,7 @@ const Profile = () => {
           },
         });
         setUser(response.data);
+        localStorage.setItem('userInfo', JSON.stringify(response.data));
       } catch (error) {
         console.error('Error fetching user profile:', error);
       }
