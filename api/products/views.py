@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions, status, generics
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,6 +15,15 @@ from .serializers import (
 )
 from .permissions import IsOwnerOrReadOnly, IsFarmerOrSupplier
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated, IsFarmerOrSupplier])
+def add_product(request):
+    serializer = ProductSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class ProductViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows products to be viewed or edited.
@@ -23,7 +33,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.filter(status='available').select_related('category', 'farmer').prefetch_related('images', 'videos')
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser, FormParser) # For file uploads
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
 
     # Filters
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -62,15 +71,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     # For future: implement soft delete by overriding destroy, or use a library
-
-class ProductCreateView(generics.CreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticated, IsFarmerOrSupplier]
-    parser_classes = (MultiPartParser, FormParser)
-
-    def perform_create(self, serializer):
-        serializer.save(farmer=self.request.user)
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
