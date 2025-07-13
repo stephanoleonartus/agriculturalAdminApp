@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from '../api/axios';
 import ProductCard from './ProductCard';
 import SearchBar from './SearchBar';
@@ -9,16 +9,31 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/api/products/${location.search}`);
+        const response = await axios.get(`products/${location.search}`);
         setProducts(response.data.results);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching products:", err);
+        if (err.response) {
+          console.error("Error data:", err.response.data);
+          console.error("Error status:", err.response.status);
+          console.error("Error headers:", err.response.headers);
+        } else if (err.request) {
+          console.error("Error request:", err.request);
+        } else {
+          console.error('Error', err.message);
+        }
         setError('There was an error fetching the products.');
       } finally {
         setLoading(false);
@@ -48,7 +63,14 @@ const Products = () => {
   return (
     <div className="products-page">
       <SearchBar onSearch={handleSearch} />
-      <h2>Our Products</h2>
+      <div className="products-header">
+        <h2>Our Products</h2>
+        {(user?.user_type === 'farmer' || user?.user_type === 'supplier') && (
+          <Link to="/products/add" className="add-product-btn">
+            Add Product
+          </Link>
+        )}
+      </div>
       <div className="products-grid">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

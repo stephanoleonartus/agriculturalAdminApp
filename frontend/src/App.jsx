@@ -20,6 +20,7 @@ import ProductDetailPage from './components/ProductDetailPage';
 import ContactInfoPage from './components/ContactInfoPage';
 import AdminDashboard from './components/AdminDashboard';
 import Admin from './components/Admin';
+import AddProduct from './components/AddProduct';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -39,6 +40,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/add" element={<AddProduct />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/products/:id/contact" element={<ContactInfoPage />} />
             <Route path="/farmers" element={<Farmers />} />
