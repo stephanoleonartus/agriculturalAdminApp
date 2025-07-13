@@ -16,8 +16,8 @@ router.register(r'cart-items', CartItemViewSet, basename='cartitem') # Manages i
 router.register(r'wishlist', WishlistViewSet, basename='wishlist')
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('products/', ProductViewSet.as_view({'get': 'list'}), name='product-list'),
     path('products/add/', ProductCreateView.as_view(), name='product-add'),
     path('products/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='product-detail'),
+    path('products/', ProductViewSet.as_view({'get': 'list'}), name='product-list'),
+    path('', include(router.urls)),
 ]
