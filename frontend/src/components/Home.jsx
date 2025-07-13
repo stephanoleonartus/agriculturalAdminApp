@@ -222,7 +222,7 @@ function Home() {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await axios.get('/api/products/?ordering=-created_at&limit=6');
+        const response = await axios.get('products/?ordering=-created_at&limit=6');
         setFilteredProducts(response.data.results);
       } catch (err) {
         console.error('Error fetching featured products:', err);
