@@ -119,9 +119,11 @@ function Signup() {
       localStorage.setItem('refreshToken', response.data.refresh);
       localStorage.setItem('userInfo', JSON.stringify(response.data.user));
 
-      // For now, just navigating to login page
+      // Dispatch auth event
+      window.dispatchEvent(new Event('authChange'));
+      // For now, just navigating to profile page
       setTimeout(() => {
-        navigate("/login"); // Assuming a login route exists
+        navigate("/profile"); // Assuming a profile route exists
       }, 2000);
 
     } catch (error) {
