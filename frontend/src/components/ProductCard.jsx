@@ -31,7 +31,7 @@ function ProductCard({ product, onDelete }) {
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-card-link">
-        <img src={imageUrl} alt={product.name} className="product-image" />
+        <img src={product.primary_image || FALLBACK_IMAGE_URL} alt={product.name} className="product-image" />
         <h3>{product.name}</h3>
       </Link>
       <p className="product-price">
