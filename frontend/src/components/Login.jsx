@@ -28,56 +28,22 @@ function Login() {
     setError("");
 
     try {
-      // TODO: Replace with Django API call
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      const response = await axios.post('http://localhost:8000/api/auth/login/', formData);
+      const { data } = response;
         
-        // Store JWT token and user info
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('userInfo', JSON.stringify(data.user));
-        
-        // Redirect based on user type
-        if (data.user.userType === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/');
-        }
+      // Store JWT token and user info
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('userInfo', JSON.stringify(data.user));
+      
+      // Redirect based on user type
+      if (data.user.userType === 'admin') {
+        navigate('/admin');
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed');
+        navigate('/');
       }
     } catch (error) {
-      // For development - simulate login
-      console.log("Login attempt:", formData);
-      
-      // Mock successful login
-      if (formData.email && formData.password) {
-        const mockUser = {
-          id: 1,
-          email: formData.email,
-          userType: formData.userType,
-          name: formData.userType === 'admin' ? 'Admin User' : 'John Doe'
-        };
-        
-        localStorage.setItem('authToken', 'mock-jwt-token');
-        localStorage.setItem('userInfo', JSON.stringify(mockUser));
-        
-        if (formData.userType === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/');
-        }
-      } else {
-        setError("Please enter valid credentials");
-      }
+      const errorData = error.response?.data;
+      setError(errorData?.detail || errorData?.message || 'Login failed');
     } finally {
       setLoading(false);
     }

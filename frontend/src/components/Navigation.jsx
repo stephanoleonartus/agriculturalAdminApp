@@ -16,7 +16,8 @@ function Navigation() {
   React.useEffect(() => {
     const token = localStorage.getItem('accessToken');
     setIsAuthenticated(!!token);
-  }, []);
+    fetchLocation();
+  }, [fetchLocation]);
 
 
   const handleSearch = () => {
