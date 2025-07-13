@@ -14,6 +14,7 @@ const Products = () => {
         const response = await axios.get('/api/products/');
         setProducts(response.data.results);
       } catch (err) {
+        console.error(err);
         setError('There was an error fetching the products.');
       } finally {
         setLoading(false);

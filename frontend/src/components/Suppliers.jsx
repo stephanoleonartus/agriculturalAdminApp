@@ -14,6 +14,7 @@ const Suppliers = () => {
         const response = await axios.get('/api/accounts/suppliers/');
         setSuppliers(response.data.results);
       } catch (err) {
+        console.error(err);
         setError('There was an error fetching the suppliers.');
       } finally {
         setLoading(false);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { Link } from "react-router-dom"; // For notification links
 import "../styles/Notification.css";
 

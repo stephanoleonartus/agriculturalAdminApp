@@ -58,8 +58,7 @@ const SearchBar = () => {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    // Navigate to a search results page
-    window.location.href = `/search?q=${searchTerm}&type=${activeTab}`;
+    console.log(`Searching for "${searchTerm}" in "${activeTab}"`);
   };
 
   const getTabStyle = (tabName) => {
