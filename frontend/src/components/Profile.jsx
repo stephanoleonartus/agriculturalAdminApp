@@ -82,33 +82,43 @@ const Profile = () => {
       {open && (
         <div className="profile-dropdown">
           <div className="profile-header">
-            <h3>{user?.username}</h3>
+            <div className="profile-header-info">
+              <h3>Hi, {user?.username}</h3>
+              <p className="profile-email">{user?.email}</p>
+            </div>
           </div>
           <div className="profile-menu">
             {(user?.user_type === 'admin' || user?.user_type === 'farmer' || user?.user_type === 'supplier') && (
               <Link to="/admin" className="profile-menu-item">
-                <span role="img" aria-label="dashboard">⚙️</span> Admin Dashboard
+                <span className="menu-icon" role="img" aria-label="dashboard">⚙️</span>
+                <span className="menu-label">Admin Dashboard</span>
               </Link>
             )}
             <Link to="/profile/my-profile" className="profile-menu-item">
-              <span role="img" aria-label="profile">👤</span> My Profile
+              <span className="menu-icon" role="img" aria-label="profile">👤</span>
+              <span className="menu-label">My Profile</span>
             </Link>
             <Link to="/profile/orders" className="profile-menu-item">
-              <span role="img" aria-label="orders">📦</span> My Orders
+              <span className="menu-icon" role="img" aria-label="orders">📦</span>
+              <span className="menu-label">My Orders</span>
             </Link>
             <Link to="/profile/wishlist" className="profile-menu-item">
-              <span role="img" aria-label="wishlist">❤️</span> Wishlist
+              <span className="menu-icon" role="img" aria-label="wishlist">❤️</span>
+              <span className="menu-label">Wishlist</span>
             </Link>
             <Link to="/profile/payment-methods" className="profile-menu-item">
-              <span role="img" aria-label="payment">💳</span> Payment Methods
+              <span className="menu-icon" role="img" aria-label="payment">💳</span>
+              <span className="menu-label">Payment Methods</span>
             </Link>
             <Link to="/profile/settings" className="profile-menu-item">
-              <span role="img" aria-label="settings">⚙️</span> Settings
+              <span className="menu-icon" role="img" aria-label="settings">⚙️</span>
+              <span className="menu-label">Settings</span>
             </Link>
           </div>
           <div className="profile-footer">
             <button onClick={handleLogout} className="logout-btn">
-              Sign Out
+              <span className="menu-icon" role="img" aria-label="logout">🚪</span>
+              <span className="menu-label">Sign Out</span>
             </button>
           </div>
         </div>
