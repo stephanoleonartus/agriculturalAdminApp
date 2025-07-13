@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -62,6 +62,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     # For future: implement soft delete by overriding destroy, or use a library
+
+class ProductCreateView(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated, IsFarmerOrSupplier]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def perform_create(self, serializer):
+        serializer.save(farmer=self.request.user)
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
