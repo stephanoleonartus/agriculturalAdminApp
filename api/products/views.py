@@ -45,14 +45,15 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
+        - 'create': User must be an authenticated farmer or supplier.
+        - 'update', 'partial_update', 'destroy': User must be the owner of the product.
+        - 'list', 'retrieve': Open to all.
         """
-        if self.action in ['create']:
+        if self.action == 'create':
             self.permission_classes = [permissions.IsAuthenticated, IsFarmerOrSupplier]
         elif self.action in ['update', 'partial_update', 'destroy']:
-            # IsOwnerOrReadOnly checks obj.farmer == request.user
-            # IsFarmerOrSupplier additionally checks user_type and obj.farmer for safety
-            self.permission_classes = [permissions.IsAuthenticated, IsFarmerOrSupplier, IsOwnerOrReadOnly]
-        else: # list, retrieve
+            self.permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+        else:  # 'list', 'retrieve'
             self.permission_classes = [permissions.AllowAny]
         return super().get_permissions()
 
