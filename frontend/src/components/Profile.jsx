@@ -85,8 +85,25 @@ const Profile = () => {
             <h3>{user?.username}</h3>
           </div>
           <div className="profile-menu">
+            {(user?.user_type === 'admin' || user?.user_type === 'farmer' || user?.user_type === 'supplier') && (
+              <Link to="/admin" className="profile-menu-item">
+                <span role="img" aria-label="dashboard">⚙️</span> Admin Dashboard
+              </Link>
+            )}
             <Link to="/profile/my-profile" className="profile-menu-item">
-              My Profile
+              <span role="img" aria-label="profile">👤</span> My Profile
+            </Link>
+            <Link to="/profile/orders" className="profile-menu-item">
+              <span role="img" aria-label="orders">📦</span> My Orders
+            </Link>
+            <Link to="/profile/wishlist" className="profile-menu-item">
+              <span role="img" aria-label="wishlist">❤️</span> Wishlist
+            </Link>
+            <Link to="/profile/payment-methods" className="profile-menu-item">
+              <span role="img" aria-label="payment">💳</span> Payment Methods
+            </Link>
+            <Link to="/profile/settings" className="profile-menu-item">
+              <span role="img" aria-label="settings">⚙️</span> Settings
             </Link>
           </div>
           <div className="profile-footer">
