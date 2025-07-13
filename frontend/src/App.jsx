@@ -20,6 +20,8 @@ import ProductDetailPage from './components/ProductDetailPage';
 import ContactInfoPage from './components/ContactInfoPage';
 import AdminDashboard from './components/AdminDashboard';
 import Admin from './components/Admin';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 
 import Chat from './components/Chat';
@@ -45,6 +47,8 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/profile" element={<ProfilePage />}>
               <Route path="my-profile" element={<MyProfile />} />

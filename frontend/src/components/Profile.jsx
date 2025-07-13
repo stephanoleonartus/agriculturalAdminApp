@@ -10,9 +10,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/api/accounts/profile/', {
+        const response = await axios.get('/api/auth/profile/', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
         setUser(response.data);
@@ -24,9 +24,19 @@ const Profile = () => {
     fetchUser();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    try {
+      await axios.post('/api/auth/logout/', {
+        refresh: localStorage.getItem('refreshToken'), // assuming you store the refresh token
+      });
+    } catch (error) {
+      console.error('Error logging out:', error);
+    } finally {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('userInfo');
+      window.location.href = '/login';
+    }
   };
 
   const toggleProfile = () => {

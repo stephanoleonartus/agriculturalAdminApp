@@ -33,7 +33,8 @@ function Login() {
       const { data } = response;
         
       // Store JWT token and user info
-      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('authToken', data.access);
+      localStorage.setItem('refreshToken', data.refresh);
       localStorage.setItem('userInfo', JSON.stringify(data.user));
       
       // Redirect based on user type

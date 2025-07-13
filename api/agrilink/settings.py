@@ -158,6 +158,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://agrilink.com",
 ]
 
+CLIENT_URL = config('CLIENT_URL', default='http://localhost:3000')
+
 CORS_ALLOW_CREDENTIALS = True
 
 # Celery Configuration for background tasks

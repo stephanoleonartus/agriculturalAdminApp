@@ -13,11 +13,15 @@ from .views import (
     logout_view,
     verify_user,
     dashboard_stats,
-    SearchRecommendationsView # Added SearchRecommendationsView
+    SearchRecommendationsView, # Added SearchRecommendationsView
+    PasswordResetRequestView,
+    PasswordResetView
 )
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='user-register'),
+    path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset-request'),
+    path('password-reset-confirm/', PasswordResetView.as_view(), name='password-reset-confirm'),
     path('login/', CustomTokenObtainPairView.as_view(), name='token-obtain-pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('logout/', logout_view, name='logout'),
