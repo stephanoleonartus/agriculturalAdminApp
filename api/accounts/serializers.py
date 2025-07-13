@@ -55,13 +55,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # Create FarmerProfile or SupplierProfile if applicable
         if user.user_type == 'farmer':
             # For now, creating an empty FarmerProfile. Registration might need more fields for this.
-            FarmerProfile.objects.create(user=user, farm_name=company_name or f"{user.username}'s Farm") # Default farm name
+            FarmerProfile.objects.create(user=user, farm_name=company_name or f"{user.username}'s Farm", farm_size=0, farming_experience=0) # Default farm name
         elif user.user_type == 'supplier':
             supplier_profile_data = {'user': user}
             if company_name:
                 supplier_profile_data['business_name'] = company_name
             # For now, creating SupplierProfile with minimal data. Registration might need more.
-            SupplierProfile.objects.create(**supplier_profile_data)
+            SupplierProfile.objects.create(**supplier_profile_data, license_number='', tax_id='')
 
         return user
 
