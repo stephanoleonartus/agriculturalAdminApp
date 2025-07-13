@@ -10,11 +10,17 @@ const CartPage = () => {
 
   useEffect(() => {
     const fetchCart = async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('Please log in to see your cart.');
+        setLoading(false);
+        return;
+      }
       try {
         const response = await axios.get('/api/products/cart/');
         setCart(response.data);
       } catch (err) {
-        setError('Please log in to see your cart.');
+        setError('There was an error fetching your cart.');
       } finally {
         setLoading(false);
       }

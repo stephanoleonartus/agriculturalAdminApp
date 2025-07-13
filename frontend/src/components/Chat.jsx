@@ -13,11 +13,17 @@ const Chat = () => {
 
   useEffect(() => {
     const fetchConversations = async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setError('Please log in to see your conversations.');
+        setLoading(false);
+        return;
+      }
       try {
         const response = await axios.get('/api/v1/chat/');
         setConversations(response.data);
       } catch (err) {
-        setError('Please log in to see your conversations.');
+        setError('There was an error fetching your conversations.');
       } finally {
         setLoading(false);
       }

@@ -14,6 +14,7 @@ const Farmers = () => {
         const response = await axios.get('/api/accounts/farmers/');
         setFarmers(response.data.results);
       } catch (err) {
+        console.error(err);
         setError('There was an error fetching the farmers.');
       } finally {
         setLoading(false);
