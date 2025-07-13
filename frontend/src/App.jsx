@@ -18,6 +18,8 @@ import Settings from './components/Settings';
 import HelpCenter from './components/HelpCenter';
 import ProductDetailPage from './components/ProductDetailPage';
 import ContactInfoPage from './components/ContactInfoPage';
+import AdminDashboard from './components/AdminDashboard';
+import Admin from './components/Admin';
 
 
 import Chat from './components/Chat';
@@ -43,6 +45,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/profile" element={<ProfilePage />}>
               <Route path="my-profile" element={<MyProfile />} />
               <Route path="orders" element={<Orders />} />
