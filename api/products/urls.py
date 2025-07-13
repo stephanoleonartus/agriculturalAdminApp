@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    add_product,
     ProductViewSet,
     CategoryViewSet,
     CartViewSet,
@@ -17,6 +16,5 @@ router.register(r'cart-items', CartItemViewSet, basename='cartitem') # Manages i
 router.register(r'wishlist', WishlistViewSet, basename='wishlist')
 
 urlpatterns = [
-    path('products/add/', add_product, name='product-add'),
     path('', include(router.urls)),
 ]
