@@ -72,7 +72,8 @@ const AddProduct = () => {
       } else {
         console.error('Error', err.message);
       }
-      setError('There was an error adding the product.');
+      setError('There was an error adding the product. Please check the console for more details.');
+      console.error("Error adding product:", err.response ? err.response.data : err.message);
     } finally {
       setLoading(false);
     }
