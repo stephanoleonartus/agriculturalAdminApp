@@ -219,29 +219,17 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    filterProducts();
-  }, [searchTerm, selectedCategory]);
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await axios.get('/api/products/?ordering=-created_at&limit=6');
+        setFilteredProducts(response.data.results);
+      } catch (err) {
+        console.error('Error fetching featured products:', err);
+      }
+    };
 
-  const filterProducts = () => {
-    let filtered = cardData;
-
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(product => 
-        product.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredProducts(filtered);
-  };
+    fetchFeaturedProducts();
+  }, []);
 
   const filteredItems = items.filter((item) =>
     item.toLowerCase().includes(searchTerm.toLowerCase())
@@ -341,7 +329,7 @@ function Home() {
                 onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                 className="search-input hero-search"
               />
-              <button onClick={() => console.log(searchTerm)}>Search</button>
+              <button onClick={() => navigate(`/products?search=${searchTerm}`)}>Search</button>
               {showDropdown && filteredItems.length > 0 && (
                 <ul className="search-suggestions">
                   {filteredItems.map((item, index) => (
@@ -404,7 +392,7 @@ function Home() {
             <button
               key={category}
               className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => navigate(`/products?category__name__icontains=${category}`)}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </button>

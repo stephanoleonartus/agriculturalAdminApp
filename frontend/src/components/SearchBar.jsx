@@ -3,7 +3,7 @@ import axios from '../api/axios';
 import { Link } from 'react-router-dom';
 import '../styles/SearchBar.css'; // Import the CSS file
 
-const SearchBar = () => {
+const SearchBar = ({ onSearch }) => {
   const [activeTab, setActiveTab] = useState('Products'); // Products, Farmers, Suppliers
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -56,9 +56,15 @@ const SearchBar = () => {
     setSearchTerm(event.target.value);
   };
 
+  const navigate = useNavigate();
+
   const handleSearch = (event) => {
     event.preventDefault();
-    console.log(`Searching for "${searchTerm}" in "${activeTab}"`);
+    if (onSearch) {
+      onSearch(searchTerm);
+    } else {
+      navigate(`/products?search=${searchTerm}`);
+    }
   };
 
   const getTabStyle = (tabName) => {
