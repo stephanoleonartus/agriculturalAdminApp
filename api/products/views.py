@@ -23,6 +23,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.filter(status='available').select_related('category', 'farmer').prefetch_related('images', 'videos')
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser, FormParser) # For file uploads
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
 
     # Filters
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
