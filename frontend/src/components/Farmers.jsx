@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api/axios';
 import FarmerCard from './FarmerCard';
 import '../styles/farmers.css';
 

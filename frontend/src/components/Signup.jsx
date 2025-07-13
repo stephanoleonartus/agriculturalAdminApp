@@ -109,7 +109,6 @@ function Signup() {
     };
 
     try {
-      // TODO: Replace with actual API URL from environment variable or config
       const response = await axios.post("http://localhost:8000/api/accounts/register/", backendData);
 
       console.log("Signup Response:", response.data);
