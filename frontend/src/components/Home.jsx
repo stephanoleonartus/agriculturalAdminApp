@@ -223,9 +223,10 @@ function Home() {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await axios.get('products/?ordering=-created_at&limit=6');
-        setFilteredProducts(response.data.results);
+        setFilteredProducts(response.data.results || []);
       } catch (err) {
         console.error('Error fetching featured products:', err);
+        setFilteredProducts([]);
       }
     };
 
