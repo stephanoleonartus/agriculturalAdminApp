@@ -157,7 +157,7 @@ function Home() {
     // Request location when component mounts, or user can trigger it via a button
     // For now, let's try fetching on mount if permission was previously granted or is prompt
     if (permissionStatus !== 'denied') {
-        fetchLocation(); // Uncomment to fetch on mount
+        // fetchLocation(); // Uncomment to fetch on mount
     }
   }, [permissionStatus, fetchLocation]);
 
@@ -205,17 +205,17 @@ function Home() {
   // Fetch user data from backend
   useEffect(() => {
     // TODO: Replace with actual Django API call
-      fetch('http://localhost:8000/api/auth/user/', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-      .then(response => response.json())
-      .then(data => setUserName(data.first_name || data.username))
-      .catch(error => console.error('Error fetching user:', error));
-      
-      // Mock data for now
-    setUserName("");
+    // fetch('http://localhost:8000/api/auth/user/', {
+    //   headers: {
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //   },
+    // })
+    // .then(response => response.json())
+    // .then(data => setUserName(data.first_name || data.username))
+    // .catch(error => console.error('Error fetching user:', error));
+
+    // Mock data for now
+    setUserName("Stephano");
   }, []);
 
   useEffect(() => {
@@ -264,24 +264,24 @@ function Home() {
 
   const handleAddToCart = (product, quantity = 1) => {
     // TODO: Replace with Django API call
-      fetch('http://localhost:8000/api/cart/add/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          product_id: product.id,
-          quantity: quantity
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          alert(`${product.title} added to cart!`);
-        }
-      })
-      .catch(error => console.error('Error adding to cart:', error));
+    // fetch('http://localhost:8000/api/cart/add/', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    //   },
+    //   body: JSON.stringify({
+    //     product_id: product.id,
+    //     quantity: quantity
+    //   })
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   if (data.success) {
+    //     alert(`${product.title} added to cart!`);
+    //   }
+    // })
+    // .catch(error => console.error('Error adding to cart:', error));
 
     setCart(prev => {
       const existingItem = prev.find(item => item.id === product.id);
