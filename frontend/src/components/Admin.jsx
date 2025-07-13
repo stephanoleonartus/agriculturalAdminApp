@@ -1,6 +1,7 @@
-// Admin.jsx
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/Admin.css";
+import AddProductForm from "./AddProductForm";
 
 function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -8,14 +9,14 @@ function Admin() {
     totalFarmers: 0,
     totalProducts: 0,
     totalOrders: 0,
-    totalSuppliers: 0
+    totalSuppliers: 0,
   });
   const [farmers, setFarmers] = useState([]);
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // TODO: Replace with Django API calls
     fetchStats();
     fetchFarmers();
     fetchProducts();
@@ -23,68 +24,59 @@ function Admin() {
   }, []);
 
   const fetchStats = async () => {
-    // TODO: API call to Django backend
-    // const response = await fetch('http://localhost:8000/api/admin/stats/');
-    // const data = await response.json();
-    // setStats(data);
-    
-    // Mock data for now
-    setStats({
-      totalFarmers: 156,
-      totalProducts: 324,
-      totalOrders: 89,
-      totalSuppliers: 45
-    });
+    try {
+      const response = await axios.get("http://localhost:8000/api/admin/stats/");
+      setStats(response.data);
+    } catch (error) {
+      setError("Failed to fetch stats.");
+      console.error("Error fetching stats:", error);
+    }
   };
 
   const fetchFarmers = async () => {
-    // TODO: API call to Django backend
-    // const response = await fetch('http://localhost:8000/api/admin/farmers/');
-    // const data = await response.json();
-    // setFarmers(data);
-    
-    // Mock data
-    setFarmers([
-      { id: 1, name: "John Mwakyusa", region: "Mbeya", status: "Active", joinDate: "2024-01-15" },
-      { id: 2, name: "Asha Komba", region: "Morogoro", status: "Active", joinDate: "2024-02-20" }
-    ]);
+    try {
+      const response = await axios.get("http://localhost:8000/api/admin/farmers/");
+      setFarmers(response.data);
+    } catch (error) {
+      setError("Failed to fetch farmers.");
+      console.error("Error fetching farmers:", error);
+    }
   };
 
   const fetchProducts = async () => {
-    // TODO: API call to Django backend
-    // const response = await fetch('http://localhost:8000/api/admin/products/');
-    // const data = await response.json();
-    // setProducts(data);
-    
-    // Mock data
-    setProducts([
-      { id: 1, name: "Fresh Apples", price: "2000", farmer: "John Mwakyusa", status: "Available" },
-      { id: 2, name: "Organic Bananas", price: "3000", farmer: "Asha Komba", status: "Available" }
-    ]);
+    try {
+      const response = await axios.get("http://localhost:8000/api/admin/products/");
+      setProducts(response.data);
+    } catch (error) {
+      setError("Failed to fetch products.");
+      console.error("Error fetching products:", error);
+    }
   };
 
   const fetchOrders = async () => {
-    // TODO: API call to Django backend
-    // const response = await fetch('http://localhost:8000/api/admin/orders/');
-    // const data = await response.json();
-    // setOrders(data);
-    
-    // Mock data
-    setOrders([
-      { id: 1, customer: "Customer A", product: "Fresh Apples", amount: "20000", status: "Pending" },
-      { id: 2, customer: "Customer B", product: "Organic Bananas", amount: "15000", status: "Completed" }
-    ]);
+    try {
+      const response = await axios.get("http://localhost:8000/api/admin/orders/");
+      setOrders(response.data);
+    } catch (error) {
+      setError("Failed to fetch orders.");
+      console.error("Error fetching orders:", error);
+    }
   };
 
   const handleStatusChange = async (type, id, newStatus) => {
-    // TODO: API call to Django backend to update status
-    // await fetch(`http://localhost:8000/api/admin/${type}/${id}/`, {
-    //   method: 'PATCH',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ status: newStatus })
-    // });
-    
-    alert(`${type} status updated to ${newStatus}`);
+    try {
+      await axios.patch(`http://localhost:8000/api/admin/${type}/${id}/`, {
+        status: newStatus,
+      });
+      alert(`${type} status updated to ${newStatus}`);
+      // Refetch data to show updated status
+      if (type === "orders") fetchOrders();
+      if (type === "farmers") fetchFarmers();
+      if (type === "products") fetchProducts();
+    } catch (error) {
+      alert(`Failed to update ${type} status.`);
+      console.error(`Error updating ${type} status:`, error);
+    }
   };
 
   const StatCard = ({ title, value, icon, color }) => (
@@ -146,7 +138,7 @@ function Admin() {
                 <td>{farmer.joinDate}</td>
                 <td>
                   <button className="btn-edit">Edit</button>
-                  <button className="btn-delete">Delete</button>
+                  <button className="btn-delete" onClick={() => handleDelete('farmers', farmer.id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -159,6 +151,7 @@ function Admin() {
   const renderProducts = () => (
     <div className="products-management">
       <h3>Products Management</h3>
+      <AddProductForm onProductAdded={handleProductAdded} />
       <div className="table-container">
         <table>
           <thead>
@@ -185,7 +178,7 @@ function Admin() {
                 </td>
                 <td>
                   <button className="btn-edit">Edit</button>
-                  <button className="btn-delete">Delete</button>
+                  <button className="btn-delete" onClick={() => handleDelete('products', product.id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -194,6 +187,26 @@ function Admin() {
       </div>
     </div>
   );
+
+  const handleProductAdded = (newProduct) => {
+    setProducts([...products, newProduct]);
+    fetchProducts();
+  };
+
+  const handleDelete = async (type, id) => {
+    if (window.confirm(`Are you sure you want to delete this ${type}?`)) {
+      try {
+        await axios.delete(`http://localhost:8000/api/admin/${type}/${id}/`);
+        alert(`${type} deleted successfully.`);
+        if (type === 'farmers') fetchFarmers();
+        if (type === 'products') fetchProducts();
+        if (type === 'orders') fetchOrders();
+      } catch (error) {
+        alert(`Failed to delete ${type}.`);
+        console.error(`Error deleting ${type}:`, error);
+      }
+    }
+  };
 
   const renderOrders = () => (
     <div className="orders-management">
@@ -231,6 +244,7 @@ function Admin() {
                 </td>
                 <td>
                   <button className="btn-view">View</button>
+                  <button className="btn-delete">Delete</button>
                 </td>
               </tr>
             ))}
