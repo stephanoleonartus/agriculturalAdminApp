@@ -12,17 +12,17 @@ from .serializers import (
     CartItemSerializer,
     WishlistSerializer
 )
-from .permissions import IsOwnerOrReadOnly, IsFarmerOrSupplier
+from .permissions import IsOwnerOrReadOnly, IsFarmerOrSupplier, IsAdminOrReadOnly
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows products to be viewed or edited.
-    - Listing and-retrieval are open to all.
-    - Creation, update, deletion require user to be a 'farmer' or 'supplier' and the owner.
+    - Admins can see all products.
+    - Other users see only 'available' products.
+    - Creation, update, deletion require user to be a 'farmer' or 'supplier' and the owner, or admin.
     """
-    queryset = Product.objects.filter(status='available').select_related('category', 'farmer').prefetch_related('images', 'videos')
     serializer_class = ProductSerializer
-    parser_classes = (MultiPartParser, FormParser) # For file uploads
+    parser_classes = (MultiPartParser, FormParser)
 
     # Filters
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -35,7 +35,23 @@ class ProductViewSet(viewsets.ModelViewSet):
         'status': ['exact'],
     }
     search_fields = ['name', 'description', 'tags', 'category__name', 'farmer__username', 'farmer__first_name', 'farmer__last_name']
-    ordering_fields = ['name', 'price', 'created_at', 'average_rating', 'quantity_available'] # average_rating needs to be annotated or a model property
+    ordering_fields = ['name', 'price', 'created_at', 'average_rating', 'quantity_available']
+
+    def get_queryset(self):
+        """
+        Admins can see all products. Other users see only 'available' products.
+        A 'status' query param can be used by admins to filter by status.
+        """
+        user = self.request.user
+        queryset = Product.objects.select_related('category', 'farmer').prefetch_related('images', 'videos')
+
+        if user.is_authenticated and user.is_staff:
+            status = self.request.query_params.get('status')
+            if status and status != 'all':
+                return queryset.filter(status=status)
+            return queryset.all()
+
+        return queryset.filter(status='available')
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -44,22 +60,20 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Instantiates and returns the list of permissions that this view requires.
         - 'create': User must be an authenticated farmer or supplier.
-        - 'update', 'partial_update', 'destroy': User must be the owner of the product.
+        - 'update', 'partial_update', 'destroy': User must be the owner or admin.
         - 'list', 'retrieve': Open to all.
         """
         if self.action == 'create':
             self.permission_classes = [permissions.IsAuthenticated, IsFarmerOrSupplier]
         elif self.action in ['update', 'partial_update', 'destroy']:
-            self.permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-        else:  # 'list', 'retrieve'
+            self.permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly | IsAdminOrReadOnly]
+        else:
             self.permission_classes = [permissions.AllowAny]
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        # The serializer's create method already sets the farmer from request.user
-        serializer.save()
+        serializer.save(farmer=self.request.user)
 
     # For future: implement soft delete by overriding destroy, or use a library
 

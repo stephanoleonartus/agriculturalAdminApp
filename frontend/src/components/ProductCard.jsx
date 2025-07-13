@@ -6,7 +6,10 @@ import { Link } from "react-router-dom"; // For View Details button
 // Fallback image if primary_image is not available
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/150?text=No+Image";
 
-function ProductCard({ product }) {
+function ProductCard({ product, onDelete }) {
+  const user = JSON.parse(localStorage.getItem('userInfo'));
+  const isOwner = user && user.id === product.farmer;
+
   // Provided by ProductListSerializer:
   // id, name, category_name, farmer_name, farmer_region,
   // price, unit, status, is_organic, primary_image (URL),
@@ -15,6 +18,12 @@ function ProductCard({ product }) {
   const handleOrder = () => {
     // TODO: Implement add to cart functionality
     alert(`Adding ${product.name} to cart (not implemented yet).`);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      onDelete(product.id);
+    }
   };
 
   const imageUrl = product.primary_image || FALLBACK_IMAGE_URL;
@@ -48,6 +57,16 @@ function ProductCard({ product }) {
           <button className="btn btn-unavailable" disabled>
             Unavailable
           </button>
+        )}
+        {isOwner && (
+          <>
+            <Link to={`/products/edit/${product.id}`} className="btn btn-edit">
+              Edit
+            </Link>
+            <button onClick={handleDelete} className="btn btn-delete">
+              Delete
+            </button>
+          </>
         )}
       </div>
     </div>

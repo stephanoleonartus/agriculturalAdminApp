@@ -39,3 +39,13 @@ class IsFarmerOrSupplier(permissions.BasePermission):
         # Check if the user is the owner of the product
         # Assumes the object `obj` has a `farmer` attribute.
         return obj.farmer == request.user
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+    """
+    Custom permission to only allow admins to perform any action.
+    Regular users have read-only access.
+    """
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user and request.user.is_staff

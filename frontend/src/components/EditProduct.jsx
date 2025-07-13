@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/Auth.css';
 
-const AddProduct = () => {
+const EditProduct = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,8 +16,27 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`products/${id}/`);
+        const product = response.data;
+        setFormData({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          quantity_available: product.quantity_available,
+          category: product.category,
+          images: [],
+        });
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError('There was an error fetching the product.');
+      }
+    };
+
     const fetchCategories = async () => {
       try {
         const response = await axios.get('products/categories/');
@@ -26,8 +45,10 @@ const AddProduct = () => {
         console.error('Error fetching categories:', err);
       }
     };
+
+    fetchProduct();
     fetchCategories();
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,12 +71,14 @@ const AddProduct = () => {
     productData.append('quantity_available', formData.quantity_available);
     productData.append('category', formData.category);
 
-    for (let i = 0; i < formData.images.length; i++) {
-      productData.append('uploaded_images', formData.images[i]);
+    if (formData.images.length > 0) {
+      for (let i = 0; i < formData.images.length; i++) {
+        productData.append('uploaded_images', formData.images[i]);
+      }
     }
 
     try {
-      await axios.post('products/', productData, {
+      await axios.put(`products/${id}/`, productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -63,18 +86,8 @@ const AddProduct = () => {
       });
       navigate('/products');
     } catch (err) {
-      console.error("Error adding product:", err);
-      if (err.response) {
-        console.error("Error data:", err.response.data);
-        console.error("Error status:", err.response.status);
-        console.error("Error headers:", err.response.headers);
-      } else if (err.request) {
-        console.error("Error request:", err.request);
-      } else {
-        console.error('Error', err.message);
-      }
-      setError('There was an error adding the product. Please check the console for more details.');
-      console.error("Error adding product:", err.response ? err.response.data : err.message);
+      setError('There was an error updating the product.');
+      console.error("Error updating product:", err.response ? err.response.data : err.message);
     } finally {
       setLoading(false);
     }
@@ -83,7 +96,7 @@ const AddProduct = () => {
   return (
     <div className="auth-page">
       <div className="auth-container">
-        <h2>Add a New Product</h2>
+        <h2>Edit Product</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -147,18 +160,17 @@ const AddProduct = () => {
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="images">Product Images</label>
+            <label htmlFor="images">Replace Images</label>
             <input
               type="file"
               id="images"
               name="images"
               onChange={handleImageChange}
               multiple
-              required
             />
           </div>
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Adding...' : 'Add Product'}
+            {loading ? 'Updating...' : 'Update Product'}
           </button>
         </form>
       </div>
@@ -166,4 +178,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

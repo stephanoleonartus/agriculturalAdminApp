@@ -20,7 +20,9 @@ import ProductDetailPage from './components/ProductDetailPage';
 import ContactInfoPage from './components/ContactInfoPage';
 import AdminDashboard from './components/AdminDashboard';
 import Admin from './components/Admin';
+import AdminProductList from './components/AdminProductList';
 import AddProduct from './components/AddProduct';
+import EditProduct from './components/EditProduct';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -41,6 +43,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/add" element={<AddProduct />} />
+            <Route path="/products/edit/:id" element={<EditProduct />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/products/:id/contact" element={<ContactInfoPage />} />
             <Route path="/farmers" element={<Farmers />} />
@@ -51,7 +54,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminProductList />} />
             <Route path="/profile" element={<ProfilePage />}>
               <Route path="my-profile" element={<MyProfile />} />
               <Route path="orders" element={<Orders />} />
