@@ -80,3 +80,7 @@
   color: var(--primary-color);
   font-weight: bold;
 }
+
+.auth-icon {
+  stroke: var(--primary-color) !important;
+}
