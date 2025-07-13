@@ -125,9 +125,13 @@ function Signup() {
       }, 2000);
 
     } catch (error) {
-      console.error("Signup Error:", error.response?.data || error.message);
-      if (error.response && error.response.data) {
-        // Convert backend error object to a flat structure or display as is
+      console.error("Signup Error:", error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        console.error("Error headers:", error.response.headers);
         const backendErrors = error.response.data;
         let flatErrors = {};
         for (const key in backendErrors) {
@@ -139,7 +143,13 @@ function Signup() {
         }
         setErrors(flatErrors);
         setMessage("❌ Signup failed. Please check the form for errors.");
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("Error request:", error.request);
+        setMessage("❌ Signup failed. No response from server.");
       } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error', error.message);
         setMessage("❌ Signup failed. An unexpected error occurred.");
       }
     }
@@ -200,12 +210,14 @@ function Signup() {
 
         <input type="tel" name="telephoneNumber" placeholder="Telephone (e.g., +255712345678)" value={formData.telephoneNumber} onChange={handleChange} required />
         <FieldError fieldName="phone_number" /> {/* Backend uses phone_number */}
+        <FieldError fieldName="telephoneNumber" />
 
         <div className="terms-agreement">
           <input type="checkbox" id="agreedToTerms" name="agreedToTerms" checked={formData.agreedToTerms} onChange={handleChange} />
           <label htmlFor="agreedToTerms">I agree to the <a href="/terms" target="_blank">Terms of Use</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.</label>
         </div>
         <FieldError fieldName="agreed_to_terms" />
+        <FieldError fieldName="agreedToTerms" />
 
         <button type="submit">Register</button>
       </form>
