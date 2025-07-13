@@ -22,7 +22,7 @@ const Products = () => {
       setLoading(true);
       try {
         const response = await axios.get(`products/${location.search}`);
-        setProducts(response.data.results);
+        setProducts(response.data.results || []);
       } catch (err) {
         console.error("Error fetching products:", err);
         if (err.response) {
@@ -35,6 +35,7 @@ const Products = () => {
           console.error('Error', err.message);
         }
         setError('There was an error fetching the products.');
+        setProducts([]);
       } finally {
         setLoading(false);
       }
