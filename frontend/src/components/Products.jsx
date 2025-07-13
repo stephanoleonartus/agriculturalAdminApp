@@ -53,6 +53,19 @@ const Products = () => {
     dispatchEvent(popStateEvent);
   };
 
+  const handleDelete = async (productId) => {
+    try {
+      await axios.delete(`products/${productId}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setProducts(products.filter((p) => p.id !== productId));
+    } catch (err) {
+      setError('There was an error deleting the product.');
+    }
+  };
+
   if (loading) {
     return <div>Loading products...</div>;
   }
@@ -74,7 +87,7 @@ const Products = () => {
       </div>
       <div className="products-grid">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} onDelete={handleDelete} />
         ))}
       </div>
     </div>
