@@ -62,7 +62,16 @@ const AddProduct = () => {
       });
       navigate('/products');
     } catch (err) {
-      console.error('Error adding product:', err);
+      console.error("Error adding product:", err);
+      if (err.response) {
+        console.error("Error data:", err.response.data);
+        console.error("Error status:", err.response.status);
+        console.error("Error headers:", err.response.headers);
+      } else if (err.request) {
+        console.error("Error request:", err.request);
+      } else {
+        console.error('Error', err.message);
+      }
       setError('There was an error adding the product.');
     } finally {
       setLoading(false);
