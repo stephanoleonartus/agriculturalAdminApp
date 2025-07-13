@@ -37,12 +37,10 @@ function Login() {
       localStorage.setItem('refreshToken', data.refresh);
       localStorage.setItem('userInfo', JSON.stringify(data.user));
       
-      // Redirect based on user type
-      if (data.user.userType === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      // Dispatch auth event
+      window.dispatchEvent(new Event('authChange'));
+      // Redirect to profile page
+      navigate('/profile');
     } catch (error) {
       const errorData = error.response?.data;
       setError(errorData?.detail || errorData?.message || 'Login failed');
