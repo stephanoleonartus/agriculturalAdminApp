@@ -132,9 +132,9 @@ function Rate() {
 
   const handleHelpful = async (reviewId) => {
     // TODO: Replace with Django API call
-    // await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful/`, {
-    //   method: 'POST'
-    // });
+    await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful/`, {
+      method: 'POST'
+    });
 
     setReviews(prev => prev.map(review => 
       review.id === reviewId 
