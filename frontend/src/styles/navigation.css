@@ -72,3 +72,9 @@
   display: flex;
   gap: 1rem;
 }
+
+.auth-links .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
