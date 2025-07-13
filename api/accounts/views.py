@@ -20,8 +20,15 @@ from .serializers import (
     UserSerializer,
     UserProfileSerializer,
     FarmerProfileSerializer,
-    SupplierProfileSerializer
+    SupplierProfileSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetSerializer
 )
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.conf import settings
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -277,3 +284,53 @@ class SearchRecommendationsView(generics.ListAPIView):
         # suggestions = suggestions[:total_limit]
 
         return Response(suggestions)
+
+class PasswordResetRequestView(generics.GenericAPIView):
+    serializer_class = PasswordResetRequestSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        user = User.objects.get(email=email)
+
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        reset_link = f"{settings.CLIENT_URL}/reset-password/{uidb64}/{token}/"
+
+        send_mail(
+            'Password Reset Request',
+            f'Please use the following link to reset your password: {reset_link}',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+
+        return Response({"message": "Password reset link sent."}, status=status.HTTP_200_OK)
+
+
+class PasswordResetView(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uidb64 = serializer.validated_data['uidb64']
+        token = serializer.validated_data['token']
+        password = serializer.validated_data['password']
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid token or user ID."}, status=status.HTTP_400_BAD_REQUEST)

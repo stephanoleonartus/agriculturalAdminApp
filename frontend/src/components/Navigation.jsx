@@ -14,7 +14,7 @@ function Navigation() {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
   React.useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('authToken');
     setIsAuthenticated(!!token);
     fetchLocation();
   }, [fetchLocation]);

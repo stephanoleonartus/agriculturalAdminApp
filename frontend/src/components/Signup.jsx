@@ -109,12 +109,16 @@ function Signup() {
     };
 
     try {
-      const response = await axios.post("http://localhost:8000/api/accounts/register/", backendData);
+      const response = await axios.post("http://localhost:8000/api/auth/register/", backendData);
 
       console.log("Signup Response:", response.data);
       setMessage("✅ Signup successful! Redirecting to login...");
 
-      // TODO: Store tokens (response.data.access, response.data.refresh) and user info (response.data.user)
+      // Store tokens and user info
+      localStorage.setItem('authToken', response.data.access);
+      localStorage.setItem('refreshToken', response.data.refresh);
+      localStorage.setItem('userInfo', JSON.stringify(response.data.user));
+
       // For now, just navigating to login page
       setTimeout(() => {
         navigate("/login"); // Assuming a login route exists
