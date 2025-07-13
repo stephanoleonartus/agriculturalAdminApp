@@ -30,6 +30,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         'category__id': ['exact'],
         'category__name': ['exact', 'icontains'],
         'farmer__region': ['exact'], # Filter by farmer's region
+        'farmer__id': ['exact'],
         'is_organic': ['exact'],
         'price': ['gte', 'lte', 'exact'],
         'status': ['exact'],

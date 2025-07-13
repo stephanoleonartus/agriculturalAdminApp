@@ -139,7 +139,9 @@ const cardData = [
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState(cardData);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [cart, setCart] = useState([]);
   const [userName, setUserName] = useState(""); // Will come from backend
@@ -220,22 +222,21 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const fetchFeaturedProducts = async () => {
+    const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get('products/?ordering=-created_at&limit=6');
-        setFilteredProducts(response.data.results || []);
+        const response = await axios.get('products/');
+        setProducts(response.data.results || []);
       } catch (err) {
-        console.error('Error fetching featured products:', err);
-        setFilteredProducts([]);
+        setError('There was an error fetching the products.');
+        setProducts([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchFeaturedProducts();
+    fetchProducts();
   }, []);
-
-  const filteredItems = items.filter((item) =>
-    item.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleChange = (e) => {
     setSearchTerm(e.target.value);
@@ -308,7 +309,19 @@ function Home() {
     );
   };
 
-  const categories = ["all", "fruits", "vegetables", "seeds", "supplies", "equipment"];
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('products/categories/');
+        setCategories(response.data.results || []);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <div className="home-container">
@@ -327,24 +340,9 @@ function Home() {
                 placeholder="🔍 Search products, farmers, suppliers, or regions..."
                 value={searchTerm}
                 onChange={handleChange}
-                onFocus={() => setShowDropdown(searchTerm.trim() !== "")}
-                onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                 className="search-input hero-search"
               />
               <button onClick={() => navigate(`/products?search=${searchTerm}`)}>Search</button>
-              {showDropdown && filteredItems.length > 0 && (
-                <ul className="search-suggestions">
-                  {filteredItems.map((item, index) => (
-                    <li
-                      key={index}
-                      className="suggestion-item"
-                      onClick={() => handleSelect(item)}
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </div>
           
@@ -392,11 +390,11 @@ function Home() {
         <div className="category-buttons">
           {categories.map(category => (
             <button
-              key={category}
-              className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-              onClick={() => navigate(`/products?category__name__icontains=${category}`)}
+              key={category.id}
+              className={`category-btn ${selectedCategory === category.name ? 'active' : ''}`}
+              onClick={() => navigate(`/products?category__name__icontains=${category.name}`)}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {category.name}
             </button>
           ))}
         </div>
@@ -406,68 +404,15 @@ function Home() {
       <div className="products-section">
         <h2>🛒 Featured Products & Supplies</h2>
         <div className="product-grid">
-          {filteredProducts.map((product) => (
-            <div className="product-card" key={product.id}>
-              <div className="product-image-container">
-                <img src={product.src} alt={product.title} className="product-image" />
-                <div className="product-badge">{product.category}</div>
-                <div className="supplier-badge">{product.supplier_type}</div>
-              </div>
-              
-              <div className="product-info">
-                <h3 className="product-title">{product.title}</h3>
-                <p className="product-supplier">
-                  {product.supplier_type === 'Farmer' ? '👨‍🌾' : '🏭'} {product.farmer}
-                </p>
-                <p className="product-region">📍 {product.region}</p>
-                
-                <div className="product-rating">
-                  {renderStars(Math.floor(product.rating))}
-                  <span className="rating-text">({product.reviews} reviews)</span>
-                </div>
-                
-                <div className="product-price-section">
-                  <span className="product-price">Tzs {parseInt(product.price).toLocaleString()}</span>
-                  <span className="product-unit">
-                    {product.category === 'Equipment' ? 'per unit' : 'per kg'}
-                  </span>
-                </div>
-                
-                <div className="product-details">
-                  <span className="minimum-order">
-                    Min Order: {product.minimum_order || 'Contact supplier'}
-                  </span>
-                </div>
-                
-                <div className="product-stock">
-                  <span className={`stock-indicator ${product.stock > 50 ? 'in-stock' : 'low-stock'}`}>
-                    {product.stock > 50 ? '✅ In Stock' : '⚠️ Limited Stock'}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="product-actions">
-                  <button
-                  className="view-details-btn"
-                    onClick={() => console.log('View details button clicked')}
-                >
-                  View Details
-                </button>
-                  <button
-                  className="contact-supplier-btn"
-                    onClick={() => console.log('Contact info button clicked')}
-                >
-                    Contact Info
-                </button>
-                  <button
-                  className="add-to-cart-btn"
-                    onClick={() => console.log('Add to cart button clicked')}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          ))}
+          {loading ? (
+            <div>Loading products...</div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          )}
         </div>
       </div>
 

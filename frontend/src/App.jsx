@@ -23,6 +23,7 @@ import Admin from './components/Admin';
 import AdminProductList from './components/AdminProductList';
 import AddProduct from './components/AddProduct';
 import EditProduct from './components/EditProduct';
+import Dashboard from './components/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -56,6 +57,7 @@ function App() {
             <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<AdminProductList />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<ProfilePage />}>
               <Route path="my-profile" element={<MyProfile />} />
               <Route path="orders" element={<Orders />} />
