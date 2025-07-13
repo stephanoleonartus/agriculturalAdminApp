@@ -6,7 +6,7 @@ import "../styles/Login.css";
 
 function Login() {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
     userType: "customer"
   });
@@ -84,13 +84,13 @@ function Login() {
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="username">Username</label>
               <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                value={formData.username}
                 onChange={handleChange}
                 required
               />
