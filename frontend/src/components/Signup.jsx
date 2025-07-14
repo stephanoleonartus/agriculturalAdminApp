@@ -1,5 +1,5 @@
 // Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../api/axios"; // Import axios
 import { useNavigate } from "react-router-dom"; // For redirection after signup
 import "../styles/Signup.css";
