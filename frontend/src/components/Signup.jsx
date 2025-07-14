@@ -113,7 +113,7 @@ function Signup() {
         last_name: formData.lastName,
         password: formData.password,
         password_confirm: formData.confirmPassword,
-        user_type: formData.tradeRole,
+        role: formData.tradeRole,
         region: formData.region,
         gender: formData.gender,
         company_name: formData.companyName,

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, Region
+from .models import User, Region, UserProfile, FarmerProfile, SupplierProfile
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,6 +23,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
+        UserProfile.objects.create(user=user)
+        if user.role == 'farmer':
+            FarmerProfile.objects.create(user=user)
+        elif user.role == 'supplier':
+            SupplierProfile.objects.create(user=user)
         return user
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,9 +40,12 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    userType = serializers.CharField()
 
     def validate(self, data):
-        user = authenticate(**data)
+        user = authenticate(username=data['username'], password=data['password'])
         if user and user.is_active:
+            if user.role != data['userType']:
+                raise serializers.ValidationError("Invalid role for this user.")
             return user
         raise serializers.ValidationError("Invalid Credentials")
