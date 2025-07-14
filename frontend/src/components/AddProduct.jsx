@@ -10,15 +10,7 @@ const AddProduct = () => {
     price: '',
     quantity_available: '',
     category: '',
-    unit: 'kg',
-    min_order_quantity: 1,
-    status: 'available',
-    harvest_date: '',
-    expiry_date: '',
-    origin_region: '',
-    is_organic: false,
     images: [],
-    videos: [],
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,10 +38,6 @@ const AddProduct = () => {
     setFormData({ ...formData, images: e.target.files });
   };
 
-  const handleVideoChange = (e) => {
-    setFormData({ ...formData, videos: e.target.files });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -61,20 +49,9 @@ const AddProduct = () => {
     productData.append('price', formData.price);
     productData.append('quantity_available', formData.quantity_available);
     productData.append('category', formData.category);
-    productData.append('unit', formData.unit);
-    productData.append('min_order_quantity', formData.min_order_quantity);
-    productData.append('status', formData.status);
-    productData.append('harvest_date', formData.harvest_date);
-    productData.append('expiry_date', formData.expiry_date);
-    productData.append('origin_region', formData.origin_region);
-    productData.append('is_organic', formData.is_organic);
 
     for (let i = 0; i < formData.images.length; i++) {
       productData.append('uploaded_images', formData.images[i]);
-    }
-
-    for (let i = 0; i < formData.videos.length; i++) {
-      productData.append('uploaded_videos', formData.videos[i]);
     }
 
     try {
@@ -170,92 +147,6 @@ const AddProduct = () => {
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="unit">Unit</label>
-            <select
-              id="unit"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              required
-            >
-              <option value="kg">Kilogram</option>
-              <option value="piece">Piece</option>
-              <option value="bunch">Bunch</option>
-              <option value="bag">Bag</option>
-              <option value="crate">Crate</option>
-              <option value="liter">Liter</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="min_order_quantity">Minimum Order Quantity</label>
-            <input
-              type="number"
-              id="min_order_quantity"
-              name="min_order_quantity"
-              value={formData.min_order_quantity}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              required
-            >
-              <option value="available">Available</option>
-              <option value="out_of_stock">Out of Stock</option>
-              <option value="discontinued">Discontinued</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="harvest_date">Harvest Date</label>
-            <input
-              type="date"
-              id="harvest_date"
-              name="harvest_date"
-              value={formData.harvest_date}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="expiry_date">Expiry Date</label>
-            <input
-              type="date"
-              id="expiry_date"
-              name="expiry_date"
-              value={formData.expiry_date}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="origin_region">Origin Region</label>
-            <input
-              type="text"
-              id="origin_region"
-              name="origin_region"
-              value={formData.origin_region}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="is_organic">
-              <input
-                type="checkbox"
-                id="is_organic"
-                name="is_organic"
-                checked={formData.is_organic}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_organic: e.target.checked })
-                }
-              />
-              Is Organic?
-            </label>
-          </div>
-          <div className="form-group">
             <label htmlFor="images">Product Images</label>
             <input
               type="file"
@@ -264,16 +155,6 @@ const AddProduct = () => {
               onChange={handleImageChange}
               multiple
               required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="videos">Product Videos</label>
-            <input
-              type="file"
-              id="videos"
-              name="videos"
-              onChange={handleVideoChange}
-              multiple
             />
           </div>
           <button type="submit" className="auth-btn" disabled={loading}>
