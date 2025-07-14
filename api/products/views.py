@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Product, Category, ProductImage, ProductVideo, Cart, CartItem, Wishlist
-from ..orders.models import OrderItem
 from .serializers import (
     ProductSerializer,
     ProductListSerializer,
@@ -76,27 +75,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(farmer=self.request.user)
-
-    @action(detail=False, methods=['get'])
-    def insights(self, request):
-        """
-        Returns insights for the products of the logged-in farmer/supplier.
-        """
-        user = self.request.user
-        if not user.is_authenticated or (not user.is_farmer and not user.is_supplier):
-            return Response({"detail": "Authentication credentials were not provided or user is not a farmer/supplier."}, status=status.HTTP_403_FORBIDDEN)
-
-        products = Product.objects.filter(farmer=user)
-        insights_data = []
-        for product in products:
-            insights_data.append({
-                "product_id": product.id,
-                "product_name": product.name,
-                "views": product.views.count(),
-                "wishlist_adds": product.wishlisted_by.count(),
-                "orders": OrderItem.objects.filter(product=product).count(),
-            })
-        return Response(insights_data)
 
     # For future: implement soft delete by overriding destroy, or use a library
 
