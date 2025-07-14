@@ -8,6 +8,7 @@ import Farmers from './components/Farmers';
 import Suppliers from './components/Suppliers';
 import Auth from './components/Auth';
 import MyProfile from './components/MyProfile';
+import ProfilePage from './components/ProfilePage';
 import Orders from './components/Orders';
 import Wishlist from './components/Wishlist';
 import PaymentMethods from './components/PaymentMethods';
