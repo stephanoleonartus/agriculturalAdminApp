@@ -5,7 +5,7 @@ import '../styles/AdminDashboard.css';
 const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
+      <h1>My Agrilink</h1>
       <div className="dashboard-links">
         <Link to="/admin/products" className="dashboard-link">
           Manage Products

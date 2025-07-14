@@ -87,7 +87,7 @@ const Profile = () => {
         <div className="profile-dropdown">
           <div className="profile-header">
             <div className="profile-header-info">
-              <h3>Hi, {user?.username}</h3>
+              <h3>Hi, {user?.first_name} {user?.last_name}</h3>
               <p className="profile-email">{user?.email}</p>
             </div>
           </div>
