@@ -18,6 +18,7 @@ import Settings from './components/Settings';
 import HelpCenter from './components/HelpCenter';
 import ProductDetailPage from './components/ProductDetailPage';
 import ContactInfoPage from './components/ContactInfoPage';
+import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './components/AdminDashboard';
 import Admin from './components/Admin';
 import AdminProductList from './components/AdminProductList';
@@ -56,10 +57,12 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/products" element={<AdminProductList />} />
-        <Route path="/admin/users" element={<UserList />} />
-        <Route path="/admin/orders" element={<OrderList />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductList />} />
+          <Route path="users" element={<UserList />} />
+          <Route path="orders" element={<OrderList />} />
+        </Route>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/products" element={<ManageProducts />} />
         <Route path="/profile" element={<ProfilePage />}>
