@@ -1,5 +1,6 @@
 // ProductCard.jsx
 import React from "react";
+import axios from "axios";
 import { Link } from "react-router-dom"; // For View Details button
 // import "../styles/ProductCard.css"; // Assuming a CSS file for styling
 

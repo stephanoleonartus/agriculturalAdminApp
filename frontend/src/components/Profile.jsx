@@ -80,7 +80,7 @@ const Profile = () => {
             {(user?.user_type === 'admin' || user?.user_type === 'farmer' || user?.user_type === 'supplier') && (
               <Link to="/admin" className="profile-menu-item">
                 <span className="menu-icon" role="img" aria-label="dashboard">⚙️</span>
-                <span className="menu-label">Admin Dashboard</span>
+                <span className="menu-label">my AgriLink</span>
               </Link>
             )}
             <Link to="/profile/my-profile" className="profile-menu-item">
