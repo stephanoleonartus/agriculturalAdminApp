@@ -164,7 +164,7 @@ function Signup() {
 
   return (
     <div className="signup-page">
-      <h1>📝 Sign Up for Agrilink</h1>
+      <h1>📝 Sign Up for Agrilink.com</h1>
       {message && <p className={`message ${message.startsWith('✅') ? 'success' : 'error'}`}>{message}</p>}
       <form onSubmit={handleSubmit} className="signup-form">
 
