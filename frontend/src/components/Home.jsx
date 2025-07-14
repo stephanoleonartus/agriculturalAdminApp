@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../styles/Home.css';
 
 const Home = () => {
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsHidden(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="home-container">
       <div className="home-buttons">
@@ -16,7 +30,7 @@ const Home = () => {
           Suppliers
         </NavLink>
       </div>
-      <div className="home-search-container">
+      <div className={`home-search-container ${isHidden ? 'hidden' : ''}`}>
         <input
           type="text"
           placeholder="Search for products, farmers, or suppliers"
