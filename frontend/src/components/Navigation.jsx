@@ -10,10 +10,8 @@ function Navigation() {
   // Placeholder for message count, to be fetched later
   const messageCount = 0; // Example: replace with actual count from state/context
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [searchCategory, setSearchCategory] = React.useState('Products');
   const { location, locationError, locationLoading, permissionStatus, fetchLocation } = useLocation();
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isSticky, setIsSticky] = React.useState(false);
 
   React.useEffect(() => {
     const checkAuth = () => {
@@ -26,15 +24,8 @@ function Navigation() {
 
     window.addEventListener('authChange', checkAuth);
 
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 0);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
     return () => {
       window.removeEventListener('authChange', checkAuth);
-      window.removeEventListener('scroll', handleScroll);
     };
   }, [fetchLocation]);
 
@@ -44,41 +35,25 @@ function Navigation() {
   };
 
   return (
-    <div className={`navbar ${isSticky ? 'sticky' : ''}`}>
+    <div className="navbar">
+      {/* Geolocation Status */}
+      <div className="location-info-section" onClick={fetchLocation}>
+        Deliver to: {location ? location.region : '...'}
+      </div>
       {/* Logo Section */}
       <div className="logo">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           🌾 AgriLink
         </Link>
       </div>
-      {/* Geolocation Status */}
-      <div className="location-info-section" onClick={fetchLocation}>
-        {location ? `Delivery to: ${location.region}` : 'Geolocation'}
-      </div>
 
-      {/* Search Bar */}
-      <div className="search-container">
-        <div className="search-category-dropdown">
-          <button className="search-category-button">{searchCategory} <i className="fas fa-caret-down"></i></button>
-          <div className="search-category-dropdown-content">
-            <a href="#" onClick={() => setSearchCategory('Products')}>Products</a>
-            <a href="#" onClick={() => setSearchCategory('Farmers')}>Farmers</a>
-            <a href="#" onClick={() => setSearchCategory('Suppliers')}>Suppliers</a>
-          </div>
-        </div>
-        <span className="search-separator">|</span>
-        <input
-          type="text"
-          placeholder={`Search for ${searchCategory.toLowerCase()}`}
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="search-btn" onClick={handleSearch}>Search</button>
-      </div>
 
       {/* Menu navigation */}
       <div className="menu">
+        <Link to="/products" className="nav-item">Products</Link>
+        <Link to="/farmers" className="nav-item">Farmers</Link>
+        <Link to="/suppliers" className="nav-item">Region Supplier</Link>
+
         {/* Message Icon */}
         <Link to="/chat" className="nav-item icon-link notification-container">
           💬
