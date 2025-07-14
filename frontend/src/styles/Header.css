@@ -96,16 +96,3 @@
     color: #2e7d32; /* Green on hover */
 }
 
-/* Scrolled state */
-.main-header.scrolled .top-header {
-    height: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.main-header.scrolled .category-nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
