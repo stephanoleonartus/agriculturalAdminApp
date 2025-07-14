@@ -23,7 +23,7 @@ const Home = () => {
           className="home-search-input"
         />
         <button className="search-button">
-          <i className="fas fa-search"></i>
+          Search
         </button>
       </div>
     </div>
