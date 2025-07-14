@@ -1,6 +1,6 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem 2rem;
   background-color: #fff;
@@ -10,28 +10,7 @@
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  width: 400px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
-}
-
-.search-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-left: none;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  border-radius: 0 4px 4px 0;
+  margin-right: auto;
 }
 
 .menu {
