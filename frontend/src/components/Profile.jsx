@@ -43,13 +43,9 @@ const Profile = () => {
     }
   };
 
-  const toggleProfile = () => {
-    setOpen(!open);
-  };
-
   return (
-    <div className="profile-wrapper">
-      <div className="profile-trigger" onClick={toggleProfile}>
+    <div className="profile-wrapper" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <div className="profile-trigger">
         <div className="profile-avatar">
           {user?.profile_picture ? (
             <img src={user.profile_picture} alt="User Avatar" />
@@ -70,17 +66,6 @@ const Profile = () => {
             </svg>
           )}
         </div>
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className={`dropdown-arrow ${open ? 'open' : ''}`}
-        >
-          <polyline points="6,9 12,15 18,9" />
-        </svg>
       </div>
 
       {open && (

@@ -43,14 +43,6 @@
   font-weight: 600;
 }
 
-.dropdown-arrow {
-  transition: transform 0.3s ease;
-  color: #666;
-}
-
-.dropdown-arrow.open {
-  transform: rotate(180deg);
-}
 
 /* Profile Dropdown */
 .profile-dropdown {
