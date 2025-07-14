@@ -9,7 +9,7 @@ def add_mbeya_region(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_region_remove_user_user_type_user_role_and_more'),
+        ('accounts', '0001_initial'),
     ]
 
     operations = [

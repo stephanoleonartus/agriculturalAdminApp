@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("accounts", "0001_initial"),
+        ("accounts", "0003_data_migration_add_mbeya_region"),
     ]
 
     operations = [
