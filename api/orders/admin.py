@@ -17,24 +17,24 @@ class OrderHistoryInline(admin.TabularInline):
         return False # Disable adding history directly through admin inline for Order
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_id', 'customer', 'supplier', 'status', 'payment_status', 'total_amount', 'order_date')
-    list_filter = ('status', 'payment_status', 'order_date', 'customer__region', 'supplier__region')
-    search_fields = ('order_id', 'customer__username', 'supplier__username', 'customer__email', 'supplier__email')
-    readonly_fields = ('order_id', 'order_date', 'created_at', 'updated_at', 'total_amount') # total_amount calculated by items
+    list_display = ('order_id', 'buyer', 'supplier', 'status', 'payment_status', 'total_amount', 'order_date')
+    list_filter = ('status', 'payment_status', 'order_date', 'buyer__groups', 'supplier__groups') # Assuming groups might be a filter, region needs to be in user model
+    search_fields = ('order_id', 'buyer__username', 'supplier__username', 'buyer__email', 'supplier__email')
+    readonly_fields = ('order_id', 'order_date', 'updated_at', 'total_amount') # total_amount calculated by items
     inlines = [OrderItemInline, OrderHistoryInline]
     date_hierarchy = 'order_date'
     fieldsets = (
         (None, {
-            'fields': ('order_id', ('customer', 'supplier'), ('status', 'payment_status'), 'total_amount')
+            'fields': ('order_id', ('buyer', 'supplier'), ('status', 'payment_status'), 'total_amount')
         }),
         ('Address Information', {
             'fields': ('shipping_address', 'billing_address')
         }),
         ('Dates & Tracking', {
-            'fields': ('order_date', 'delivery_date', 'tracking_number')
+            'fields': ('order_date', 'updated_at', 'tracking_number')
         }),
         ('Additional Information', {
-            'fields': ('notes', 'created_at', 'updated_at')
+            'fields': ('notes',)
         }),
     )
 
@@ -65,9 +65,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product_name', 'quantity', 'unit_price', 'total_price')
+    list_display = ('order', 'product', 'quantity', 'price', 'total_price')
     list_filter = ('order__status',)
-    search_fields = ('product_name', 'order__order_id')
+    search_fields = ('product__name', 'order__order_id')
     readonly_fields = ('total_price',)
 
 class OrderHistoryAdmin(admin.ModelAdmin):
