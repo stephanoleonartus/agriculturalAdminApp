@@ -1,7 +1,7 @@
 // App.js
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Navigation from './components/Navigation';
+import Header from './components/Header';
 import Home from './components/Home';
 import Products from './components/Products';
 import Farmers from './components/Farmers';
@@ -84,7 +84,7 @@ function App() {
     <LocationProvider> {/* Wrap with LocationProvider */}
       <div className="App">
         <Router>
-          <Navigation />
+          <Header />
           <AppContent />
         </Router>
       </div>
