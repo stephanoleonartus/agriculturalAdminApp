@@ -6,7 +6,6 @@ import Home from './components/Home';
 import { Products, ProductDetailPage, AddProduct } from './components/Product';
 import Farmers from './components/Farmers';
 import Suppliers from './components/Suppliers';
-import Login from './components/Login';
 import Auth from './components/Auth';
 import MyProfile from './components/MyProfile';
 import Orders from './components/Orders';
@@ -61,15 +60,6 @@ function AppContent() {
         </Route>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/products" element={<ManageProducts />} />
-        <Route path="/profile" element={<ProfilePage />}>
-          <Route path="my-profile" element={<MyProfile />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="wishlist" element={<Wishlist />} />
-          <Route path="payment-methods" element={<PaymentMethods />} />
-          <Route path="rewards" element={<Rewards />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="help-center" element={<HelpCenter />} />
-        </Route>
       </Routes>
     </>
   );
