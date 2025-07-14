@@ -53,6 +53,7 @@ const genderOptions = [
 
 function Signup() {
   const navigate = useNavigate();
+  const [regions, setRegions] = useState([]);
   const [formData, setFormData] = useState({
     username: "", // Added username
     email: "",
@@ -70,6 +71,18 @@ function Signup() {
 
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchRegions = async () => {
+      try {
+        const response = await axios.get("auth/regions/");
+        setRegions(response.data);
+      } catch (error) {
+        console.error("Failed to fetch regions", error);
+      }
+    };
+    fetchRegions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -194,7 +207,8 @@ function Signup() {
         <FieldError fieldName="user_type" /> {/* Backend uses user_type */}
 
         <select name="region" value={formData.region} onChange={handleChange} required>
-          {regionOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+          <option value="">Select Region</option>
+          {regions.map(region => <option key={region.id} value={region.id}>{region.name}</option>)}
         </select>
         <FieldError fieldName="region" />
 

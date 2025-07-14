@@ -1,8 +1,8 @@
 from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User
-from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
+from .models import User, Region
+from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, RegionSerializer
 
 class RegisterView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
@@ -44,6 +44,11 @@ class FarmerViewSet(viewsets.ReadOnlyModelViewSet):
         if region is not None:
             queryset = queryset.filter(region__name=region)
         return queryset
+
+class RegionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Region.objects.all()
+    serializer_class = RegionSerializer
+    permission_classes = [permissions.AllowAny]
 
 class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(role='supplier')
