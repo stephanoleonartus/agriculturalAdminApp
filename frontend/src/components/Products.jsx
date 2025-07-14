@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import ProductCard from './ProductCard';
 import SearchBar from './SearchBar';
@@ -8,17 +8,12 @@ import '../styles/product.css';
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    const userInfo = localStorage.getItem('userInfo');
-    if (userInfo) {
-      setUser(JSON.parse(userInfo));
-    }
-
     const fetchProducts = async () => {
       setLoading(true);
       try {
@@ -26,17 +21,7 @@ const Products = () => {
         setProducts(response.data.results || []);
       } catch (err) {
         console.error("Error fetching products:", err);
-        if (err.response) {
-          console.error("Error data:", err.response.data);
-          console.error("Error status:", err.response.status);
-          console.error("Error headers:", err.response.headers);
-        } else if (err.request) {
-          console.error("Error request:", err.request);
-        } else {
-          console.error('Error', err.message);
-        }
         setError('There was an error fetching the products.');
-        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -51,22 +36,23 @@ const Products = () => {
       }
     };
 
+    const fetchRegions = async () => {
+      try {
+        const response = await axios.get('accounts/regions/');
+        setRegions(response.data);
+      } catch (err) {
+        console.error('Error fetching regions:', err);
+      }
+    };
+
     fetchProducts();
     fetchCategories();
+    fetchRegions();
   }, [location.search]);
 
-  const handleSearch = (searchTerm) => {
+  const handleFilterChange = (filterType, value) => {
     const params = new URLSearchParams(location.search);
-    params.set('search', searchTerm);
-    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
-    // This will trigger the useEffect hook to refetch the products
-    const popStateEvent = new PopStateEvent('popstate');
-    dispatchEvent(popStateEvent);
-  };
-
-  const handleCategoryFilter = (categoryId) => {
-    const params = new URLSearchParams(location.search);
-    params.set('category__id', categoryId);
+    params.set(filterType, value);
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the products
     const popStateEvent = new PopStateEvent('popstate');
@@ -96,16 +82,38 @@ const Products = () => {
 
   return (
     <div className="products-page">
-      <SearchBar onSearch={handleSearch} />
-      <div className="category-filters">
-        <h3>Categories</h3>
-        <ul>
-          {categories.map((category) => (
-            <li key={category.id} onClick={() => handleCategoryFilter(category.id)}>
-              {category.name}
-            </li>
-          ))}
-        </ul>
+      <SearchBar onSearch={(searchTerm) => handleFilterChange('search', searchTerm)} />
+      <div className="filters">
+        <div className="category-filters">
+          <h3>Categories</h3>
+          <select onChange={(e) => handleFilterChange('category', e.target.value)}>
+            <option value="">All</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="region-filters">
+          <h3>Regions</h3>
+          <select onChange={(e) => handleFilterChange('region', e.target.value)}>
+            <option value="">All</option>
+            {regions.map((region) => (
+              <option key={region.code} value={region.name}>
+                {region.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="owner-type-filters">
+          <h3>Owner Type</h3>
+          <select onChange={(e) => handleFilterChange('owner_type', e.target.value)}>
+            <option value="">All</option>
+            <option value="farmer">Farmer</option>
+            <option value="supplier">Supplier</option>
+          </select>
+        </div>
       </div>
       <div className="products-header">
         <h2>Our Products</h2>

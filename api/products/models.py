@@ -16,72 +16,26 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+from accounts.models import Region
+
 class Product(models.Model):
-    PRODUCT_STATUS = [
-        ('available', 'Available'),
-        ('out_of_stock', 'Out of Stock'),
-        ('discontinued', 'Discontinued'),
-    ]
-    
-    UNIT_CHOICES = [
-        ('kg', 'Kilogram'),
-        ('piece', 'Piece'),
-        ('bunch', 'Bunch'),
-        ('bag', 'Bag'),
-        ('crate', 'Crate'),
-        ('liter', 'Liter'),
-    ]
-    
     name = models.CharField(max_length=200)
     description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
-    farmer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='kg')
-    quantity_available = models.PositiveIntegerField(default=0)
-    min_order_quantity = models.PositiveIntegerField(default=1)
-    status = models.CharField(max_length=20, choices=PRODUCT_STATUS, default='available')
-    
-    # Location and harvest info
-    harvest_date = models.DateField(null=True, blank=True)
-    expiry_date = models.DateField(null=True, blank=True)
-    origin_region = models.CharField(max_length=100, blank=True)
-    is_organic = models.BooleanField(default=False)
-    
-    # SEO and metadata
-    slug = models.SlugField(max_length=250, unique=True, blank=True)
-    tags = models.CharField(max_length=500, blank=True, help_text="Comma-separated tags")
-    
-    # Timestamps
+    image = models.ImageField(upload_to='products/')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    quantity = models.PositiveIntegerField(default=0)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='products')
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='products')
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['status', 'category']),
-            models.Index(fields=['farmer', 'status']),
-        ]
-    
-    def __str__(self):
-        return f"{self.name} - {self.farmer.get_full_name()}"
-    
-    @property
-    def is_available(self):
-        return self.status == 'available' and self.quantity_available > 0
-    
-    @property
-    def average_rating(self):
-        reviews = self.reviews.all()
-        if reviews:
-            return reviews.aggregate(models.Avg('rating'))['rating__avg']
-        return 0
-    
+
     def save(self, *args, **kwargs):
-        if not self.slug:
-            from django.utils.text import slugify
-            self.slug = slugify(f"{self.name}-{self.farmer.username}")
+        if not self.region and self.owner:
+            self.region = self.owner.region
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
