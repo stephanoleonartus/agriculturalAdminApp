@@ -7,8 +7,7 @@ import Products from './components/Products';
 import Farmers from './components/Farmers';
 import Suppliers from './components/Suppliers';
 import Login from './components/Login';
-import ProfilePage from './components/ProfilePage';
-import Signup from './components/Signup';
+import Auth from './components/Auth';
 import MyProfile from './components/MyProfile';
 import Orders from './components/Orders';
 import Wishlist from './components/Wishlist';
@@ -53,8 +52,7 @@ function AppContent() {
         <Route path="/suppliers" element={<Suppliers />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminLayout />}>

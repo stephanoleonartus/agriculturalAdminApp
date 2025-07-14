@@ -8,20 +8,12 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password_confirm = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password_confirm', 'first_name', 'last_name', 'role', 'region']
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'role', 'region']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password_confirm']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-        return attrs
-
     def create(self, validated_data):
-        validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
         UserProfile.objects.create(user=user)
         if user.role == 'farmer':
@@ -40,12 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    userType = serializers.CharField()
+    role = serializers.CharField()
 
     def validate(self, data):
         user = authenticate(username=data['username'], password=data['password'])
         if user and user.is_active:
-            if user.role != data['userType']:
+            if user.role != data['role']:
                 raise serializers.ValidationError("Invalid role for this user.")
             return user
         raise serializers.ValidationError("Invalid Credentials")
