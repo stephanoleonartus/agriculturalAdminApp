@@ -49,8 +49,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'farmer_name', 'farmer_region', 'price', 'unit', 'quantity_available',
             'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 
             'origin_region', 'is_organic', 'slug', 'tags',
-            'images', 'videos', # Added videos to fields
-            'uploaded_images', 'uploaded_videos', # Added upload fields
+            'images', 'videos',
+            'uploaded_images', 'uploaded_videos',
             'average_rating', 'is_available', 'is_wishlisted', 'created_at', 'updated_at'
         ]
         read_only_fields = ['farmer', 'slug', 'created_at', 'updated_at']
