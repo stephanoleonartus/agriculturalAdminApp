@@ -41,6 +41,10 @@
   padding: 40px;
 }
 
+.auth-form-container.login .register-field {
+    display: none;
+}
+
 .auth-form-container h2 {
   font-size: 1.8rem;
   margin-bottom: 10px;

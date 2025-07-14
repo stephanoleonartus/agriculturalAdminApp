@@ -52,27 +52,30 @@ const Auth = () => {
       return;
     }
 
+    const url = isLogin ? "accounts/login/" : "accounts/register/";
+    let data;
+
+    if (isLogin) {
+      data = {
+        username: formData.username,
+        password: formData.password,
+      };
+    } else {
+      data = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        role: formData.userType,
+      };
+      if (formData.userType !== 'customer') {
+        data.region = formData.region;
+      }
+    }
+
     try {
-      const url = isLogin ? "auth/login/" : "auth/register/";
-      const data = isLogin
-        ? {
-            username: formData.username,
-            password: formData.password,
-          }
-        : {
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            role: formData.userType,
-            region: formData.region,
-          };
-      const response = await axios.post(url, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(url, data);
       const { data: responseData } = response;
 
       // Store JWT token and user info
@@ -100,7 +103,15 @@ const Auth = () => {
       }
     } catch (error) {
       const errorData = error.response?.data;
-      setError(errorData?.detail || errorData?.message || "Login failed");
+      if (errorData) {
+        let errorMessages = [];
+        for (const key in errorData) {
+          errorMessages.push(`${key}: ${errorData[key]}`);
+        }
+        setError(errorMessages.join(' '));
+      } else {
+        setError("Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -127,7 +138,7 @@ const Auth = () => {
           </div>
         </div>
 
-        <div className="auth-form-container">
+        <div className={`auth-form-container ${isLogin ? 'login' : 'register'}`}>
           <h2>{isLogin ? "Welcome Back!" : "Create an Account"}</h2>
           <p className="auth-subtitle">
             {isLogin ? "Sign in to your account" : "Join our community"}
@@ -152,46 +163,39 @@ const Auth = () => {
                 required
               />
             </div>
-            {!isLogin && (
-              <>
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    placeholder="Enter your first name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    placeholder="Enter your last name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </>
-            )}
+            <div className="form-group register-field">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group register-field">
+              <label htmlFor="firstName">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                placeholder="Enter your first name"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group register-field">
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                placeholder="Enter your last name"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
@@ -214,42 +218,36 @@ const Auth = () => {
                 </button>
               </div>
             </div>
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            )}
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="region">Region</label>
-                <select
-                  id="region"
-                  name="region"
-                  value={formData.region}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Region</option>
-                  {regions.map((region) => (
-                    <option key={region.id} value={region.id}>
-                      {region.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div className="form-group register-field">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group register-field">
+              <label htmlFor="region">Region</label>
+              <select
+                id="region"
+                name="region"
+                value={formData.region}
+                onChange={handleChange}
+              >
+                <option value="">Select Region</option>
+                {regions.map((region) => (
+                  <option key={region.id} value={region.id}>
+                    {region.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <div className="user-type-selection">
-              <label>{isLogin ? "Login as:" : "Register as:"}</label>
+            <div className="user-type-selection register-field">
+              <label>Register as:</label>
               <div className="user-type-grid">
                 <UserTypeCard
                   type="customer"

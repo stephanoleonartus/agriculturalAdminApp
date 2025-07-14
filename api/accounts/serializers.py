@@ -13,6 +13,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'role', 'region']
         extra_kwargs = {'password': {'write_only': True}}
 
+    def validate(self, data):
+        if User.objects.filter(username=data['username']).exists():
+            raise serializers.ValidationError("Username already exists.")
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return data
+
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         UserProfile.objects.create(user=user)
@@ -32,12 +39,9 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    role = serializers.CharField()
 
     def validate(self, data):
         user = authenticate(username=data['username'], password=data['password'])
         if user and user.is_active:
-            if user.role != data['role']:
-                raise serializers.ValidationError("Invalid role for this user.")
             return user
         raise serializers.ValidationError("Invalid Credentials")
