@@ -14,7 +14,11 @@ const Dashboard = () => {
     if (userInfo) {
       const parsedUser = JSON.parse(userInfo);
       setUser(parsedUser);
-      fetchProducts(parsedUser.id);
+      if (parsedUser.role === 'farmer') {
+        fetchProducts(parsedUser.id);
+      } else {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -63,7 +67,18 @@ const Dashboard = () => {
         </Link>
       </div>
       <div className="products-grid">
-        {/* ProductCard component removed */}
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div key={product.id} className="product-card">
+              <h3>{product.name}</h3>
+              <p>{product.description}</p>
+              <p>Price: {product.price}</p>
+              <button onClick={() => handleDelete(product.id)}>Delete</button>
+            </div>
+          ))
+        ) : (
+          <p>No products found. Add new products to get started.</p>
+        )}
       </div>
     </div>
   );

@@ -58,7 +58,6 @@ const Auth = () => {
         ? {
             username: formData.username,
             password: formData.password,
-            role: formData.userType,
           }
         : {
             username: formData.username,
@@ -69,18 +68,36 @@ const Auth = () => {
             role: formData.userType,
             region: formData.region,
           };
-      const response = await axios.post(url, data);
+      const response = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const { data: responseData } = response;
 
       // Store JWT token and user info
-      localStorage.setItem("authToken", responseData.access);
-      localStorage.setItem("refreshToken", responseData.refresh);
+      localStorage.setItem("access_token", responseData.access);
+      localStorage.setItem("refresh_token", responseData.refresh);
       localStorage.setItem("userInfo", JSON.stringify(responseData.user));
 
       // Dispatch auth event
       window.dispatchEvent(new Event("authChange"));
-      // Redirect to profile page
-      navigate("/profile");
+
+      // Redirect based on user role
+      switch (responseData.user.role) {
+        case "admin":
+          navigate("/admin");
+          break;
+        case "farmer":
+          navigate("/dashboard");
+          break;
+        case "supplier":
+          navigate("/dashboard");
+          break;
+        default:
+          navigate("/");
+          break;
+      }
     } catch (error) {
       const errorData = error.response?.data;
       setError(errorData?.detail || errorData?.message || "Login failed");
