@@ -1,15 +1,14 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const CategoryNav = () => {
     return (
         <nav className="category-nav">
             <ul>
-                <li><a href="#">All Categories</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Manufacturers</a></li>
-                <li><a href="#">Regional Supplies</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Deals</a></li>
+                <li><Link to="/products">All Categories</Link></li>
+                <li><Link to="/products">Products</Link></li>
+                <li><Link to="/suppliers">Suppliers</Link></li>
+                <li><Link to="/farmers">Farmers</Link></li>
             </ul>
         </nav>
     );

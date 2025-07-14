@@ -2,30 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import '../styles/product.css';
+import '../styles/Admin.css';
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  const [view, setView] = useState('grid'); // 'grid' or 'table'
 
   useEffect(() => {
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) {
       const parsedUser = JSON.parse(userInfo);
       setUser(parsedUser);
-      if (parsedUser.role === 'farmer') {
-        fetchProducts(parsedUser.id);
+      if (parsedUser.role === 'farmer' || parsedUser.role === 'supplier') {
+        fetchProducts(parsedUser.id, parsedUser.role);
       } else {
         setLoading(false);
       }
     }
   }, []);
 
-  const fetchProducts = async (userId) => {
+  const fetchProducts = async (userId, role) => {
     setLoading(true);
     try {
-      const response = await axios.get(`products/?farmer__id=${userId}`);
+      const response = await axios.get(`products/?${role}__id=${userId}&status=all`);
       setProducts(response.data.results || []);
     } catch (err) {
       setError('There was an error fetching your products.');
@@ -62,24 +64,58 @@ const Dashboard = () => {
     <div className="products-page">
       <div className="products-header">
         <h2>Your Products</h2>
-        <Link to="/dashboard/products" className="add-product-btn">
-          Manage Products
-        </Link>
+        <div>
+          <button onClick={() => setView('grid')} className={view === 'grid' ? 'active' : ''}>Grid View</button>
+          <button onClick={() => setView('table')} className={view === 'table' ? 'active' : ''}>Table View</button>
+          <Link to="/products/add" className="add-product-btn">
+            Add New Product
+          </Link>
+        </div>
       </div>
-      <div className="products-grid">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className="product-card">
-              <h3>{product.name}</h3>
-              <p>{product.description}</p>
-              <p>Price: {product.price}</p>
-              <button onClick={() => handleDelete(product.id)}>Delete</button>
-            </div>
-          ))
-        ) : (
-          <p>No products found. Add new products to get started.</p>
-        )}
-      </div>
+      {view === 'grid' ? (
+        <div className="products-grid">
+          {products.length > 0 ? (
+            products.map((product) => (
+              <div key={product.id} className="product-card">
+                <h3>{product.name}</h3>
+                <p>{product.description}</p>
+                <p>Price: {product.price}</p>
+                <button onClick={() => handleDelete(product.id)}>Delete</button>
+              </div>
+            ))
+          ) : (
+            <p>No products found. Add new products to get started.</p>
+          )}
+        </div>
+      ) : (
+        <div className="admin-product-list">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>{product.status}</td>
+                  <td>
+                    <Link to={`/products/edit/${product.id}`} className="edit-btn">
+                      Edit
+                    </Link>
+                    <button onClick={() => handleDelete(product.id)} className="delete-btn">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

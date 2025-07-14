@@ -1,8 +1,26 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import '../styles/AdminLayout.css';
 
 const AdminLayout = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.dispatchEvent(new Event('authChange'));
+    navigate('/');
+  };
+
   return (
     <div className="admin-layout">
       <div className="sidebar">
@@ -17,29 +35,28 @@ const AdminLayout = () => {
             <Link to="/admin/products">Manage Products</Link>
           </li>
           <li>
-            <Link to="/admin/customers">Manage Customers</Link>
+            <Link to="/admin/users">Manage Users</Link>
           </li>
           <li>
             <Link to="/admin/orders">Manage Orders</Link>
           </li>
           <li>
-            <Link to="/admin/analytics">Insights & Analytics</Link>
-          </li>
-          <li>
             <Link to="/admin/settings">Settings</Link>
           </li>
           <li>
-            <Link to="/logout">Logout</Link>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
       </div>
       <div className="main-content">
         <div className="top-bar">
           <div className="welcome-message">
-            Welcome back, [User's Name]!
+            {user && `Welcome back, ${user.first_name}!`}
           </div>
           <div className="profile-section">
-            <img src="https://via.placeholder.com/40" alt="User Avatar" />
+            {user && user.profile_picture && (
+              <img src={user.profile_picture} alt="User Avatar" />
+            )}
           </div>
         </div>
         <div className="content">
