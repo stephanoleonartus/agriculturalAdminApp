@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
-import ProductCard from './ProductCard';
-import '../styles/product.css';
+import '../styles/Admin.css';
 
-const Dashboard = () => {
+const ManageProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -22,7 +21,7 @@ const Dashboard = () => {
   const fetchProducts = async (userId) => {
     setLoading(true);
     try {
-      const response = await axios.get(`products/?farmer__id=${userId}`);
+      const response = await axios.get(`products/?farmer__id=${userId}&status=all`);
       setProducts(response.data.results || []);
     } catch (err) {
       setError('There was an error fetching your products.');
@@ -48,7 +47,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div>Loading your products...</div>;
+    return <div>Loading products...</div>;
   }
 
   if (error) {
@@ -56,20 +55,38 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="products-page">
-      <div className="products-header">
-        <h2>Your Products</h2>
-        <Link to="/dashboard/products" className="add-product-btn">
-          Manage Products
-        </Link>
-      </div>
-      <div className="products-grid">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} onDelete={handleDelete} />
-        ))}
-      </div>
+    <div className="admin-product-list">
+      <h2>Manage Your Products</h2>
+      <Link to="/products/add" className="add-product-btn">
+        Add New Product
+      </Link>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr key={product.id}>
+              <td>{product.name}</td>
+              <td>{product.status}</td>
+              <td>
+                <Link to={`/products/edit/${product.id}`} className="edit-btn">
+                  Edit
+                </Link>
+                <button onClick={() => handleDelete(product.id)} className="delete-btn">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default Dashboard;
+export default ManageProducts;
