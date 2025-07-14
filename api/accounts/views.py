@@ -49,6 +49,7 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = [permissions.AllowAny]
+    pagination_class = None
 
 class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(role='supplier')

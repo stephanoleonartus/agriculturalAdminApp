@@ -24,8 +24,10 @@ const Auth = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await axios.get("auth/regions/");
-        setRegions(response.data);
+        const response = await axios.get("accounts/regions/");
+        if (Array.isArray(response.data)) {
+          setRegions(response.data);
+        }
       } catch (error) {
         console.error("Failed to fetch regions", error);
       }
