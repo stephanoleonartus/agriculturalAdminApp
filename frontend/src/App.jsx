@@ -21,6 +21,8 @@ import ContactInfoPage from './components/ContactInfoPage';
 import AdminDashboard from './components/AdminDashboard';
 import Admin from './components/Admin';
 import AdminProductList from './components/AdminProductList';
+import UserList from './components/UserList';
+import OrderList from './components/OrderList';
 import AddProduct from './components/AddProduct';
 import EditProduct from './components/EditProduct';
 import Dashboard from './components/Dashboard';
@@ -56,6 +58,8 @@ function AppContent() {
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/products" element={<AdminProductList />} />
+        <Route path="/admin/users" element={<UserList />} />
+        <Route path="/admin/orders" element={<OrderList />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/products" element={<ManageProducts />} />
         <Route path="/profile" element={<ProfilePage />}>

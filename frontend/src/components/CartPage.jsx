@@ -70,6 +70,19 @@ const CartPage = () => {
     );
   }
 
+  const handlePlaceOrder = async () => {
+    try {
+      await axios.post('orders/', { cart_id: cart.id });
+      alert('Order placed successfully!');
+      // Refetch the cart to update the state
+      const response = await axios.get('cart/');
+      setCart(response.data);
+    } catch (err) {
+      console.error('Error placing order:', err);
+      alert('There was an error placing the order.');
+    }
+  };
+
   return (
     <div className="cart-page">
       <h2>Your Shopping Cart</h2>
@@ -102,9 +115,9 @@ const CartPage = () => {
           <h3>Cart Summary</h3>
           <p>Total Items: {cart.total_items}</p>
           <p>Total Price: ${cart.total_price}</p>
-          <Link to="/checkout" className="btn-checkout">
-            Proceed to Checkout
-          </Link>
+          <button onClick={handlePlaceOrder} className="btn-checkout">
+            Place Order
+          </button>
         </div>
       </div>
     </div>
