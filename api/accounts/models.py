@@ -4,46 +4,22 @@ from django.db import models
 from django.core.validators import RegexValidator
 from PIL import Image
 
+class Region(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    code = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
-    USER_TYPES = [
+    ROLE_CHOICES = [
         ('farmer', 'Farmer'),
         ('supplier', 'Supplier'),
-        ('customer', 'Customer'),
-        ('admin', 'Admin'),
+        ('buyer', 'Buyer'),
     ]
     
-    REGIONS = [
-        ('arusha', 'Arusha'),
-        ('dar_es_salaam', 'Dar es Salaam'),
-        ('dodoma', 'Dodoma'),
-        ('geita', 'Geita'),
-        ('iringa', 'Iringa'),
-        ('kagera', 'Kagera'),
-        ('katavi', 'Katavi'),
-        ('kigoma', 'Kigoma'),
-        ('kilimanjaro', 'Kilimanjaro'),
-        ('lindi', 'Lindi'),
-        ('manyara', 'Manyara'),
-        ('mara', 'Mara'),
-        ('mbeya', 'Mbeya'),
-        ('morogoro', 'Morogoro'),
-        ('mtwara', 'Mtwara'),
-        ('mwanza', 'Mwanza'),
-        ('njombe', 'Njombe'),
-        ('pwani', 'Pwani'),
-        ('rukwa', 'Rukwa'),
-        ('ruvuma', 'Ruvuma'),
-        ('shinyanga', 'Shinyanga'),
-        ('simiyu', 'Simiyu'),
-        ('singida', 'Singida'),
-        ('songwe', 'Songwe'),
-        ('tabora', 'Tabora'),
-        ('tanga', 'Tanga'),
-        ('zanzibar', 'Zanzibar'),
-    ]
-    
-    user_type = models.CharField(max_length=20, choices=USER_TYPES, default='customer')
-    region = models.CharField(max_length=20, choices=REGIONS, null=True, blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='buyer')
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
 
     GENDER_CHOICES = [
         ('male', 'Male'),
@@ -68,7 +44,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"{self.username} ({self.get_user_type_display()})"
+        return f"{self.username} ({self.get_role_display()})"
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
