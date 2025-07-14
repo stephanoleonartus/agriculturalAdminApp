@@ -1,0 +1,111 @@
+.main-header {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: top 0.3s ease-in-out;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #2e7d32; /* Green background */
+    color: white;
+    transition: all 0.3s ease-in-out;
+    height: 80px; /* Initial height */
+}
+
+.company-name {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+}
+
+.search-bar {
+    display: flex;
+    flex-grow: 1;
+    margin: 0 40px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.search-bar button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #ff9800; /* Orange button */
+    color: white;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.action-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.action-item i {
+    font-size: 20px;
+}
+
+.category-nav {
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.category-nav ul {
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
+    margin: 0;
+    padding: 15px 30px;
+}
+
+.category-nav li {
+    margin-right: 25px;
+}
+
+.category-nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.category-nav a:hover {
+    color: #2e7d32; /* Green on hover */
+}
+
+/* Scrolled state */
+.main-header.scrolled .top-header {
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.main-header.scrolled .category-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
