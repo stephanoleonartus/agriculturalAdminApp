@@ -7,6 +7,7 @@ import { Products, ProductDetailPage, AddProduct } from './components/Product';
 import Farmers from './components/Farmers';
 import Suppliers from './components/Suppliers';
 import Auth from './components/Auth';
+import Login from './components/Login';
 import MyProfile from './components/MyProfile';
 import Orders from './components/Orders';
 import Wishlist from './components/Wishlist';
@@ -50,7 +51,9 @@ function AppContent() {
         <Route path="/chat" element={<Chat />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/profile" element={<MyProfile />} />
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
