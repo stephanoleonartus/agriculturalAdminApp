@@ -79,11 +79,6 @@ const Products = () => {
       <SearchBar onSearch={handleSearch} />
       <div className="products-header">
         <h2>Our Products</h2>
-        {(user?.user_type === 'farmer' || user?.user_type === 'supplier') && (
-          <Link to="/products/add" className="add-product-btn">
-            Add Product
-          </Link>
-        )}
       </div>
       <div className="products-grid">
         {products.map((product) => (

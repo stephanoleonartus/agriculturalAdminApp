@@ -24,6 +24,7 @@ import AdminProductList from './components/AdminProductList';
 import AddProduct from './components/AddProduct';
 import EditProduct from './components/EditProduct';
 import Dashboard from './components/Dashboard';
+import ManageProducts from './components/ManageProducts';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -58,6 +59,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/products" element={<AdminProductList />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/products" element={<ManageProducts />} />
             <Route path="/profile" element={<ProfilePage />}>
               <Route path="my-profile" element={<MyProfile />} />
               <Route path="orders" element={<Orders />} />
