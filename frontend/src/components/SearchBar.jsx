@@ -18,7 +18,7 @@ const SearchBar = ({ onSearch }) => {
       }
       setLoading(true);
       try {
-        const response = await axios.get(`/api/accounts/search/recommendations/?q=${searchTerm}`);
+        const response = await axios.get(`accounts/search/recommendations/?q=${searchTerm}`);
         setSuggestions(response.data);
       } catch (error) {
         console.error('Error fetching search suggestions:', error);

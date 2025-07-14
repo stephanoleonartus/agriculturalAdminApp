@@ -7,6 +7,7 @@ import '../styles/product.css';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
@@ -41,12 +42,31 @@ const Products = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('products/categories/');
+        setCategories(response.data.results);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
     fetchProducts();
+    fetchCategories();
   }, [location.search]);
 
   const handleSearch = (searchTerm) => {
     const params = new URLSearchParams(location.search);
     params.set('search', searchTerm);
+    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
+    // This will trigger the useEffect hook to refetch the products
+    const popStateEvent = new PopStateEvent('popstate');
+    dispatchEvent(popStateEvent);
+  };
+
+  const handleCategoryFilter = (categoryId) => {
+    const params = new URLSearchParams(location.search);
+    params.set('category__id', categoryId);
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the products
     const popStateEvent = new PopStateEvent('popstate');
@@ -77,6 +97,16 @@ const Products = () => {
   return (
     <div className="products-page">
       <SearchBar onSearch={handleSearch} />
+      <div className="category-filters">
+        <h3>Categories</h3>
+        <ul>
+          {categories.map((category) => (
+            <li key={category.id} onClick={() => handleCategoryFilter(category.id)}>
+              {category.name}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="products-header">
         <h2>Our Products</h2>
       </div>

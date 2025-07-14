@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../api/axios';
 import '../styles/ProductDetailPage.css';
 
 const ProductDetailPage = () => {
@@ -11,17 +11,26 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('/api/products/cart/items/', { product_id: product.id, quantity: 1 });
+      await axios.post('cart-items/', { product_id: product.id, quantity: 1 });
       alert('Product added to cart!');
     } catch (err) {
       alert('There was an error adding the product to the cart.');
     }
   };
 
+  const handleAddToWishlist = async () => {
+    try {
+      await axios.post('wishlist/', { product_id: product.id });
+      alert('Product added to wishlist!');
+    } catch (err) {
+      alert('There was an error adding the product to the wishlist.');
+    }
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/api/products/${id}/`);
+        const response = await axios.get(`products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');
@@ -62,6 +71,7 @@ const ProductDetailPage = () => {
             <p>{product.farmer.username}</p>
           </div>
           <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
+          <button className="add-to-wishlist-btn" onClick={handleAddToWishlist}>Add to Wishlist</button>
         </div>
       </div>
     </div>

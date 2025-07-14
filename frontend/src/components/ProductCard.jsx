@@ -15,9 +15,24 @@ function ProductCard({ product, onDelete }) {
   // price, unit, status, is_organic, primary_image (URL),
   // average_rating, is_available, created_at
 
-  const handleOrder = () => {
-    // TODO: Implement add to cart functionality
-    alert(`Adding ${product.name} to cart (not implemented yet).`);
+  const handleAddToCart = async () => {
+    try {
+      await axios.post('cart-items/', { product_id: product.id, quantity: 1 });
+      alert(`${product.name} added to cart!`);
+    } catch (err) {
+      console.error('Error adding to cart:', err);
+      alert('There was an error adding the product to the cart.');
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    try {
+      await axios.post('wishlist/', { product_id: product.id });
+      alert(`${product.name} added to wishlist!`);
+    } catch (err) {
+      console.error('Error adding to wishlist:', err);
+      alert('There was an error adding the product to the wishlist.');
+    }
   };
 
   const handleDelete = () => {
@@ -50,7 +65,7 @@ function ProductCard({ product, onDelete }) {
           View Details
         </Link>
         {product.is_available ? (
-          <button onClick={handleOrder} className="btn btn-order">
+          <button onClick={handleAddToCart} className="btn btn-order">
             Add to Cart
           </button>
         ) : (
@@ -58,6 +73,9 @@ function ProductCard({ product, onDelete }) {
             Unavailable
           </button>
         )}
+        <button onClick={handleAddToWishlist} className="btn btn-wishlist">
+          Add to Wishlist
+        </button>
         {isOwner && (
           <>
             <Link to={`/products/edit/${product.id}`} className="btn btn-edit">

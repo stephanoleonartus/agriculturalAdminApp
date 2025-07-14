@@ -7,24 +7,29 @@ const AdminProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        // Fetch all products, including those not 'available'
-        const response = await axios.get('products/?status=all'); // A custom filter or a new endpoint might be needed
-        setProducts(response.data.results || []);
-      } catch (err) {
-        setError('There was an error fetching the products.');
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      const parsedUser = JSON.parse(userInfo);
+      setUser(parsedUser);
+      fetchProducts();
+    }
   }, []);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`products/?status=all`);
+      setProducts(response.data.results || []);
+    } catch (err) {
+      setError('There was an error fetching the products.');
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
