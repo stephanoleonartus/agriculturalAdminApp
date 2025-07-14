@@ -53,7 +53,14 @@ function AppContent() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/profile" element={<MyProfile />} />
+        <Route path="/profile" element={<MyProfile />}>
+          <Route path="orders" element={<Orders />} />
+          <Route path="wishlist" element={<Wishlist />} />
+          <Route path="payment-methods" element={<PaymentMethods />} />
+          <Route path="rewards" element={<Rewards />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="help-center" element={<HelpCenter />} />
+        </Route>
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
@@ -62,7 +69,6 @@ function AppContent() {
           <Route path="orders" element={<OrderList />} />
         </Route>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard/products" element={<ManageProducts />} />
       </Routes>
     </>
   );
