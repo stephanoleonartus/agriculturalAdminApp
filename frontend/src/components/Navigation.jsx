@@ -43,7 +43,7 @@ function Navigation() {
       {/* Logo Section */}
       <div className="logo">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          🌾 AgriLink
+          🌾 AgriLink.com
         </Link>
       </div>
 
