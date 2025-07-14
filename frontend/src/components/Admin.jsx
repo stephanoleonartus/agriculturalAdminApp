@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/Admin.css";
-import AddProductForm from "./AddProductForm";
 
 function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -151,7 +150,6 @@ function Admin() {
   const renderProducts = () => (
     <div className="products-management">
       <h3>Products Management</h3>
-      <AddProductForm onProductAdded={handleProductAdded} />
       <div className="table-container">
         <table>
           <thead>
@@ -188,10 +186,6 @@ function Admin() {
     </div>
   );
 
-  const handleProductAdded = (newProduct) => {
-    setProducts([...products, newProduct]);
-    fetchProducts();
-  };
 
   const handleDelete = async (type, id) => {
     if (window.confirm(`Are you sure you want to delete this ${type}?`)) {

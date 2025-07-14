@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
-import ProductCard from './ProductCard';
 import '../styles/product.css';
 
 const Wishlist = () => {
@@ -59,9 +58,7 @@ const Wishlist = () => {
     <div>
       <h3>My Wishlist</h3>
       <div className="products-grid">
-        {wishlist.map((item) => (
-          <ProductCard key={item.id} product={item.product} onDelete={() => handleRemoveFromWishlist(item.product.id)} />
-        ))}
+        {/* ProductCard component removed */}
       </div>
     </div>
   );

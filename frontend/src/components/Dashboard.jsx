@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
-import ProductCard from './ProductCard';
 import '../styles/product.css';
 
 const Dashboard = () => {
@@ -64,9 +63,7 @@ const Dashboard = () => {
         </Link>
       </div>
       <div className="products-grid">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} onDelete={handleDelete} />
-        ))}
+        {/* ProductCard component removed */}
       </div>
     </div>
   );
