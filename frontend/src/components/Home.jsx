@@ -17,12 +17,14 @@ const Home = () => {
         </NavLink>
       </div>
       <div className="home-search-container">
-        <i className="fas fa-search search-icon"></i>
         <input
           type="text"
           placeholder="Search for products, farmers, or suppliers"
           className="home-search-input"
         />
+        <button className="search-button">
+          <i className="fas fa-search"></i>
+        </button>
       </div>
     </div>
   );

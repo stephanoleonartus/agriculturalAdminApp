@@ -36,27 +36,15 @@ function Navigation() {
 
   return (
     <div className="navbar">
-      {/* Geolocation Status */}
-      <div className="location-info-section" onClick={fetchLocation}>
-        ? Geolocation
-      </div>
       {/* Logo Section */}
       <div className="logo">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          🌾 AgriLink.com
+          🌾 AgriLink
         </Link>
       </div>
-
-      {/* Search Bar */}
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search products, farmers, suppliers..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className="search-btn" onClick={handleSearch}>?</button>
+      {/* Geolocation Status */}
+      <div className="location-info-section" onClick={fetchLocation}>
+        ? Geolocation
       </div>
 
       {/* Menu navigation */}
