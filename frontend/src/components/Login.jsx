@@ -29,7 +29,7 @@ function Login() {
     setError("");
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/', formData);
+      const response = await axios.post('auth/login/', formData);
       const { data } = response;
         
       // Store JWT token and user info

@@ -109,7 +109,7 @@ function Signup() {
     };
 
     try {
-      const response = await axios.post("http://localhost:8000/api/auth/register/", backendData);
+      const response = await axios.post("auth/register/", backendData);
 
       console.log("Signup Response:", response.data);
       setMessage("✅ Signup successful! Redirecting to login...");

@@ -13,7 +13,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/api/auth/profile/', {
+        const response = await axios.get('auth/profile/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
@@ -30,7 +30,7 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/auth/logout/', {
+      await axios.post('auth/logout/', {
         refresh: localStorage.getItem('refreshToken'), // assuming you store the refresh token
       });
     } catch (error) {

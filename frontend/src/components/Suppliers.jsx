@@ -11,7 +11,7 @@ const Suppliers = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.get('/api/accounts/suppliers/');
+        const response = await axios.get('accounts/suppliers/');
         setSuppliers(response.data.results);
       } catch (err) {
         console.error(err);

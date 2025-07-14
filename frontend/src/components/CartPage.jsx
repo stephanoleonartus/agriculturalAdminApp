@@ -17,7 +17,7 @@ const CartPage = () => {
         return;
       }
       try {
-        const response = await axios.get('/api/products/cart/');
+        const response = await axios.get('cart/');
         setCart(response.data);
       } catch (err) {
         setError('There was an error fetching your cart.');
@@ -32,7 +32,7 @@ const CartPage = () => {
   const handleUpdateQuantity = async (itemId, quantity) => {
     if (quantity < 1) return;
     try {
-      const response = await axios.patch(`/api/products/cart/items/${itemId}/`, { quantity });
+      const response = await axios.patch(`cart-items/${itemId}/`, { quantity });
       setCart(response.data);
     } catch (err) {
       console.error('Error updating cart item:', err);
@@ -41,9 +41,9 @@ const CartPage = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(`/api/products/cart/items/${itemId}/`);
+      await axios.delete(`cart-items/${itemId}/`);
       // Refetch the cart to update the state
-      const response = await axios.get('/api/products/cart/');
+      const response = await axios.get('cart/');
       setCart(response.data);
     } catch (err) {
       console.error('Error removing cart item:', err);

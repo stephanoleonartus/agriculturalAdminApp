@@ -11,7 +11,7 @@ const Farmers = () => {
   useEffect(() => {
     const fetchFarmers = async () => {
       try {
-        const response = await axios.get('/api/accounts/farmers/');
+        const response = await axios.get('accounts/farmers/');
         setFarmers(response.data.results);
       } catch (err) {
         console.error(err);
