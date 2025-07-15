@@ -11,6 +11,9 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('farmer', 'Farmer'),
@@ -18,17 +21,16 @@ class User(AbstractUser):
         ('buyer', 'Buyer'),
     ]
     
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='buyer')
-    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
-
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),
         ('other', 'Other'),
         ('prefer_not_to_say', 'Prefer not to say'),
     ]
+    
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='buyer')
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
-
     phone_number = models.CharField(
         max_length=15,
         validators=[RegexValidator(r'^\+?1?\d{9,15}$', 'Enter a valid phone number.')],
@@ -49,11 +51,14 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.profile_picture:
-            img = Image.open(self.profile_picture.path)
-            if img.height > 300 or img.width > 300:
-                output_size = (300, 300)
-                img.thumbnail(output_size)
-                img.save(self.profile_picture.path)
+            try:
+                img = Image.open(self.profile_picture.path)
+                if img.height > 300 or img.width > 300:
+                    output_size = (300, 300)
+                    img.thumbnail(output_size)
+                    img.save(self.profile_picture.path)
+            except Exception:
+                pass  # Handle cases where image processing fails
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
