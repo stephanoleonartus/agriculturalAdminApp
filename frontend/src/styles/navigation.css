@@ -7,6 +7,20 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
+.create-account-btn {
+  background-color: #4CAF50; /* Example color */
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.create-account-btn:hover {
+  background-color: #45a049; /* Darker shade on hover */
+}
+
 .logo {
   font-size: 1.5rem;
   font-weight: bold;

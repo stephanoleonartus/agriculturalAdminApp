@@ -54,7 +54,7 @@ const Auth = () => {
       return;
     }
 
-    const url = isLogin ? "accounts/login/" : "accounts/register/";
+    const url = isLogin ? "auth/login/" : "auth/register/";
     let data;
 
     if (isLogin) {
@@ -70,10 +70,8 @@ const Auth = () => {
         first_name: formData.firstName,
         last_name: formData.lastName,
         role: formData.userType,
+        region: formData.region,
       };
-      if (formData.userType !== 'customer') {
-        data.region = formData.region;
-      }
     }
 
     try {
