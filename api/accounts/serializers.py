@@ -8,9 +8,11 @@ class RegionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RegisterSerializer(serializers.ModelSerializer):
+    region = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'role', 'region']
+        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'role', 'region')
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
@@ -21,7 +23,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        region_name = validated_data.pop('region')
+        try:
+            region = Region.objects.get(name=region_name)
+        except Region.DoesNotExist:
+            raise serializers.ValidationError(f"Region '{region_name}' does not exist.")
+
+        user = User.objects.create_user(**validated_data, region=region)
         UserProfile.objects.create(user=user)
         if user.role == 'farmer':
             FarmerProfile.objects.create(user=user)
