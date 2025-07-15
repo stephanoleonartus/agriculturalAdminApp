@@ -1,9 +1,11 @@
 from rest_framework import viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
+from .serializers import ProductSerializer, CategorySerializer, ProductCreateSerializer, ProductUpdateSerializer
 from .permissions import IsOwnerOrReadOnly
+from .filters import ProductFilter
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -15,21 +17,17 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     pagination_class = StandardResultsSetPagination
-    filter_backends = [SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ProductFilter
     search_fields = ['name', 'description']
+    ordering_fields = ['price', 'created_at']
 
-    def get_queryset(self):
-        queryset = Product.objects.all()
-        category = self.request.query_params.get('category')
-        region = self.request.query_params.get('region')
-        owner_type = self.request.query_params.get('owner_type')
-        if category is not None:
-            queryset = queryset.filter(category__name=category)
-        if region is not None:
-            queryset = queryset.filter(owner__region__name=region)
-        if owner_type is not None:
-            queryset = queryset.filter(owner__role=owner_type)
-        return queryset
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ProductCreateSerializer
+        elif self.action in ['update', 'partial_update']:
+            return ProductUpdateSerializer
+        return ProductSerializer
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

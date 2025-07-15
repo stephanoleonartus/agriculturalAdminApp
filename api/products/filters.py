@@ -15,7 +15,7 @@ class ProductFilter(django_filters.FilterSet):
     
     class Meta:
         model = Product
-        fields = ['name', 'category', 'min_price', 'max_price', 'is_organic', 'region', 'status']
+        fields = ['name', 'category', 'min_price', 'max_price', 'is_organic', 'region']
     
     def filter_farmer(self, queryset, name, value):
         return queryset.filter(
