@@ -234,7 +234,7 @@ const Auth = () => {
               >
                 <option value="">Select Region</option>
                 {regions.map((region) => (
-                  <option key={region.id} value={region.id}>
+                  <option key={region.id} value={region.name}>
                     {region.name}
                   </option>
                 ))}
