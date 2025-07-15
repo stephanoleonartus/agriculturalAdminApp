@@ -4,7 +4,6 @@ import axios from "../api/axios";
 import "../styles/Auth.css";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -24,7 +23,7 @@ const Auth = () => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await axios.get("accounts/regions/");
+        const response = await axios.get("auth/regions/");
         if (Array.isArray(response.data)) {
           setRegions(response.data);
         }
@@ -48,31 +47,22 @@ const Auth = () => {
     setLoading(true);
     setError("");
 
-    if (!isLogin && formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
       return;
     }
 
-    const url = isLogin ? "auth/login/" : "auth/register/";
-    let data;
-
-    if (isLogin) {
-      data = {
-        username: formData.username,
-        password: formData.password,
-      };
-    } else {
-      data = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        role: formData.userType,
-        region: formData.region,
-      };
-    }
+    const url = "auth/register/";
+    const data = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      role: formData.userType,
+      region: formData.region,
+    };
 
     try {
       const response = await axios.post(url, data);
@@ -110,7 +100,7 @@ const Auth = () => {
         }
         setError(errorMessages.join(' '));
       } else {
-        setError("Login failed");
+        setError("Registration failed");
       }
     } finally {
       setLoading(false);
@@ -138,11 +128,9 @@ const Auth = () => {
           </div>
         </div>
 
-        <div className={`auth-form-container ${isLogin ? 'login' : 'register'}`}>
-          <h2>{isLogin ? "Welcome Back!" : "Create an Account"}</h2>
-          <p className="auth-subtitle">
-            {isLogin ? "Sign in to your account" : "Join our community"}
-          </p>
+        <div className="auth-form-container register">
+          <h2>Create an Account</h2>
+          <p className="auth-subtitle">Join our community</p>
 
           {error && (
             <div className="error-message">
@@ -163,7 +151,7 @@ const Auth = () => {
                 required
               />
             </div>
-            <div className="form-group register-field">
+            <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -172,9 +160,10 @@ const Auth = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
-            <div className="form-group register-field">
+            <div className="form-group">
               <label htmlFor="firstName">First Name</label>
               <input
                 type="text"
@@ -183,9 +172,10 @@ const Auth = () => {
                 placeholder="Enter your first name"
                 value={formData.firstName}
                 onChange={handleChange}
+                required
               />
             </div>
-            <div className="form-group register-field">
+            <div className="form-group">
               <label htmlFor="lastName">Last Name</label>
               <input
                 type="text"
@@ -194,6 +184,7 @@ const Auth = () => {
                 placeholder="Enter your last name"
                 value={formData.lastName}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -218,7 +209,7 @@ const Auth = () => {
                 </button>
               </div>
             </div>
-            <div className="form-group register-field">
+            <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
@@ -227,15 +218,17 @@ const Auth = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                required
               />
             </div>
-            <div className="form-group register-field">
+            <div className="form-group">
               <label htmlFor="region">Region</label>
               <select
                 id="region"
                 name="region"
                 value={formData.region}
                 onChange={handleChange}
+                required
               >
                 <option value="">Select Region</option>
                 {regions.map((region) => (
@@ -246,7 +239,7 @@ const Auth = () => {
               </select>
             </div>
 
-            <div className="user-type-selection register-field">
+            <div className="user-type-selection">
               <label>Register as:</label>
               <div className="user-type-grid">
                 <UserTypeCard
@@ -273,49 +266,22 @@ const Auth = () => {
                   selected={formData.userType === "supplier"}
                   onClick={(type) => setFormData({ ...formData, userType: type })}
                 />
-                <UserTypeCard
-                  type="admin"
-                  icon="⚙️"
-                  title="Admin"
-                  description="Manage platform"
-                  selected={formData.userType === "admin"}
-                  onClick={(type) => setFormData({ ...formData, userType: type })}
-                />
               </div>
             </div>
 
             <div className="form-actions">
-              <div className="remember-forgot">
-                <label className="remember-me">
-                  <input type="checkbox" />
-                  Remember me
-                </label>
-                <Link to="/forgot-password" a className="forgot-password">
-                  Forgot password?
-                </Link>
-              </div>
-
               <button type="submit" className="auth-btn" disabled={loading}>
-                {loading
-                  ? isLogin
-                    ? "Signing in..."
-                    : "Registering..."
-                  : isLogin
-                  ? "Sign In"
-                  : "Sign Up"}
+                {loading ? "Registering..." : "Sign Up"}
               </button>
             </div>
           </form>
 
           <div className="auth-footer">
             <p>
-              {isLogin ? "Don't have an account?" : "Already have an account?"}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="toggle-auth"
-              >
-                {isLogin ? "Sign up here" : "Login here"}
-              </button>
+              Already have an account?
+              <Link to="/login" className="toggle-auth">
+                Login here
+              </Link>
             </p>
           </div>
         </div>
