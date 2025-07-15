@@ -14,6 +14,46 @@ class Region(models.Model):
     class Meta:
         ordering = ['name']
 
+    @classmethod
+    def populate_tanzania_regions(cls):
+        """Populate Tanzania regions - call this in a migration or management command"""
+        tanzania_regions = [
+            ('Arusha', 'ARU'),
+            ('Dar es Salaam', 'DSM'),
+            ('Dodoma', 'DOD'),
+            ('Geita', 'GEI'),
+            ('Iringa', 'IRI'),
+            ('Kagera', 'KAG'),
+            ('Katavi', 'KAT'),
+            ('Kigoma', 'KIG'),
+            ('Kilimanjaro', 'KIL'),
+            ('Lindi', 'LIN'),
+            ('Manyara', 'MAN'),
+            ('Mara', 'MAR'),
+            ('Mbeya', 'MBE'),
+            ('Morogoro', 'MOR'),
+            ('Mtwara', 'MTW'),
+            ('Mwanza', 'MWA'),
+            ('Njombe', 'NJO'),
+            ('Pwani', 'PWA'),
+            ('Rukwa', 'RUK'),
+            ('Ruvuma', 'RUV'),
+            ('Shinyanga', 'SHI'),
+            ('Simiyu', 'SIM'),
+            ('Singida', 'SIN'),
+            ('Songwe', 'SON'),
+            ('Tabora', 'TAB'),
+            ('Tanga', 'TAN'),
+            ('Pemba North', 'PEN'),
+            ('Pemba South', 'PES'),
+            ('Unguja North', 'UNN'),
+            ('Unguja South', 'UNS'),
+            ('Unguja West', 'UNW'),
+        ]
+        
+        for name, code in tanzania_regions:
+            cls.objects.get_or_create(name=name, code=code)
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('farmer', 'Farmer'),
