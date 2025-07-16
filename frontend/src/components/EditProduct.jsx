@@ -39,7 +39,7 @@ const EditProduct = () => {
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`products/${id}/`);
+        const response = await axios.get(`products/products/${id}/`);
         setFormData(response.data);
       } catch (err) {
         console.error('Error fetching product:', err);
@@ -91,7 +91,7 @@ const EditProduct = () => {
     }
 
     try {
-      await axios.put(`products/${id}/`, productData, {
+      await axios.put(`products/products/${id}/`, productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

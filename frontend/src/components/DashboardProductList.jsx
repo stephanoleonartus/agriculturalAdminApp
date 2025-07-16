@@ -27,7 +27,7 @@ const DashboardProductList = () => {
   const fetchProducts = async (userId, role) => {
     setLoading(true);
     try {
-      const response = await axios.get('products/my_products/');
+      const response = await axios.get('products/products/my_products/');
       setProducts(response.data || []);
     } catch (err) {
       setError('Error loading your products');
