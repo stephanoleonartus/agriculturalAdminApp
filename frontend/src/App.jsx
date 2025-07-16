@@ -25,6 +25,14 @@ import EditProduct from './components/EditProduct';
 import Dashboard from './components/Dashboard';
 import DashboardLayout from './components/DashboardLayout';
 import DashboardProductList from './components/DashboardProductList';
+import Categories from './components/Categories';
+import Inventory from './components/Inventory';
+import Buyers from './components/Buyers';
+import Analytics from './components/Analytics';
+import TopSellingCrops from './components/TopSellingCrops';
+import CropDemandTrends from './components/CropDemandTrends';
+import Transactions from './components/Transactions';
+import Discounts from './components/Discounts';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -79,6 +87,18 @@ function AppContent() {
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<DashboardProductList />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="inventory" element={<Inventory />} />
+          <Route path="buyers" element={<Buyers />} />
+          <Route path="suppliers" element={<Suppliers />} />
+          <Route path="farmers" element={<Farmers />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="top-selling" element={<TopSellingCrops />} />
+          <Route path="crop-demand" element={<CropDemandTrends />} />
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="discounts" element={<Discounts />} />
         </Route>
       </Routes>
     </>
