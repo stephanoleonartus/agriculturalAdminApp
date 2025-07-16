@@ -1,29 +1,20 @@
 # products/filters.py
-import django_filters
-from django.db.models import Q
-from .models import Product, Category
+from django_filters import rest_framework as filters
+from .models import Product
 
-class ProductFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains')
-    category = django_filters.ModelChoiceFilter(queryset=Category.objects.all())
-    min_price = django_filters.NumberFilter(field_name='price', lookup_expr='gte')
-    max_price = django_filters.NumberFilter(field_name='price', lookup_expr='lte')
-    is_organic = django_filters.BooleanFilter()
-    region = django_filters.CharFilter(field_name='farmer__region', lookup_expr='icontains')
-    farmer = django_filters.CharFilter(method='filter_farmer')
-    available_only = django_filters.BooleanFilter(method='filter_available')
+class ProductFilter(filters.FilterSet):
+    min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
+    max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+    category = filters.CharFilter(field_name="category__name", lookup_expr='iexact')
+    region = filters.CharFilter(field_name="region__name", lookup_expr='iexact')
+    owner = filters.NumberFilter(field_name="owner__id")
+    out_of_stock = filters.BooleanFilter(field_name="quantity", lookup_expr='lte', method='filter_out_of_stock')
     
     class Meta:
         model = Product
-        fields = ['name', 'category', 'min_price', 'max_price', 'is_organic', 'region']
+        fields = ['category', 'region', 'owner', 'min_price', 'max_price']
     
-    def filter_farmer(self, queryset, name, value):
-        return queryset.filter(
-            Q(farmer__first_name__icontains=value) | 
-            Q(farmer__last_name__icontains=value)
-        )
-    
-    def filter_available(self, queryset, name, value):
+    def filter_out_of_stock(self, queryset, name, value):
         if value:
-            return queryset.filter(status='available', quantity_available__gt=0)
-        return queryset
+            return queryset.filter(quantity__lte=0)
+        return queryset.filter(quantity__gt=0)
