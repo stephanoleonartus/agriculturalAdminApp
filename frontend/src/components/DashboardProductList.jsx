@@ -27,31 +27,26 @@ const DashboardProductList = () => {
   const fetchProducts = async (userId, role) => {
     setLoading(true);
     try {
-      const response = await axios.get(`products/?${role}__id=${userId}&status=all`);
-      setProducts(response.data.results || []);
+      const response = await axios.get('products/products/my-products/');
+      setProducts(response.data || []);
     } catch (err) {
-      setError('There was an error fetching your products.');
-      setProducts([]);
+      setError('Error loading your products');
+      console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleDelete = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await axios.delete(`products/${productId}/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        setProducts(products.filter((p) => p.id !== productId));
-      } catch (err) {
-        setError('There was an error deleting the product.');
-      }
+    try {
+      await axios.delete(`products/products/${productId}/`);
+      setProducts(products.filter(p => p.id !== productId));
+    } catch (err) {
+      setError('Failed to delete product');
+      console.error('Error deleting product:', err);
     }
   };
-
+  
   if (loading) {
     return <div>Loading your products...</div>;
   }

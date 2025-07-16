@@ -1,3 +1,4 @@
+// Product.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
@@ -109,7 +110,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`products/${id}/`);
+        const response = await axios.get(`products/products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');
@@ -209,7 +210,7 @@ const AddProduct = () => {
     }
 
     try {
-      await axios.post('products/', productData, {
+      await axios.post('products/products/', productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -332,11 +333,11 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`products/${location.search}`);
+        const response = await axios.get(`products/products/${location.search}`);
         setProducts(response.data.results || []);
       } catch (err) {
+        setError('Error loading products');
         console.error("Error fetching products:", err);
-        setError('There was an error fetching the products.');
       } finally {
         setLoading(false);
       }
@@ -376,7 +377,7 @@ const Products = () => {
 
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/${productId}/`, {
+      await axios.delete(`products/products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

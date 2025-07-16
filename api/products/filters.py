@@ -8,22 +8,30 @@ class ProductFilter(django_filters.FilterSet):
     category = django_filters.ModelChoiceFilter(queryset=Category.objects.all())
     min_price = django_filters.NumberFilter(field_name='price', lookup_expr='gte')
     max_price = django_filters.NumberFilter(field_name='price', lookup_expr='lte')
-    is_organic = django_filters.BooleanFilter()
-    region = django_filters.CharFilter(field_name='farmer__region', lookup_expr='icontains')
-    farmer = django_filters.CharFilter(method='filter_farmer')
+    region = django_filters.CharFilter(field_name='region__name', lookup_expr='icontains')
+    owner = django_filters.CharFilter(method='filter_owner')
     available_only = django_filters.BooleanFilter(method='filter_available')
+    search = django_filters.CharFilter(method='filter_search')
     
     class Meta:
         model = Product
-        fields = ['name', 'category', 'min_price', 'max_price', 'is_organic', 'region']
+        fields = ['name', 'category', 'min_price', 'max_price', 'region']
     
-    def filter_farmer(self, queryset, name, value):
+    def filter_owner(self, queryset, name, value):
         return queryset.filter(
-            Q(farmer__first_name__icontains=value) | 
-            Q(farmer__last_name__icontains=value)
+            Q(owner__first_name__icontains=value) | 
+            Q(owner__last_name__icontains=value) |
+            Q(owner__username__icontains=value)
         )
     
     def filter_available(self, queryset, name, value):
         if value:
-            return queryset.filter(status='available', quantity_available__gt=0)
+            return queryset.filter(quantity__gt=0)
         return queryset
+    
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(
+            Q(name__icontains=value) |
+            Q(description__icontains=value) |
+            Q(category__name__icontains=value)
+        )

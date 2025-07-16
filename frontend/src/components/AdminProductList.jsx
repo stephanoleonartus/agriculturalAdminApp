@@ -1,3 +1,4 @@
+// AdminProductList.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
@@ -21,31 +22,26 @@ const AdminProductList = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`products/?status=all`);
+      const response = await axios.get('products/products/?include_inactive=true');
       setProducts(response.data.results || []);
     } catch (err) {
-      setError('There was an error fetching the products.');
-      setProducts([]);
+      setError('Error loading products');
+      console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleDelete = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await axios.delete(`products/${productId}/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        setProducts(products.filter((p) => p.id !== productId));
-      } catch (err) {
-        setError('There was an error deleting the product.');
-      }
+    try {
+      await axios.delete(`products/products/${productId}/`);
+      setProducts(products.filter(p => p.id !== productId));
+    } catch (err) {
+      setError('Failed to delete product');
+      console.error('Error deleting product:', err);
     }
   };
-
+  
   if (loading) {
     return <div>Loading products...</div>;
   }

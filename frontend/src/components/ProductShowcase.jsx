@@ -9,12 +9,12 @@ const ProductShowcase = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('products/?limit=4');
-        if (response.data && Array.isArray(response.data.results)) {
-          setProducts(response.data.results);
+        const response = await axios.get('products/products/featured/');
+        if (response.data && Array.isArray(response.data)) {
+          setProducts(response.data);
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching featured products:', error);
       }
     };
     fetchProducts();
