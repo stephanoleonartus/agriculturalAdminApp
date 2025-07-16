@@ -24,6 +24,7 @@ class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     videos = ProductVideoSerializer(many=True, read_only=True)
     region = RegionSerializer(read_only=True)
+    farmer_name = serializers.CharField(source='owner.get_full_name', read_only=True)
     
     class Meta:
         model = Product
@@ -31,15 +32,56 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner', 'created_at']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
+    uploaded_videos = serializers.ListField(
+        child=serializers.FileField(max_length=1000000, allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
+        fields = ['name', 'description', 'price', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic', 'uploaded_images', 'uploaded_videos']
+
+    def create(self, validated_data):
+        uploaded_images = validated_data.pop('uploaded_images', [])
+        uploaded_videos = validated_data.pop('uploaded_videos', [])
+        product = Product.objects.create(**validated_data)
+        for image in uploaded_images:
+            ProductImage.objects.create(product=product, image=image)
+        for video in uploaded_videos:
+            ProductVideo.objects.create(product=product, video_file=video)
+        return product
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(max_length=1000000, allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
+    uploaded_videos = serializers.ListField(
+        child=serializers.FileField(max_length=1000000, allow_empty_file=False, use_url=False),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Product
-        feature/profile-dropdown-and-dashboard
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
+        fields = ['name', 'description', 'price', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic', 'uploaded_images', 'uploaded_videos']
+
+    def update(self, instance, validated_data):
+        uploaded_images = validated_data.pop('uploaded_images', [])
+        uploaded_videos = validated_data.pop('uploaded_videos', [])
+        instance = super().update(instance, validated_data)
+        for image in uploaded_images:
+            ProductImage.objects.create(product=instance, image=image)
+        for video in uploaded_videos:
+            ProductVideo.objects.create(product=instance, video_file=video)
+        return instance
 
         
 

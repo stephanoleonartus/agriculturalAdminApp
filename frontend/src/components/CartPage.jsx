@@ -17,7 +17,7 @@ const CartPage = () => {
         return;
       }
       try {
-        const response = await axios.get('cart/');
+        const response = await axios.get('products/cart/current/');
         setCart(response.data);
       } catch (err) {
         setError('There was an error fetching your cart.');
@@ -30,9 +30,8 @@ const CartPage = () => {
   }, []);
 
   const handleUpdateQuantity = async (itemId, quantity) => {
-    if (quantity < 1) return;
     try {
-      const response = await axios.patch(`cart-items/${itemId}/`, { quantity });
+      const response = await axios.patch(`products/cart/update_item/${itemId}/`, { quantity });
       setCart(response.data);
     } catch (err) {
       console.error('Error updating cart item:', err);
@@ -41,9 +40,7 @@ const CartPage = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(`cart-items/${itemId}/`);
-      // Refetch the cart to update the state
-      const response = await axios.get('cart/');
+      const response = await axios.delete(`products/cart/remove_item/${itemId}/`);
       setCart(response.data);
     } catch (err) {
       console.error('Error removing cart item:', err);
@@ -74,8 +71,7 @@ const CartPage = () => {
     try {
       await axios.post('orders/', { cart_id: cart.id });
       alert('Order placed successfully!');
-      // Refetch the cart to update the state
-      const response = await axios.get('cart/');
+      const response = await axios.get('products/cart/current/');
       setCart(response.data);
     } catch (err) {
       console.error('Error placing order:', err);
