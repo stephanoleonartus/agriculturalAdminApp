@@ -33,12 +33,15 @@ class ProductSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity']
+        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity']
+        feature/profile-dropdown-and-dashboard
+        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
+
+        
 
 class ProductStockUpdateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(min_value=0)
@@ -72,3 +75,4 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id', 'items', 'created_at', 'updated_at', 'total_items', 'total_price']
+
