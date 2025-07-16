@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import SupplierCard from './SupplierCard';
 import SearchBar from './SearchBar';
+import RegionFilter from './RegionFilter';
 import '../styles/Supplies.css';
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
-  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const location = useLocation();
@@ -25,18 +25,7 @@ const Suppliers = () => {
         setLoading(false);
       }
     };
-
-    const fetchRegions = async () => {
-      try {
-        const response = await axios.get('auth/regions/');
-        setRegions(response.data || []);
-      } catch (err) {
-        console.error('Error fetching regions:', err);
-      }
-    };
-
     fetchSuppliers();
-    fetchRegions();
   }, [location.search]);
 
   const handleSearch = (searchTerm) => {
@@ -68,17 +57,8 @@ const Suppliers = () => {
   return (
     <div className="suppliers-page">
       <SearchBar onSearch={handleSearch} />
-      <div className="region-filters">
-        <h3>Regions</h3>
-        <ul>
-          {regions.map((region) => (
-            <li key={region.id} onClick={() => handleRegionFilter(region.name)}>
-              {region.name}
-            </li>
-          ))}
-        </ul>
-      </div>
       <h2>Our Suppliers</h2>
+      <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="suppliers-grid">
         {suppliers.map((supplier) => (
           <SupplierCard key={supplier.id} supplier={supplier} />

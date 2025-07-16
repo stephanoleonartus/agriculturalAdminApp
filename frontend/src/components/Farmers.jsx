@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import FarmerCard from './FarmerCard';
 import SearchBar from './SearchBar';
+import RegionFilter from './RegionFilter';
 import '../styles/farmers.css';
 
 const Farmers = () => {
   const [farmers, setFarmers] = useState([]);
-  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const location = useLocation();
@@ -17,7 +17,7 @@ const Farmers = () => {
       setLoading(true);
       try {
         const response = await axios.get(`accounts/farmers/${location.search}`);
-        setFarmers(response.data.results);
+        setFarmers(response.data.results || []);
       } catch (err) {
         console.error(err);
         setError('There was an error fetching the farmers.');
@@ -25,18 +25,7 @@ const Farmers = () => {
         setLoading(false);
       }
     };
-
-    const fetchRegions = async () => {
-      try {
-        const response = await axios.get('accounts/regions/');
-        setRegions(response.data);
-      } catch (err) {
-        console.error('Error fetching regions:', err);
-      }
-    };
-
     fetchFarmers();
-    fetchRegions();
   }, [location.search]);
 
   const handleSearch = (searchTerm) => {
@@ -68,17 +57,8 @@ const Farmers = () => {
   return (
     <div className="farmers-page">
       <SearchBar onSearch={handleSearch} />
-      <div className="region-filters">
-        <h3>Regions</h3>
-        <ul>
-          {regions.map((region) => (
-            <li key={region.value} onClick={() => handleRegionFilter(region.value)}>
-              {region.label}
-            </li>
-          ))}
-        </ul>
-      </div>
       <h2>Our Farmers</h2>
+      <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="farmers-grid">
         {farmers.map((farmer) => (
           <FarmerCard key={farmer.id} farmer={farmer} />
