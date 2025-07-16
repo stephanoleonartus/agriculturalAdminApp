@@ -79,7 +79,7 @@ const AddProductForm = () => {
     }
 
     try {
-      await axios.post('products/', productData, {
+      await axios.post('products/products/', productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

@@ -25,7 +25,11 @@ function SupplierCard({ supplier }) {
         <div className="product-categories-list">
           <h4>Supplies:</h4>
           <ul>
-            {profile.products_categories.slice(0, 3).map((cat, index) => <li key={`cat-${index}`}>{cat}</li>)}
+            {profile.products_categories.slice(0, 3).map((cat, index) => (
+              <li key={`cat-${index}`}>
+                {typeof cat === 'object' ? cat.name : cat}
+              </li>
+            ))}
             {profile.products_categories.length > 3 && <li>...and more</li>}
           </ul>
         </div>

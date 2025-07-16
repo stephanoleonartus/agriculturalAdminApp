@@ -16,7 +16,8 @@ const Suppliers = () => {
     const fetchSuppliers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`auth/suppliers/${location.search}`);
+        // Fixed API endpoint to match farmers pattern
+        const response = await axios.get(`api/auth/suppliers/${location.search}`);
         setSuppliers(response.data.results || []);
       } catch (err) {
         console.error(err);
@@ -28,7 +29,8 @@ const Suppliers = () => {
 
     const fetchRegions = async () => {
       try {
-        const response = await axios.get('auth/regions/');
+        // Fixed API endpoint to match farmers pattern
+        const response = await axios.get('api/auth/regions/');
         setRegions(response.data || []);
       } catch (err) {
         console.error('Error fetching regions:', err);
@@ -41,7 +43,11 @@ const Suppliers = () => {
 
   const handleSearch = (searchTerm) => {
     const params = new URLSearchParams(location.search);
-    params.set('search', searchTerm);
+    if (searchTerm) {
+      params.set('search', searchTerm);
+    } else {
+      params.delete('search');
+    }
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the suppliers
     const popStateEvent = new PopStateEvent('popstate');
@@ -50,7 +56,11 @@ const Suppliers = () => {
 
   const handleRegionFilter = (region) => {
     const params = new URLSearchParams(location.search);
-    params.set('region', region);
+    if (region) {
+      params.set('region', region);
+    } else {
+      params.delete('region');
+    }
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the suppliers
     const popStateEvent = new PopStateEvent('popstate');
@@ -72,8 +82,8 @@ const Suppliers = () => {
         <h3>Regions</h3>
         <ul>
           {regions.map((region) => (
-            <li key={region.id} onClick={() => handleRegionFilter(region.name)}>
-              {region.name}
+            <li key={region.id || region.value} onClick={() => handleRegionFilter(region.name || region.value)}>
+              {region.name || region.label}
             </li>
           ))}
         </ul>

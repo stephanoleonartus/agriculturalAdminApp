@@ -8,7 +8,7 @@ const categories = [
   { id: 2, name: 'Legumes/Pulses' },
   { id: 3, name: 'Fruits' },
   { id: 4, name: 'Vegetables' },
-  { id: 5, name: 'Root and Tuber Crops' },
+  { id: 5, name: 'Root Tuber Crops' },
   { id: 6, name: 'Oilseeds' },
   { id: 7, name: 'Spices and Herbs' },
   { id: 8, name: 'Sugar Crops' },
