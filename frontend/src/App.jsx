@@ -19,6 +19,7 @@ import ContactInfoPage from './components/ContactInfoPage';
 import AdminLayout from './components/AdminLayout';
 import Admin from './components/Admin';
 import AdminProductList from './components/AdminProductList';
+import AddProductForm from './components/AddProductForm';
 import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
@@ -81,6 +82,7 @@ function AppContent() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
           <Route path="products" element={<AdminProductList />} />
+          <Route path="products/add" element={<AddProductForm />} />
           <Route path="users" element={<UserList />} />
           <Route path="orders" element={<OrderList />} />
         </Route>
