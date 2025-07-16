@@ -16,15 +16,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'image', 'category', 'quantity', 'owner', 'region', 'created_at', 'owner_name', 'role', 'region_name']
-        read_only_fields = ['owner', 'region', 'created_at']
+        fields = '__all__'
+        read_only_fields = ['owner', 'created_at']
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity']
+        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'quantity']
+        fields = ['name', 'description', 'price', 'image', 'category', 'quantity', 'unit', 'min_order_quantity', 'status', 'harvest_date', 'expiry_date', 'origin_region', 'is_organic']
