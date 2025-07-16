@@ -45,7 +45,7 @@ function FarmerCard({ farmer }) {
         <Link to={`/farmers/${farmer.id}`} className="btn btn-profile">
           View Profile
         </Link>
-        {/* <button className="btn btn-contact">Contact</button> */}
+        <button className="btn btn-contact">Contact</button>
       </div>
     </div>
   );
