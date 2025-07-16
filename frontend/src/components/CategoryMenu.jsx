@@ -25,12 +25,12 @@ const CategoryMenu = () => {
   };
 
   return (
-    <div className="category-menu-container">
+    <div className="category-menu-wrapper">
       <button className="scroll-btn left" onClick={() => scroll(-100)}>
         &lt;
       </button>
       <div className="category-menu" ref={menuRef}>
-        <ul>
+        <ul className="category-list">
           {categories.map((category) => (
             <li key={category.id}>
               <Link to={category.name === 'All Categories' ? '/products' : `/products?category=${category.name}`}>{category.name}</Link>

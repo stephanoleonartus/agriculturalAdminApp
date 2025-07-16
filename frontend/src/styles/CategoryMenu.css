@@ -1,6 +1,5 @@
-.category-menu-container {
-  display: flex;
-  align-items: center;
+.category-menu-wrapper {
+  position: relative;
   width: 100%;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e7e7e7;
@@ -8,10 +7,12 @@
 }
 
 .category-menu {
-  overflow-x: scroll;
+  display: flex;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 40px;
 }
 
 .category-menu::-webkit-scrollbar {
@@ -19,16 +20,30 @@
 }
 
 .scroll-btn {
-  background: none;
-  border: none;
-  font-size: 2rem;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
   cursor: pointer;
-  padding: 0 10px;
+  z-index: 10;
   transition: all 0.3s ease;
   opacity: 0;
 }
 
-.category-menu-container:hover .scroll-btn {
+.scroll-btn.left {
+  left: 10px;
+}
+
+.scroll-btn.right {
+  right: 10px;
+}
+
+.category-menu-wrapper:hover .scroll-btn {
   opacity: 1;
 }
 
