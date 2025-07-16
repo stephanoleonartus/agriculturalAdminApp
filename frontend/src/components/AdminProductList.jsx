@@ -1,3 +1,4 @@
+// AdminProductList.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
@@ -21,7 +22,7 @@ const AdminProductList = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`products/?status=all`);
+      const response = await axios.get(`products/products/?status=all`);
       setProducts(response.data.results || []);
     } catch (err) {
       setError('There was an error fetching the products.');
@@ -34,7 +35,7 @@ const AdminProductList = () => {
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await axios.delete(`products/${productId}/`, {
+        await axios.delete(`products/products/${productId}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
