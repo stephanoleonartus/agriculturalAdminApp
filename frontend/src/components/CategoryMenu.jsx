@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../styles/CategoryMenu.css';
 
 const categories = [
+  { id: 0, name: 'All Categories' },
   { id: 1, name: 'Grains' },
   { id: 2, name: 'Legumes/Pulses' },
   { id: 3, name: 'Fruits' },
@@ -22,7 +23,7 @@ const CategoryMenu = () => {
       <ul>
         {categories.map((category) => (
           <li key={category.id}>
-            <Link to={`/products?category=${category.name}`}>{category.name}</Link>
+            <Link to={category.name === 'All Categories' ? '/products' : `/products?category=${category.name}`}>{category.name}</Link>
           </li>
         ))}
       </ul>
