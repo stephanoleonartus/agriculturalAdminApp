@@ -1,4 +1,4 @@
-# products/urls.py (Complete version)
+# products/urls.py (updated)
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
@@ -7,14 +7,14 @@ from .views import (
     CategoryProductsView,
     UserProductsView,
     WishlistViewSet,
-    # CartViewSet  # Add this import
+    CartViewSet
 )
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet, basename='product')
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'wishlist', WishlistViewSet, basename='wishlist')
-# router.register(r'cart', CartViewSet, basename='cart')  # Add this line
+router.register(r'cart', CartViewSet, basename='cart')
 
 urlpatterns = [
     path('', include(router.urls)),
