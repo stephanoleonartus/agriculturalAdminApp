@@ -2,6 +2,10 @@
   padding: 2rem;
 }
 
+.products-header h2 {
+  color: green;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

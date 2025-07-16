@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CategoryMenu.css';
 
@@ -18,15 +18,29 @@ const categories = [
 ];
 
 const CategoryMenu = () => {
+  const menuRef = useRef(null);
+
+  const scroll = (scrollOffset) => {
+    menuRef.current.scrollLeft += scrollOffset;
+  };
+
   return (
-    <div className="category-menu">
-      <ul>
-        {categories.map((category) => (
-          <li key={category.id}>
-            <Link to={category.name === 'All Categories' ? '/products' : `/products?category=${category.name}`}>{category.name}</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="category-menu-container">
+      <button className="scroll-btn left" onClick={() => scroll(-100)}>
+        &lt;
+      </button>
+      <div className="category-menu" ref={menuRef}>
+        <ul>
+          {categories.map((category) => (
+            <li key={category.id}>
+              <Link to={category.name === 'All Categories' ? '/products' : `/products?category=${category.name}`}>{category.name}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button className="scroll-btn right" onClick={() => scroll(100)}>
+        &gt;
+      </button>
     </div>
   );
 };
