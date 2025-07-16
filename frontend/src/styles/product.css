@@ -2,6 +2,10 @@
   padding: 2rem;
 }
 
+.products-header {
+  text-align: center;
+}
+
 .products-header h2 {
   color: green;
 }

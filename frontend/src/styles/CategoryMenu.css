@@ -24,6 +24,11 @@
   font-size: 2rem;
   cursor: pointer;
   padding: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.scroll-btn:hover {
+  color: #007bff;
 }
 
 .category-menu ul {
