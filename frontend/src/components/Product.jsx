@@ -5,6 +5,7 @@ import axios from '../api/axios';
 import '../styles/product.css';
 import '../styles/ProductDetailPage.css';
 import '../styles/Auth.css';
+import CategoryMenu from './CategoryMenu';
 
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/150?text=No+Image";
 
@@ -398,38 +399,7 @@ const Products = () => {
 
   return (
     <div className="products-page">
-      <div className="filters">
-        <div className="category-filters">
-          <h3>Categories</h3>
-          <select onChange={(e) => handleFilterChange('category', e.target.value)}>
-            <option value="">All</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="region-filters">
-          <h3>Regions</h3>
-          <select onChange={(e) => handleFilterChange('region', e.target.value)}>
-            <option value="">All</option>
-            {regions.map((region) => (
-              <option key={region.code} value={region.name}>
-                {region.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="owner-type-filters">
-          <h3>Owner Type</h3>
-          <select onChange={(e) => handleFilterChange('owner_type', e.target.value)}>
-            <option value="">All</option>
-            <option value="farmer">Farmer</option>
-            <option value="supplier">Supplier</option>
-          </select>
-        </div>
-      </div>
+      <CategoryMenu />
       <div className="products-header">
         <h2>Our Products</h2>
       </div>
