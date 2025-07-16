@@ -346,7 +346,7 @@ const Products = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('products/categories/');
-        setCategories(response.data.results);
+        setCategories(response.data.results || []);
       } catch (err) {
         console.error('Error fetching categories:', err);
       }
