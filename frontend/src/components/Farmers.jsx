@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import FarmerCard from './FarmerCard';
-import SearchBar from './SearchBar';
 import RegionFilter from './RegionFilter';
 import '../styles/farmers.css';
 
@@ -28,15 +27,6 @@ const Farmers = () => {
     fetchFarmers();
   }, [location.search]);
 
-  const handleSearch = (searchTerm) => {
-    const params = new URLSearchParams(location.search);
-    params.set('search', searchTerm);
-    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
-    // This will trigger the useEffect hook to refetch the farmers
-    const popStateEvent = new PopStateEvent('popstate');
-    dispatchEvent(popStateEvent);
-  };
-
   const handleRegionFilter = (region) => {
     const params = new URLSearchParams(location.search);
     params.set('region', region);
@@ -56,7 +46,6 @@ const Farmers = () => {
 
   return (
     <div className="farmers-page">
-      <SearchBar onSearch={handleSearch} />
       <h2>Our Farmers</h2>
       <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="farmers-grid">
