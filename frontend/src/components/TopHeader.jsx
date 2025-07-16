@@ -58,6 +58,11 @@ const TopHeader = () => {
                     <div className="action-item">
                         <i className="fas fa-user"></i>
                         <Link to="/login">Sign In</Link>
+
+                        <i className="fas fa-user"></i>
+                        <Link to="/auth" className="nav-item create-account-btn">
+                            Register
+                        </Link>
                     </div>
                 )}
             </div>

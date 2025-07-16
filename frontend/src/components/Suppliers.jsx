@@ -16,7 +16,7 @@ const Suppliers = () => {
     const fetchSuppliers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`accounts/suppliers/${location.search}`);
+        const response = await axios.get(`auth/suppliers/${location.search}`);
         setSuppliers(response.data.results);
       } catch (err) {
         console.error(err);
@@ -28,7 +28,7 @@ const Suppliers = () => {
 
     const fetchRegions = async () => {
       try {
-        const response = await axios.get('accounts/regions/');
+        const response = await axios.get('auth/regions/');
         setRegions(response.data);
       } catch (err) {
         console.error('Error fetching regions:', err);
