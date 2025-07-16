@@ -29,6 +29,17 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
     pagination_class = StandardResultsSetPagination
 
+    @action(detail=False, methods=['get'], url_path='public')
+    def public_list(self, request):
+        """Public product listing (only active products)"""
+        queryset = self.filter_queryset(self.get_queryset().filter(is_active=True))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def get_queryset(self):
         queryset = Product.objects.all()
         if self.request.query_params.get('include_inactive') != 'true':
