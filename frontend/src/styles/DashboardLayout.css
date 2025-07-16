@@ -1,0 +1,33 @@
+.dashboard-layout {
+  display: flex;
+}
+
+.dashboard-sidebar {
+  width: 200px;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.dashboard-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-sidebar li {
+  margin-bottom: 10px;
+}
+
+.dashboard-sidebar li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.dashboard-sidebar li a:hover {
+  color: #007bff;
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 20px;
+}
