@@ -25,6 +25,11 @@
   cursor: pointer;
   padding: 0 10px;
   transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.category-menu-container:hover .scroll-btn {
+  opacity: 1;
 }
 
 .scroll-btn:hover {
