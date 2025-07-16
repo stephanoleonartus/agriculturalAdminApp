@@ -399,10 +399,10 @@ const Products = () => {
 
   return (
     <div className="products-page">
-      <CategoryMenu />
       <div className="products-header">
         <h2>Our Products</h2>
       </div>
+      <CategoryMenu />
       <div className="products-grid">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} onDelete={handleDelete} />
