@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ProfileDropdown from './ProfileDropdown';
 
 const TopHeader = () => {
     const [user, setUser] = useState(null);
+    const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -49,9 +51,14 @@ const TopHeader = () => {
                     <span>Delivery to</span>
                 </div>
                 {user ? (
-                    <div className="action-item">
+                    <div
+                        className="action-item profile-menu"
+                        onMouseEnter={() => setShowDropdown(true)}
+                        onMouseLeave={() => setShowDropdown(false)}
+                    >
                         <i className="fas fa-user"></i>
                         <Link to="/profile">Hi, {user.first_name}</Link>
+                        {showDropdown && <ProfileDropdown />}
                         <button onClick={handleLogout}>Logout</button>
                     </div>
                 ) : (

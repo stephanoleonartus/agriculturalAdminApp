@@ -1,6 +1,6 @@
 // App.js
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import { Products, ProductDetailPage, AddProduct } from './components/Product';
@@ -23,6 +23,8 @@ import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
 import Dashboard from './components/Dashboard';
+import DashboardLayout from './components/DashboardLayout';
+import DashboardProductList from './components/DashboardProductList';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
@@ -30,6 +32,14 @@ import ResetPassword from './components/ResetPassword';
 import Chat from './components/Chat';
 import CartPage from './components/CartPage';
 import { LocationProvider } from './contexts/LocationContext'; // Import LocationProvider
+
+const ProtectedRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem('userInfo'));
+  if (!user || (user.role !== 'farmer' && user.role !== 'supplier')) {
+    return <Navigate to="/login" />;
+  }
+  return children;
+};
 
 function AppContent() {
   const location = useLocation();
@@ -66,7 +76,10 @@ function AppContent() {
           <Route path="users" element={<UserList />} />
           <Route path="orders" element={<OrderList />} />
         </Route>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<DashboardProductList />} />
+        </Route>
       </Routes>
     </>
   );
