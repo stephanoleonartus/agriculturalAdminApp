@@ -1,0 +1,30 @@
+.category-menu {
+  width: 100%;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e7e7e7;
+  padding: 10px 0;
+}
+
+.category-menu ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.category-menu li {
+  margin: 0 15px;
+}
+
+.category-menu a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.category-menu a:hover {
+  color: #007bff;
+}
