@@ -336,8 +336,8 @@ const Products = () => {
         const response = await axios.get(`products/products/${location.search}`);
         setProducts(response.data.results || []);
       } catch (err) {
+        setError('Error loading products');
         console.error("Error fetching products:", err);
-        setError('There was an error fetching the products.');
       } finally {
         setLoading(false);
       }
