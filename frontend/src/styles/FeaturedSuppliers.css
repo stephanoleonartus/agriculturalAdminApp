@@ -1,0 +1,33 @@
+.featured-suppliers {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.featured-suppliers h3 {
+  margin-top: 0;
+}
+
+.supplier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.supplier-card {
+  text-align: center;
+}
+
+.supplier-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.supplier-card p {
+  margin: 0;
+  font-weight: bold;
+}
