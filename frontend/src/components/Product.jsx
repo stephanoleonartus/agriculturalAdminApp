@@ -14,7 +14,7 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('cart-items/', { product_id: product.id, quantity: 1 });
+      await axios.post('products/cart/add_item/', { product_id: product.id, quantity: 1 });
       alert(`${product.name} added to cart!`);
     } catch (err) {
       console.error('Error adding to cart:', err);
@@ -24,7 +24,7 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToWishlist = async () => {
     try {
-      await axios.post('wishlist/', { product_id: product.id });
+      await axios.post('products/wishlist/add_product/', { product_id: product.id });
       alert(`${product.name} added to wishlist!`);
     } catch (err) {
       console.error('Error adding to wishlist:', err);
@@ -110,7 +110,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`products/products/${id}/`);
+        const response = await axios.get(`products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');
@@ -176,7 +176,7 @@ const AddProduct = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('products/categories/');
-        setCategories(response.data.results);
+        setCategories(response.data.results || []);
       } catch (err) {
         console.error('Error fetching categories:', err);
       }
@@ -210,7 +210,7 @@ const AddProduct = () => {
     }
 
     try {
-      await axios.post('products/products/', productData, {
+      await axios.post('products/', productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -333,7 +333,7 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`products/products/${location.search}`);
+        const response = await axios.get(`products/${location.search}`);
         setProducts(response.data.results || []);
       } catch (err) {
         setError('Error loading products');
@@ -355,7 +355,7 @@ const Products = () => {
     const fetchRegions = async () => {
       try {
         const response = await axios.get('auth/regions/');
-        setRegions(response.data);
+        setRegions(response.data || []);
       } catch (err) {
         console.error('Error fetching regions:', err);
       }
@@ -377,7 +377,7 @@ const Products = () => {
 
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/products/${productId}/`, {
+      await axios.delete(`products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
