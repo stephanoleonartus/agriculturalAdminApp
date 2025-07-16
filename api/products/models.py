@@ -3,15 +3,22 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)  # Added slug field
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=50, blank=True)  # For emoji icons
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         verbose_name_plural = "Categories"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
@@ -27,7 +34,10 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='products')
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='products')
+    is_active = models.BooleanField(default=True)  # Added is_active field
+    is_featured = models.BooleanField(default=False)  # Added is_featured field
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # Added updated_at field
 
     def save(self, *args, **kwargs):
         if not self.region and self.owner:
