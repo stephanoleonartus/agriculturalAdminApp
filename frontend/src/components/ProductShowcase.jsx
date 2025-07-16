@@ -10,7 +10,9 @@ const ProductShowcase = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('products/?limit=4');
-        setProducts(response.data.results);
+        if (response.data && Array.isArray(response.data.results)) {
+          setProducts(response.data.results);
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
       }
