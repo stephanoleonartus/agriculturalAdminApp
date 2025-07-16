@@ -1,0 +1,38 @@
+.business-categories {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.business-categories h3 {
+  margin-top: 0;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 20px;
+}
+
+.category-card {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.category-card:hover {
+  background-color: #f4f4f4;
+}
+
+.category-card i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #27ae60;
+}
+
+.category-card p {
+  margin: 0;
+  font-weight: bold;
+}
