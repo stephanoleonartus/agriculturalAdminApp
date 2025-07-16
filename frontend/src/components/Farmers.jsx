@@ -1,91 +1,91 @@
-// import React, { useState, useEffect } from 'react';
-// import { useLocation } from 'react-router-dom';
-// import axios from '../api/axios';
-// import FarmerCard from './FarmerCard';
-// import SearchBar from './SearchBar';
-// import '../styles/farmers.css';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import axios from '../api/axios';
+import FarmerCard from './FarmerCard';
+import SearchBar from './SearchBar';
+import '../styles/farmers.css';
 
-// const Farmers = () => {
-//   const [farmers, setFarmers] = useState([]);
-//   const [regions, setRegions] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState('');
-//   const location = useLocation();
+const Farmers = () => {
+  const [farmers, setFarmers] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const location = useLocation();
 
-//   useEffect(() => {
-//     const fetchFarmers = async () => {
-//       setLoading(true);
-//       try {
-//         const response = await axios.get(`accounts/farmers/${location.search}`);
-//         setFarmers(response.data.results);
-//       } catch (err) {
-//         console.error(err);
-//         setError('There was an error fetching the farmers.');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`accounts/farmers/${location.search}`);
+        setFarmers(response.data.results);
+      } catch (err) {
+        console.error(err);
+        setError('There was an error fetching the farmers.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//     const fetchRegions = async () => {
-//       try {
-//         const response = await axios.get('accounts/regions/');
-//         setRegions(response.data);
-//       } catch (err) {
-//         console.error('Error fetching regions:', err);
-//       }
-//     };
+    const fetchRegions = async () => {
+      try {
+        const response = await axios.get('accounts/regions/');
+        setRegions(response.data);
+      } catch (err) {
+        console.error('Error fetching regions:', err);
+      }
+    };
 
-//     fetchFarmers();
-//     fetchRegions();
-//   }, [location.search]);
+    fetchFarmers();
+    fetchRegions();
+  }, [location.search]);
 
-//   const handleSearch = (searchTerm) => {
-//     const params = new URLSearchParams(location.search);
-//     params.set('search', searchTerm);
-//     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
-//     // This will trigger the useEffect hook to refetch the farmers
-//     const popStateEvent = new PopStateEvent('popstate');
-//     dispatchEvent(popStateEvent);
-//   };
+  const handleSearch = (searchTerm) => {
+    const params = new URLSearchParams(location.search);
+    params.set('search', searchTerm);
+    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
+    // This will trigger the useEffect hook to refetch the farmers
+    const popStateEvent = new PopStateEvent('popstate');
+    dispatchEvent(popStateEvent);
+  };
 
-//   const handleRegionFilter = (region) => {
-//     const params = new URLSearchParams(location.search);
-//     params.set('region', region);
-//     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
-//     // This will trigger the useEffect hook to refetch the farmers
-//     const popStateEvent = new PopStateEvent('popstate');
-//     dispatchEvent(popStateEvent);
-//   };
+  const handleRegionFilter = (region) => {
+    const params = new URLSearchParams(location.search);
+    params.set('region', region);
+    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
+    // This will trigger the useEffect hook to refetch the farmers
+    const popStateEvent = new PopStateEvent('popstate');
+    dispatchEvent(popStateEvent);
+  };
 
-//   if (loading) {
-//     return <div>Loading farmers...</div>;
-//   }
+  if (loading) {
+    return <div>Loading farmers...</div>;
+  }
 
-//   if (error) {
-//     return <div className="error-message">{error}</div>;
-//   }
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
-//   return (
-//     <div className="farmers-page">
-//       <SearchBar onSearch={handleSearch} />
-//       <div className="region-filters">
-//         <h3>Regions</h3>
-//         <ul>
-//           {regions.map((region) => (
-//             <li key={region.value} onClick={() => handleRegionFilter(region.value)}>
-//               {region.label}
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//       <h2>Our Farmers</h2>
-//       <div className="farmers-grid">
-//         {farmers.map((farmer) => (
-//           <FarmerCard key={farmer.id} farmer={farmer} />
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
+  return (
+    <div className="farmers-page">
+      <SearchBar onSearch={handleSearch} />
+      <div className="region-filters">
+        <h3>Regions</h3>
+        <ul>
+          {regions.map((region) => (
+            <li key={region.value} onClick={() => handleRegionFilter(region.value)}>
+              {region.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <h2>Our Farmers</h2>
+      <div className="farmers-grid">
+        {farmers.map((farmer) => (
+          <FarmerCard key={farmer.id} farmer={farmer} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
-// export default Farmers;
+export default Farmers;
