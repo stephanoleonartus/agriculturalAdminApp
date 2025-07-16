@@ -53,7 +53,7 @@ const AdminProductList = () => {
   return (
     <div className="admin-product-list">
       <h2>Manage Products</h2>
-      <Link to="/products/add" className="add-product-btn">
+      <Link to="/admin/products/add" className="add-product-btn">
         Add New Product
       </Link>
       <table>

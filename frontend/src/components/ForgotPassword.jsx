@@ -26,7 +26,7 @@ function ForgotPassword() {
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <div className="auth-container forgot-password-container">
         <h2>Forgot Password</h2>
         <p>Enter your email address and we'll send you a link to reset your password.</p>
         {message && <div className="success-message">{message}</div>}
