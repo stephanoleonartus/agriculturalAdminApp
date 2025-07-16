@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import SupplierCard from './SupplierCard';
 import SearchBar from './SearchBar';
+import RegionFilter from './RegionFilter';
 import '../styles/Supplies.css';
 
 const Suppliers = () => {
@@ -89,6 +90,7 @@ const Suppliers = () => {
         </ul>
       </div>
       <h2>Our Suppliers</h2>
+      <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="suppliers-grid">
         {suppliers.map((supplier) => (
           <SupplierCard key={supplier.id} supplier={supplier} />

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import FarmerCard from './FarmerCard';
 import SearchBar from './SearchBar';
+import RegionFilter from './RegionFilter';
 import '../styles/farmers.css';
 
 const Farmers = () => {
@@ -16,7 +17,8 @@ const Farmers = () => {
     const fetchFarmers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`auth/farmers/${location.search}`);
+        // Using accounts/farmers/ endpoint (from fix-product-list-url branch)
+        const response = await axios.get(`accounts/farmers/${location.search}`);
         console.log('Farmers response:', response.data); // Debug log
         setFarmers(response.data.results || []);
       } catch (err) {
@@ -29,7 +31,8 @@ const Farmers = () => {
 
     const fetchRegions = async () => {
       try {
-        const response = await axios.get('auth/regions/');
+        // Using accounts/regions/ endpoint to match farmers endpoint
+        const response = await axios.get('accounts/regions/');
         console.log('Regions response:', response.data); // Debug log
         setRegions(response.data || []);
       } catch (err) {
@@ -100,16 +103,24 @@ const Farmers = () => {
   return (
     <div className="farmers-page">
       <SearchBar onSearch={handleSearch} />
-      <div className="region-filters">
-        <h3>Regions</h3>
-        <ul>
-          {regions.map((region, index) => (
-            <li key={region.id || region.value || index} onClick={() => handleRegionFilter(getRegionValue(region))}>
-              {renderRegionData(region)}
-            </li>
-          ))}
-        </ul>
-      </div>
+      
+      {/* Using RegionFilter component (from fix-product-list-url branch) */}
+      <RegionFilter onRegionFilter={handleRegionFilter} />
+      
+      {/* Fallback region filters if RegionFilter component doesn't handle regions state */}
+      {regions.length > 0 && (
+        <div className="region-filters-fallback" style={{ display: 'none' }}>
+          <h3>Regions</h3>
+          <ul>
+            {regions.map((region, index) => (
+              <li key={region.id || region.value || index} onClick={() => handleRegionFilter(getRegionValue(region))}>
+                {renderRegionData(region)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      
       <h2>Our Farmers</h2>
       <div className="farmers-grid">
         {farmers.map((farmer) => (
