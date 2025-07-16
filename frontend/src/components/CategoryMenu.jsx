@@ -1,23 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axios from '../api/axios';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CategoryMenu.css';
 
+const categories = [
+  { id: 1, name: 'Grains' },
+  { id: 2, name: 'Legumes/Pulses' },
+  { id: 3, name: 'Fruits' },
+  { id: 4, name: 'Vegetables' },
+  { id: 5, name: 'Root and Tuber Crops' },
+  { id: 6, name: 'Oilseeds' },
+  { id: 7, name: 'Spices and Herbs' },
+  { id: 8, name: 'Sugar Crops' },
+  { id: 9, name: 'Beverage Crops' },
+  { id: 10, name: 'Fiber Crops' },
+  { id: 11, name: 'Services' },
+];
+
 const CategoryMenu = () => {
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('products/categories/');
-        setCategories(response.data.results || []);
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
   return (
     <div className="category-menu">
       <ul>
