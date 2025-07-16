@@ -135,18 +135,19 @@ class FarmerProfile(models.Model):
     ]
     
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='farmer_profile')
-    farm_name = models.CharField(max_length=100)
-    farm_type = models.CharField(max_length=20, choices=FARM_TYPES)
-    farm_size = models.DecimalField(max_digits=10, decimal_places=2, help_text="Size in acres")
+    farm_name = models.CharField(max_length=100, blank=True, default='')  # Made optional
+    farm_type = models.CharField(max_length=20, choices=FARM_TYPES, blank=True, default='crop')  # Made optional
+    farm_size = models.DecimalField(max_digits=10, decimal_places=2, help_text="Size in acres", null=True, blank=True)  # Made optional
     certifications = models.CharField(max_length=20, choices=CERTIFICATION_TYPES, default='none')
     crops_grown = models.JSONField(default=list, blank=True)
     livestock_types = models.JSONField(default=list, blank=True)
-    farming_experience = models.PositiveIntegerField(help_text="Years of experience")
+    farming_experience = models.PositiveIntegerField(help_text="Years of experience", null=True, blank=True)  # Made optional
     seasonal_availability = models.JSONField(default=dict, blank=True)
     delivery_radius = models.PositiveIntegerField(default=50, help_text="Delivery radius in km")
     
     def __str__(self):
         return f"{self.farm_name} - {self.user.username}"
+
 
 class SupplierProfile(models.Model):
     SUPPLIER_TYPES = [

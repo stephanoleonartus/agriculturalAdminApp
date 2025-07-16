@@ -13,13 +13,22 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'first_name', 'last_name', 'role', 'region')
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'role': {'required': True}  # Ensure role is always provided
+        }
 
     def validate(self, data):
         if User.objects.filter(username=data['username']).exists():
             raise serializers.ValidationError("Username already exists.")
         if User.objects.filter(email=data['email']).exists():
             raise serializers.ValidationError("Email already exists.")
+        
+        # Validate role choice
+        valid_roles = [choice[0] for choice in User.ROLE_CHOICES]
+        if data['role'] not in valid_roles:
+            raise serializers.ValidationError(f"⚠️ role: '{data['role']}' is not a valid choice. Valid choices are: {', '.join(valid_roles)}")
+        
         return data
 
     def create(self, validated_data):
@@ -31,12 +40,15 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         user = User.objects.create_user(**validated_data, region=region)
         UserProfile.objects.create(user=user)
+        
+        # Handle profile creation based on role
         if user.role == 'farmer':
             FarmerProfile.objects.create(user=user)
         elif user.role == 'supplier':
             SupplierProfile.objects.create(user=user)
+        # No special profile needed for buyers
+        
         return user
-
 class UserSerializer(serializers.ModelSerializer):
     region = RegionSerializer(read_only=True)
 

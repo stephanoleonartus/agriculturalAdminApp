@@ -85,6 +85,17 @@ class FarmerViewSet(viewsets.ReadOnlyModelViewSet):
         if region is not None:
             queryset = queryset.filter(region__name=region)
         return queryset
+    
+class BuyerViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.filter(role='buyer')
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.filter(role='buyer')
+        region = self.request.query_params.get('region')
+        if region is not None:
+            queryset = queryset.filter(region__name=region)
+        return queryset
 
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
