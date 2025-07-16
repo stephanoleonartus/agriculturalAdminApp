@@ -29,7 +29,7 @@ const MyProfile = () => {
     formData.append('profile_picture', file);
 
     try {
-      const response = await axios.patch('auth/profile/', formData, {
+      const response = await axios.patch('accounts/profile/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

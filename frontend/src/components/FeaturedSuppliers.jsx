@@ -8,7 +8,7 @@ const FeaturedSuppliers = () => {
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await axios.get('auth/suppliers/?limit=4');
+        const response = await axios.get('accounts/suppliers/?limit=4');
         setSuppliers(response.data.results);
       } catch (error) {
         console.error('Error fetching suppliers:', error);

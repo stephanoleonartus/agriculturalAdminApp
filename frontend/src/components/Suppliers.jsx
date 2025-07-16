@@ -8,7 +8,6 @@ import '../styles/Supplies.css';
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
-  const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const location = useLocation();
@@ -17,8 +16,7 @@ const Suppliers = () => {
     const fetchSuppliers = async () => {
       setLoading(true);
       try {
-        // Fixed API endpoint to match farmers pattern
-        const response = await axios.get(`api/auth/suppliers/${location.search}`);
+        const response = await axios.get(`auth/suppliers/${location.search}`);
         setSuppliers(response.data.results || []);
       } catch (err) {
         console.error(err);
@@ -27,28 +25,12 @@ const Suppliers = () => {
         setLoading(false);
       }
     };
-
-    const fetchRegions = async () => {
-      try {
-        // Fixed API endpoint to match farmers pattern
-        const response = await axios.get('api/auth/regions/');
-        setRegions(response.data || []);
-      } catch (err) {
-        console.error('Error fetching regions:', err);
-      }
-    };
-
     fetchSuppliers();
-    fetchRegions();
   }, [location.search]);
 
   const handleSearch = (searchTerm) => {
     const params = new URLSearchParams(location.search);
-    if (searchTerm) {
-      params.set('search', searchTerm);
-    } else {
-      params.delete('search');
-    }
+    params.set('search', searchTerm);
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the suppliers
     const popStateEvent = new PopStateEvent('popstate');
@@ -57,11 +39,7 @@ const Suppliers = () => {
 
   const handleRegionFilter = (region) => {
     const params = new URLSearchParams(location.search);
-    if (region) {
-      params.set('region', region);
-    } else {
-      params.delete('region');
-    }
+    params.set('region', region);
     window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
     // This will trigger the useEffect hook to refetch the suppliers
     const popStateEvent = new PopStateEvent('popstate');
@@ -79,16 +57,6 @@ const Suppliers = () => {
   return (
     <div className="suppliers-page">
       <SearchBar onSearch={handleSearch} />
-      <div className="region-filters">
-        <h3>Regions</h3>
-        <ul>
-          {regions.map((region) => (
-            <li key={region.id || region.value} onClick={() => handleRegionFilter(region.name || region.value)}>
-              {region.name || region.label}
-            </li>
-          ))}
-        </ul>
-      </div>
       <h2>Our Suppliers</h2>
       <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="suppliers-grid">
