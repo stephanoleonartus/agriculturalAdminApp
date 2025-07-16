@@ -22,7 +22,7 @@ const AdminProductList = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('products/products/?include_inactive=true');
+      const response = await axios.get('products/?include_inactive=true');
       setProducts(response.data.results || []);
     } catch (err) {
       setError('Error loading products');
@@ -34,7 +34,7 @@ const AdminProductList = () => {
   
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/products/${productId}/`);
+      await axios.delete(`products/${productId}/`);
       setProducts(products.filter(p => p.id !== productId));
     } catch (err) {
       setError('Failed to delete product');

@@ -234,10 +234,10 @@ class WishlistViewSet(viewsets.ModelViewSet):
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
-    
+
     def get_object(self):
         cart, created = Cart.objects.get_or_create(user=self.request.user)
         return cart
@@ -252,92 +252,59 @@ class CartViewSet(viewsets.ModelViewSet):
     def add_item(self, request):
         product_id = request.data.get('product_id')
         quantity = request.data.get('quantity', 1)
-        
+
         if not product_id:
-            return Response(
-                {'error': 'Product ID is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+            return Response({'error': 'Product ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             product = Product.objects.get(id=product_id)
             cart, created = Cart.objects.get_or_create(user=request.user)
-            
             cart_item, created = CartItem.objects.get_or_create(
-                cart=cart,
-                product=product,
-                defaults={'quantity': quantity}
+                cart=cart, product=product, defaults={'quantity': quantity}
             )
-            
+
             if not created:
                 cart_item.quantity += int(quantity)
                 cart_item.save()
-            
+
             serializer = self.get_serializer(cart)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Product.DoesNotExist:
-            return Response(
-                {'error': 'Product not found'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['post'])
-    def remove_item(self, request):
-        product_id = request.data.get('product_id')
-        
-        if not product_id:
-            return Response(
-                {'error': 'Product ID is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            cart = Cart.objects.get(user=request.user)
-            cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
+    @action(detail=True, methods=['patch'])
+    def update_item(self, request, pk=None):
+        cart_item = self.get_cart_item(pk)
+        if not cart_item:
+            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        quantity = request.data.get('quantity')
+        if quantity is None:
+            return Response({'error': 'Quantity is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if int(quantity) <= 0:
             cart_item.delete()
-            
-            serializer = self.get_serializer(cart)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except (Cart.DoesNotExist, CartItem.DoesNotExist):
-            return Response(
-                {'error': 'Item not found in cart'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
+        else:
+            cart_item.quantity = quantity
+            cart_item.save()
 
-    @action(detail=False, methods=['post'])
-    def update_quantity(self, request):
-        product_id = request.data.get('product_id')
-        quantity = request.data.get('quantity', 1)
-        
-        if not product_id:
-            return Response(
-                {'error': 'Product ID is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+        cart = self.get_object()
+        serializer = self.get_serializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['delete'])
+    def remove_item(self, request, pk=None):
+        cart_item = self.get_cart_item(pk)
+        if not cart_item:
+            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        cart_item.delete()
+        cart = self.get_object()
+        serializer = self.get_serializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_cart_item(self, pk):
         try:
-            cart = Cart.objects.get(user=request.user)
-            cart_item = CartItem.objects.get(cart=cart, product__id=product_id)
-            
-            if int(quantity) <= 0:
-                cart_item.delete()
-            else:
-                cart_item.quantity = quantity
-                cart_item.save()
-            
-            serializer = self.get_serializer(cart)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except (Cart.DoesNotExist, CartItem.DoesNotExist):
-            return Response(
-                {'error': 'Item not found in cart'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-    @action(detail=False, methods=['post'])
-    def clear(self, request):
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        cart.items.all().delete()
-        return Response(
-            {'message': 'Cart cleared successfully'}, 
-            status=status.HTTP_200_OK
-        )
+            return CartItem.objects.get(id=pk, cart__user=self.request.user)
+        except CartItem.DoesNotExist:
+            return None

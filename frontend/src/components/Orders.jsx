@@ -44,7 +44,7 @@ const Orders = () => {
                 <span>Status: {order.status}</span>
               </div>
               <div className="order-card-body">
-                <p>Product: {order.product_name}</p>
+                <p>Product: {order.product.name}</p>
                 <p>Quantity: {order.quantity}</p>
                 <p>Total Price: {order.total_price}</p>
               </div>
