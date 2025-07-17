@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import SupplierCard from './SupplierCard';
-import SearchBar from './SearchBar';
 import RegionFilter from './RegionFilter';
 import '../styles/Supplies.css';
 
@@ -28,15 +27,6 @@ const Suppliers = () => {
     fetchSuppliers();
   }, [location.search]);
 
-  const handleSearch = (searchTerm) => {
-    const params = new URLSearchParams(location.search);
-    params.set('search', searchTerm);
-    window.history.pushState({}, '', `${location.pathname}?${params.toString()}`);
-    // This will trigger the useEffect hook to refetch the suppliers
-    const popStateEvent = new PopStateEvent('popstate');
-    dispatchEvent(popStateEvent);
-  };
-
   const handleRegionFilter = (region) => {
     const params = new URLSearchParams(location.search);
     params.set('region', region);
@@ -56,7 +46,6 @@ const Suppliers = () => {
 
   return (
     <div className="suppliers-page">
-      <SearchBar onSearch={handleSearch} />
       <h2>Our Suppliers</h2>
       <RegionFilter onRegionFilter={handleRegionFilter} />
       <div className="suppliers-grid">
