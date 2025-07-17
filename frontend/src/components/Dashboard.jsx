@@ -4,8 +4,6 @@ import '../styles/AccountDetail.css';
 
 import { BarChart3, Users, ShoppingCart, DollarSign, TrendingUp, Package, Bell, Search, Settings } from 'lucide-react';
 
-
-
 const Dashboard = () => {
   const [user, setUser] = useState(null);
 
@@ -27,51 +25,6 @@ const Dashboard = () => {
   }, []);
 
   return (
-
-    <div className="account-detail-container">
-      <div className="account-detail">
-        <div className="header">
-          <div className="profile-photo">
-            <img src={user?.profile_picture || "https://via.placeholder.com/150"} alt="Profile" />
-            <a href="#">Upload Photo</a>
-          </div>
-          <div className="vertical-line"></div>
-          <div className="account-info">
-            <h3>{user?.username} ({user?.role})</h3>
-            <p>Email: {user?.email} <a href="#">Change email address</a></p>
-            <p>Mobile: {user?.phone_number || 'N/A'} <a href="#">Change Mobile number</a></p>
-          </div>
-        </div>
-        <div className="body">
-          <div className="section">
-            <h4>Overview</h4>
-            <ul>
-              <li><a href="#">Dashboard Home</a></li>
-              <li><a href="#">Analytics</a></li>
-              <li><a href="#">Reports</a></li>
-            </ul>
-          </div>
-          <div className="vertical-line"></div>
-          <div className="section">
-            <h4>My Business</h4>
-            <ul>
-              <li><a href="#">My Products</a></li>
-              <li><a href="#">My Orders</a></li>
-              <li><a href="#">My Customers</a></li>
-            </ul>
-          </div>
-          <div className="vertical-line"></div>
-          <div className="section">
-            <h4>Tools</h4>
-            <ul>
-              <li><a href="#">Marketing</a></li>
-              <li><a href="#">Promotions</a></li>
-              <li><a href="#">Integrations</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-=======
     <div className="dashboard">
       {/* Header */}
       <header className="header">
@@ -102,7 +55,7 @@ const Dashboard = () => {
                 <Settings className="button-icon" />
               </button>
               <div className="avatar">
-                <span>JD</span>
+                <span>{user?.username ? user.username.substring(0, 2).toUpperCase() : 'JD'}</span>
               </div>
             </div>
           </div>
@@ -113,7 +66,7 @@ const Dashboard = () => {
       <main className="main-content">
         {/* Welcome Section */}
         <div className="welcome-section">
-          <h2 className="welcome-title">Welcome back, John!</h2>
+          <h2 className="welcome-title">Welcome back, {user?.username || 'User'}!</h2>
           <p className="welcome-subtitle">Here's what's happening with your business today.</p>
         </div>
 
@@ -248,7 +201,6 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
-
     </div>
   );
 };
