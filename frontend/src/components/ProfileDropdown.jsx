@@ -16,6 +16,9 @@ const ProfileDropdown = () => {
             <Link to="/dashboard">My Agrilink</Link>
           </li>
           <li>
+            <Link to="/profile">Account</Link>
+          </li>
+          <li>
             <Link to="/profile/orders">My Orders</Link>
           </li>
           <li>
@@ -29,6 +32,9 @@ const ProfileDropdown = () => {
           </li>
           <li>
             <Link to="/profile/rewards">Rewards</Link>
+          </li>
+          <li>
+            <Link to="/profile/help-center">Help Center</Link>
           </li>
         </ul>
       </div>
