@@ -297,3 +297,22 @@ class SalesAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
             )
         
         return Response({'message': f'Daily stats generated for {target_date}'})
+
+
+class DashboardStatsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # In a real application, you would fetch this data from your database
+        data = {
+            'widgets': [
+                {'title': 'Sales', 'value': '$12,345'},
+                {'title': 'Customers', 'value': '1,234'},
+                {'title': 'Orders', 'value': '567'},
+            ],
+            'chartData': {
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                'values': [1200, 1900, 3000, 5000, 2300, 3200],
+            }
+        }
+        return Response(data)

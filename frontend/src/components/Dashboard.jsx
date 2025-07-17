@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
+import Card from './Card';
+import Widget from './Widget';
+import Chart from './Chart';
 import '../styles/AccountDetail.css';
+import '../styles/Dashboard.css';
 
 import { BarChart3, Users, ShoppingCart, DollarSign, TrendingUp, Package, Bell, Search, Settings } from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -21,7 +26,21 @@ const Dashboard = () => {
       }
     };
 
+    const fetchDashboardData = async () => {
+      try {
+        const response = await axios.get('analytics/dashboard-stats/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
+        setDashboardData(response.data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
     fetchUser();
+    fetchDashboardData();
   }, []);
 
   return (
@@ -64,11 +83,40 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="main-content">
+        {/* Account Detail Section */}
+        <div className="account-detail-container">
+          <div className="account-detail">
+            <div className="header">
+              <div className="profile-photo">
+                <img src={user?.profile_picture || "https://via.placeholder.com/150"} alt="Profile" />
+                <a href="#">Upload Photo</a>
+              </div>
+              <div className="vertical-line"></div>
+              <div className="account-info">
+                <h3>{user?.username} ({user?.role})</h3>
+                <p>Email: {user?.email} <a href="#">Change email address</a></p>
+                <p>Mobile: {user?.phone_number || 'N/A'} <a href="#">Change Mobile number</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Welcome Section */}
         <div className="welcome-section">
           <h2 className="welcome-title">Welcome back, {user?.username || 'User'}!</h2>
           <p className="welcome-subtitle">Here's what's happening with your business today.</p>
         </div>
+
+        {/* Dashboard Widgets */}
+        {dashboardData && dashboardData.widgets && (
+          <div className="widgets-container">
+            <div className="widgets">
+              {dashboardData.widgets.map((widget, index) => (
+                <Widget key={index} title={widget.title} value={widget.value} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="stats-grid">
@@ -76,7 +124,9 @@ const Dashboard = () => {
             <div className="stat-content">
               <div className="stat-info">
                 <p className="stat-label">Total Revenue</p>
-                <p className="stat-value">$45,231</p>
+                <p className="stat-value">
+                  {dashboardData?.revenue || '$45,231'}
+                </p>
                 <p className="stat-change positive">+20.1% from last month</p>
               </div>
               <div className="stat-icon green">
@@ -89,7 +139,9 @@ const Dashboard = () => {
             <div className="stat-content">
               <div className="stat-info">
                 <p className="stat-label">Orders</p>
-                <p className="stat-value">1,234</p>
+                <p className="stat-value">
+                  {dashboardData?.orders || '1,234'}
+                </p>
                 <p className="stat-change blue">+12.5% from last month</p>
               </div>
               <div className="stat-icon blue">
@@ -102,7 +154,9 @@ const Dashboard = () => {
             <div className="stat-content">
               <div className="stat-info">
                 <p className="stat-label">Customers</p>
-                <p className="stat-value">2,456</p>
+                <p className="stat-value">
+                  {dashboardData?.customers || '2,456'}
+                </p>
                 <p className="stat-change purple">+8.2% from last month</p>
               </div>
               <div className="stat-icon purple">
@@ -115,7 +169,9 @@ const Dashboard = () => {
             <div className="stat-content">
               <div className="stat-info">
                 <p className="stat-label">Products</p>
-                <p className="stat-value">567</p>
+                <p className="stat-value">
+                  {dashboardData?.products || '567'}
+                </p>
                 <p className="stat-change orange">+3.1% from last month</p>
               </div>
               <div className="stat-icon orange">
@@ -193,12 +249,20 @@ const Dashboard = () => {
               <button className="chart-button">90 days</button>
             </div>
           </div>
-          <div className="chart-placeholder">
-            <div className="chart-content">
-              <TrendingUp className="chart-icon" />
-              <p className="chart-text">Chart visualization would go here</p>
+          
+          {/* Use Chart component if data is available */}
+          {dashboardData && dashboardData.chartData ? (
+            <Card title="Sales">
+              <Chart data={dashboardData.chartData} />
+            </Card>
+          ) : (
+            <div className="chart-placeholder">
+              <div className="chart-content">
+                <TrendingUp className="chart-icon" />
+                <p className="chart-text">Chart visualization would go here</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
