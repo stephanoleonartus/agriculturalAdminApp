@@ -63,7 +63,7 @@ const SearchBar = ({ onSearch }) => {
     if (onSearch) {
       onSearch(searchTerm);
     } else {
-      navigate(`/products?search=${searchTerm}`);
+      navigate(`/products/products?search=${searchTerm}`);
     }
   };
 

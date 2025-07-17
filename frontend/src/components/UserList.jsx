@@ -28,7 +28,7 @@ const UserList = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`accounts/users/${userId}/`, {
+        await axios.delete(`auth/users/${userId}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

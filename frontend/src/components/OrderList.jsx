@@ -12,7 +12,7 @@ const OrderList = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('orders/');
+        const response = await axios.get('api/v1/orders/orders/');
         setOrders(response.data.results);
       } catch (err) {
         setError('There was an error fetching the orders.');
@@ -27,9 +27,9 @@ const OrderList = () => {
 
   const handleUpdateStatus = async (orderId, status) => {
     try {
-      await axios.post(`orders/${orderId}/update_status/`, { status });
+      await axios.post(`api/v1/orders/orders/${orderId}/update_status/`, { status });
       // Refetch orders to update the list
-      const response = await axios.get('orders/');
+      const response = await axios.get('api/v1/orders/orders/');
       setOrders(response.data.results);
     } catch (err) {
       setError('There was an error updating the order status.');

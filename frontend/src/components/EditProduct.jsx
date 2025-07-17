@@ -91,7 +91,7 @@ const EditProduct = () => {
     }
 
     try {
-      await axios.put(`products/${id}/`, productData, {
+      await axios.put(`products/products/${id}/`, productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

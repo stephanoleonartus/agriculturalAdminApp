@@ -334,7 +334,7 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`products/${location.search}`);
+        const response = await axios.get(`products/products/${location.search}`);
         setProducts(response.data.results || []);
       } catch (err) {
         setError('Error loading products');
@@ -378,7 +378,7 @@ const Products = () => {
 
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/${productId}/`, {
+      await axios.delete(`products/products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

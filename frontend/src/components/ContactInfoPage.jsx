@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../api/axios';
 import '../styles/ContactInfoPage.css';
 
 const ContactInfoPage = () => {
@@ -12,7 +12,7 @@ const ContactInfoPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/api/products/${id}/`);
+        const response = await axios.get(`/api/products/products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');

@@ -12,20 +12,27 @@ function FarmerCard({ farmer }) {
   const displayName = profile?.farm_name || `${farmer.first_name || ''} ${farmer.last_name || ''}`.trim() || farmer.username;
   const avatarUrl = farmer.profile_picture || userProfile?.profile_picture || FALLBACK_AVATAR_URL;
 
+  // Handle region object - extract the name property
+  const regionName = farmer.region?.name || farmer.region || 'N/A';
+
   return (
     <div className="farmer-card">
       <Link to={`/farmers/${farmer.id}`} className="farmer-card-link-wrapper">
         <img src={avatarUrl} alt={displayName} className="farmer-avatar" />
         <h3>{displayName}</h3>
       </Link>
-      <p><strong>Region:</strong> {farmer.region || 'N/A'}</p>
+      <p><strong>Region:</strong> {regionName}</p>
       <p><strong>Farm Type:</strong> {profile?.farm_type || 'N/A'}</p>
 
       {profile?.crops_grown && profile.crops_grown.length > 0 && (
         <div className="product-list">
           <h4>Crops:</h4>
           <ul>
-            {profile.crops_grown.slice(0, 3).map((crop, index) => <li key={`crop-${index}`}>{crop}</li>)}
+            {profile.crops_grown.slice(0, 3).map((crop, index) => (
+              <li key={`crop-${index}`}>
+                {typeof crop === 'object' ? crop.name || crop.label || JSON.stringify(crop) : crop}
+              </li>
+            ))}
             {profile.crops_grown.length > 3 && <li>...and more</li>}
           </ul>
         </div>
@@ -35,7 +42,11 @@ function FarmerCard({ farmer }) {
         <div className="product-list">
           <h4>Livestock:</h4>
           <ul>
-            {profile.livestock_types.slice(0, 3).map((livestock, index) => <li key={`livestock-${index}`}>{livestock}</li>)}
+            {profile.livestock_types.slice(0, 3).map((livestock, index) => (
+              <li key={`livestock-${index}`}>
+                {typeof livestock === 'object' ? livestock.name || livestock.label || JSON.stringify(livestock) : livestock}
+              </li>
+            ))}
             {profile.livestock_types.length > 3 && <li>...and more</li>}
           </ul>
         </div>
