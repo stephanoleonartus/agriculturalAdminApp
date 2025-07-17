@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart3, Users, ShoppingCart, DollarSign, TrendingUp, Package, Bell, Search, Settings } from 'lucide-react';
-// import './Dashboard.css';
+
 
 const Dashboard = () => {
   return (
