@@ -57,8 +57,8 @@ const TopHeader = () => {
                         onMouseLeave={() => setShowDropdown(false)}
                     >
                         <i className="fas fa-user"></i>
-                        <Link to="/profile">Hi, {user.first_name}</Link>
-                        {showDropdown && <ProfileDropdown />}
+                        <Link to="/profile">Account</Link>
+                        {showDropdown && <ProfileDropdown user={user} />}
                         <button onClick={handleLogout}>Logout</button>
                     </div>
                 ) : (

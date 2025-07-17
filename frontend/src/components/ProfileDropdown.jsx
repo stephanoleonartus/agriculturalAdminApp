@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/ProfileDropdown.css';
 
-const ProfileDropdown = () => {
-  const user = JSON.parse(localStorage.getItem('userInfo'));
-
+const ProfileDropdown = ({ user }) => {
   return (
     <div className="profile-dropdown">
       <div className="profile-dropdown-header">
-        <p>Welcome, {user.username}</p>
+        <p className="greeting">Hi, {user.first_name}</p>
       </div>
       <div className="profile-dropdown-body">
         <ul>

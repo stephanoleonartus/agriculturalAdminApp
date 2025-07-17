@@ -33,3 +33,7 @@
 .profile-dropdown-body li a:hover {
   color: #007bff;
 }
+
+.greeting {
+  color: green;
+}
