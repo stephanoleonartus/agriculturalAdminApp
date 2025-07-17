@@ -397,10 +397,32 @@ const Products = () => {
     return <div className="error-message">{error}</div>;
   }
 
+  const [pageClass, setPageClass] = useState('');
+
   return (
-    <div className="products-page">
+    <div className={`products-page ${pageClass}`}>
       <div className="products-header">
-        <h2>Our Products</h2>
+        <h2
+          className="product-heading"
+          onMouseEnter={() => setPageClass('product-hover')}
+          onMouseLeave={() => setPageClass('')}
+        >
+          Products
+        </h2>
+        <h2
+          className="supplier-heading"
+          onMouseEnter={() => setPageClass('supplier-hover')}
+          onMouseLeave={() => setPageClass('')}
+        >
+          Suppliers
+        </h2>
+        <h2
+          className="farmer-heading"
+          onMouseEnter={() => setPageClass('farmer-hover')}
+          onMouseLeave={() => setPageClass('')}
+        >
+          Farmers
+        </h2>
       </div>
       <CategoryMenu />
       <div className="products-grid">
