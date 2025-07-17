@@ -328,6 +328,7 @@ const Products = () => {
   const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [pageClass, setPageClass] = useState(''); // Moved to top with other hooks
   const location = useLocation();
 
   useEffect(() => {
@@ -396,8 +397,6 @@ const Products = () => {
   if (error) {
     return <div className="error-message">{error}</div>;
   }
-
-  const [pageClass, setPageClass] = useState('');
 
   return (
     <div className={`products-page ${pageClass}`}>
