@@ -27,3 +27,4 @@ const BusinessCategories = () => {
 };
 
 export default BusinessCategories;
+                                                                                                                                                        
