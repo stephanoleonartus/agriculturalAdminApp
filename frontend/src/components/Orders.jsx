@@ -10,9 +10,13 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('/api/v1/orders/orders/');
-        setOrders(response.data.results);
-        if (response.data.results.length === 0) {
+        const response = await axios.get('/api/v1/orders/orders/mine/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
+        setOrders(response.data);
+        if (response.data.length === 0) {
           setError('You have no orders.');
         }
       } catch (err) {

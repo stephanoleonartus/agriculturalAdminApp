@@ -11,11 +11,12 @@ import { BarChart3, Users, ShoppingCart, DollarSign, TrendingUp, Package, Bell, 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
+  const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('auth/profile/', {
+        const response = await axios.get('/api/auth/me/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -28,7 +29,7 @@ const Dashboard = () => {
 
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get('analytics/dashboard-stats/', {
+        const response = await axios.get('/api/v1/analytics/dashboard-stats/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -39,8 +40,22 @@ const Dashboard = () => {
       }
     };
 
+    const fetchChartData = async () => {
+      try {
+        const response = await axios.get('/api/v1/analytics/sales/revenue_chart/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
+        setChartData(response.data);
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
+    };
+
     fetchUser();
     fetchDashboardData();
+    fetchChartData();
   }, []);
 
   return (
@@ -251,9 +266,9 @@ const Dashboard = () => {
           </div>
           
           {/* Use Chart component if data is available */}
-          {dashboardData && dashboardData.chartData ? (
+          {chartData ? (
             <Card title="Sales">
-              <Chart data={dashboardData.chartData} />
+              <Chart data={chartData} />
             </Card>
           ) : (
             <div className="chart-placeholder">

@@ -1,24 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import axios from '../api/axios';
 import '../styles/CategoryMenu.css';
 
-const categories = [
-  { id: 0, name: 'All Categories' },
-  { id: 1, name: 'Grains' },
-  { id: 2, name: 'Legumes/Pulses' },
-  { id: 3, name: 'Fruits' },
-  { id: 4, name: 'Vegetables' },
-  { id: 5, name: 'Root and Tuber Crops' },
-  { id: 6, name: 'Oilseeds' },
-  { id: 7, name: 'Spices and Herbs' },
-  { id: 8, name: 'Sugar Crops' },
-  { id: 9, name: 'Beverage Crops' },
-  { id: 10, name: 'Fiber Crops' },
-  { id: 11, name: 'Services' },
-];
-
 const CategoryMenu = () => {
+  const [categories, setCategories] = useState([]);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('/api/products/categories/');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const scroll = (scrollOffset) => {
     menuRef.current.scrollLeft += scrollOffset;
@@ -31,9 +30,12 @@ const CategoryMenu = () => {
       </button>
       <div className="category-menu" ref={menuRef}>
         <ul className="category-list">
+          <li>
+            <Link to="/products">All Categories</Link>
+          </li>
           {categories.map((category) => (
             <li key={category.id}>
-              <Link to={category.name === 'All Categories' ? '/products' : `/products?category=${category.name}`}>{category.name}</Link>
+              <Link to={`/products?category=${category.id}`}>{category.name}</Link>
             </li>
           ))}
         </ul>

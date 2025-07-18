@@ -27,7 +27,24 @@ const OrderList = () => {
 
   const handleUpdateStatus = async (orderId, status) => {
     try {
-      await axios.post(`api/v1/orders/orders/${orderId}/update_status/`, { status });
+      let endpoint = '';
+      switch (status) {
+        case 'confirmed':
+          endpoint = 'confirm';
+          break;
+        case 'shipped':
+          endpoint = 'ship';
+          break;
+        case 'delivered':
+          endpoint = 'deliver';
+          break;
+        case 'cancelled':
+          endpoint = 'cancel';
+          break;
+        default:
+          return;
+      }
+      await axios.post(`api/v1/orders/orders/${orderId}/${endpoint}/`);
       // Refetch orders to update the list
       const response = await axios.get('api/v1/orders/orders/');
       setOrders(response.data.results);

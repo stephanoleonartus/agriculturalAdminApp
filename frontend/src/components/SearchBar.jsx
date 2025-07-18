@@ -18,8 +18,15 @@ const SearchBar = ({ onSearch }) => {
       }
       setLoading(true);
       try {
-        const response = await axios.get(`auth/search/recommendations/?q=${searchTerm}`);
-        setSuggestions(response.data);
+        let response;
+        if (activeTab === 'Products') {
+          response = await axios.get(`/api/products/products/search/?q=${searchTerm}`);
+        } else if (activeTab === 'Farmers') {
+          response = await axios.get(`/api/auth/farmers/?search=${searchTerm}`);
+        } else if (activeTab === 'Suppliers') {
+          response = await axios.get(`/api/auth/suppliers/?search=${searchTerm}`);
+        }
+        setSuggestions(response.data.results);
       } catch (error) {
         console.error('Error fetching search suggestions:', error);
       }
@@ -31,7 +38,7 @@ const SearchBar = ({ onSearch }) => {
     }, 300);
 
     return () => clearTimeout(debounceFetch);
-  }, [searchTerm]);
+  }, [searchTerm, activeTab]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
