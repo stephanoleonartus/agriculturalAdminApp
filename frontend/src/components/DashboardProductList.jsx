@@ -27,8 +27,12 @@ const DashboardProductList = () => {
   const fetchProducts = async (userId, role) => {
     setLoading(true);
     try {
-      const response = await axios.get('products/products/my_products/');
-      setProducts(response.data || []);
+      const response = await axios.get(`/api/products/products/?owner=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setProducts(response.data.results || []);
     } catch (err) {
       setError('Error loading your products');
       console.error('Error fetching products:', err);
@@ -39,7 +43,11 @@ const DashboardProductList = () => {
   
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/products/${productId}/`);
+      await axios.delete(`/api/products/products/${productId}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       setProducts(products.filter(p => p.id !== productId));
     } catch (err) {
       setError('Failed to delete product');

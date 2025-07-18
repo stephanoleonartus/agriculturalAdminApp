@@ -15,7 +15,11 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('products/cart/add_item/', { product_id: product.id, quantity: 1 });
+      await axios.post('/api/products/cart/add_item/', { product_id: product.id, quantity: 1 }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       alert(`${product.name} added to cart!`);
     } catch (err) {
       console.error('Error adding to cart:', err);
@@ -25,7 +29,11 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToWishlist = async () => {
     try {
-      await axios.post('products/wishlist/add_product/', { product_id: product.id });
+      await axios.post('/api/products/wishlist/toggle/', { product_id: product.id }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       alert(`${product.name} added to wishlist!`);
     } catch (err) {
       console.error('Error adding to wishlist:', err);
@@ -92,7 +100,11 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('cart-items/', { product_id: product.id, quantity: 1 });
+      await axios.post('/api/products/cart/add_item/', { product_id: product.id, quantity: 1 }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       alert('Product added to cart!');
     } catch (err) {
       alert('There was an error adding the product to the cart.');
@@ -101,7 +113,11 @@ const ProductDetailPage = () => {
 
   const handleAddToWishlist = async () => {
     try {
-      await axios.post('wishlist/', { product_id: product.id });
+      await axios.post('/api/products/wishlist/toggle/', { product_id: product.id }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       alert('Product added to wishlist!');
     } catch (err) {
       alert('There was an error adding the product to the wishlist.');
@@ -111,7 +127,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`products/${id}/`);
+        const response = await axios.get(`/api/products/products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');
@@ -176,7 +192,11 @@ const AddProduct = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('products/categories/');
+        const response = await axios.get('/api/products/categories/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
         setCategories(response.data.results || []);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -211,7 +231,7 @@ const AddProduct = () => {
     }
 
     try {
-      await axios.post('products/', productData, {
+      await axios.post('/api/products/products/', productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -335,7 +355,7 @@ const Products = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`products/products/${location.search}`);
+        const response = await axios.get(`/api/products/products/${location.search}`);
         setProducts(response.data.results || []);
       } catch (err) {
         setError('Error loading products');
@@ -347,7 +367,7 @@ const Products = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('products/categories/');
+        const response = await axios.get('/api/products/categories/');
         setCategories(response.data.results || []);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -356,7 +376,7 @@ const Products = () => {
 
     const fetchRegions = async () => {
       try {
-        const response = await axios.get('auth/regions/');
+        const response = await axios.get('/api/auth/regions/');
         setRegions(response.data || []);
       } catch (err) {
         console.error('Error fetching regions:', err);
@@ -379,7 +399,7 @@ const Products = () => {
 
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`products/products/${productId}/`, {
+      await axios.delete(`/api/products/products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

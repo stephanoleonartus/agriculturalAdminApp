@@ -1,5 +1,6 @@
 // Rate.jsx
 import React, { useState, useEffect } from "react";
+import axios from '../api/axios';
 import "../styles/Rate.css";
 
 function Rate() {
@@ -7,13 +8,14 @@ function Rate() {
   const [newReview, setNewReview] = useState({
     rating: 5,
     comment: "",
-    productId: "",
-    farmerId: ""
+    product: "",
+    reviewee: ""
   });
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [farmers, setFarmers] = useState([]);
+  const [reply, setReply] = useState({ reviewId: null, text: '' });
 
   useEffect(() => {
     fetchReviews();
@@ -22,72 +24,42 @@ function Rate() {
   }, []);
 
   const fetchReviews = async () => {
-    // TODO: Replace with Django API call
-    // const response = await fetch('http://localhost:8000/api/reviews/');
-    // const data = await response.json();
-    // setReviews(data);
-    
-    // Mock data
-    setReviews([
-      {
-        id: 1,
-        rating: 5,
-        comment: "Excellent quality apples! Very fresh and tasty.",
-        customer: "John Customer",
-        product: "Fresh Apples",
-        farmer: "John Mwakyusa",
-        date: "2024-01-15",
-        helpful: 12
-      },
-      {
-        id: 2,
-        rating: 4,
-        comment: "Good bananas, delivered on time. Packaging could be better.",
-        customer: "Mary Buyer",
-        product: "Organic Bananas",
-        farmer: "Asha Komba",
-        date: "2024-01-20",
-        helpful: 8
-      },
-      {
-        id: 3,
-        rating: 5,
-        comment: "Amazing tomatoes! Perfect for my restaurant.",
-        customer: "Restaurant Owner",
-        product: "Red Tomatoes",
-        farmer: "Peter Farmer",
-        date: "2024-01-18",
-        helpful: 15
-      }
-    ]);
+    try {
+      const response = await axios.get('/api/v1/reviews/reviews/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setReviews(response.data.results);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
   };
 
   const fetchProducts = async () => {
-    // TODO: Replace with Django API call
-    // const response = await fetch('http://localhost:8000/api/products/');
-    // const data = await response.json();
-    // setProducts(data);
-    
-    // Mock data
-    setProducts([
-      { id: 1, name: "Fresh Apples", farmer: "John Mwakyusa" },
-      { id: 2, name: "Organic Bananas", farmer: "Asha Komba" },
-      { id: 3, name: "Red Tomatoes", farmer: "Peter Farmer" }
-    ]);
+    try {
+      const response = await axios.get('/api/products/products/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setProducts(response.data.results);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
   };
 
   const fetchFarmers = async () => {
-    // TODO: Replace with Django API call
-    // const response = await fetch('http://localhost:8000/api/farmers/');
-    // const data = await response.json();
-    // setFarmers(data);
-    
-    // Mock data
-    setFarmers([
-      { id: 1, name: "John Mwakyusa", region: "Mbeya" },
-      { id: 2, name: "Asha Komba", region: "Morogoro" },
-      { id: 3, name: "Peter Farmer", region: "Arusha" }
-    ]);
+    try {
+      const response = await axios.get('/api/auth/farmers/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setFarmers(response.data.results);
+    } catch (error) {
+      console.error("Error fetching farmers:", error);
+    }
   };
 
   const handleSubmitReview = async (e) => {
@@ -95,32 +67,18 @@ function Rate() {
     setLoading(true);
 
     try {
-      // TODO: Replace with Django API call
-      // const response = await fetch('http://localhost:8000/api/reviews/', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(newReview)
-      // });
-
-      // Mock submission
-      const review = {
-        id: Date.now(),
-        ...newReview,
-        customer: "Current User",
-        product: products.find(p => p.id === parseInt(newReview.productId))?.name || "Unknown Product",
-        farmer: farmers.find(f => f.id === parseInt(newReview.farmerId))?.name || "Unknown Farmer",
-        date: new Date().toISOString().split('T')[0],
-        helpful: 0
-      };
-
-      setReviews(prev => [review, ...prev]);
+      await axios.post('/api/v1/reviews/reviews/', newReview, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      fetchReviews();
       setNewReview({
         rating: 5,
         comment: "",
-        productId: "",
-        farmerId: ""
+        product: "",
+        reviewee: ""
       });
-
       alert("Review submitted successfully!");
     } catch (error) {
       console.error("Error submitting review:", error);
@@ -131,16 +89,30 @@ function Rate() {
   };
 
   const handleHelpful = async (reviewId) => {
-    // TODO: Replace with Django API call
-    // await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful/`, {
-    //   method: 'POST'
-    // });
+    try {
+      await axios.post(`/api/v1/reviews/reviews/${reviewId}/mark_helpful/`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      fetchReviews();
+    } catch (error) {
+      console.error("Error marking review as helpful:", error);
+    }
+  };
 
-    setReviews(prev => prev.map(review => 
-      review.id === reviewId 
-        ? { ...review, helpful: review.helpful + 1 }
-        : review
-    ));
+  const handleReply = async (reviewId) => {
+    try {
+      await axios.post(`/api/v1/reviews/reviews/${reviewId}/respond/`, { response_text: reply.text }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      fetchReviews();
+      setReply({ reviewId: null, text: '' });
+    } catch (error) {
+      console.error("Error replying to review:", error);
+    }
   };
 
   const renderStars = (rating, interactive = false, onRatingChange = null) => {
@@ -164,7 +136,7 @@ function Rate() {
     return review.rating === parseInt(filter);
   });
 
-  const averageRating = reviews.length > 0 
+  const averageRating = reviews.length > 0
     ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
     : 0;
 
@@ -196,8 +168,8 @@ function Rate() {
                 <div key={rating} className="rating-bar">
                   <span className="rating-label">{rating} ⭐</span>
                   <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
+                    <div
+                      className="progress-fill"
                       style={{ width: `${percentage}%` }}
                     ></div>
                   </div>
@@ -210,7 +182,7 @@ function Rate() {
           <div className="rating-filters">
             <h4>Filter by Rating</h4>
             <div className="filter-buttons">
-              <button 
+              <button
                 className={filter === "all" ? "active" : ""}
                 onClick={() => setFilter("all")}
               >
@@ -237,14 +209,14 @@ function Rate() {
                 <div className="form-group">
                   <label>Select Product</label>
                   <select
-                    value={newReview.productId}
-                    onChange={(e) => setNewReview({...newReview, productId: e.target.value})}
+                    value={newReview.product}
+                    onChange={(e) => setNewReview({ ...newReview, product: e.target.value })}
                     required
                   >
                     <option value="">Choose a product...</option>
                     {products.map(product => (
                       <option key={product.id} value={product.id}>
-                        {product.name} - {product.farmer}
+                        {product.name} - {product.owner.username}
                       </option>
                     ))}
                   </select>
@@ -253,14 +225,14 @@ function Rate() {
                 <div className="form-group">
                   <label>Select Farmer</label>
                   <select
-                    value={newReview.farmerId}
-                    onChange={(e) => setNewReview({...newReview, farmerId: e.target.value})}
+                    value={newReview.reviewee}
+                    onChange={(e) => setNewReview({ ...newReview, reviewee: e.target.value })}
                     required
                   >
                     <option value="">Choose a farmer...</option>
                     {farmers.map(farmer => (
                       <option key={farmer.id} value={farmer.id}>
-                        {farmer.name} - {farmer.region}
+                        {farmer.username} - {farmer.region.name}
                       </option>
                     ))}
                   </select>
@@ -269,8 +241,8 @@ function Rate() {
 
               <div className="form-group">
                 <label>Your Rating</label>
-                {renderStars(newReview.rating, true, (rating) => 
-                  setNewReview({...newReview, rating})
+                {renderStars(newReview.rating, true, (rating) =>
+                  setNewReview({ ...newReview, rating })
                 )}
               </div>
 
@@ -278,7 +250,7 @@ function Rate() {
                 <label>Your Review</label>
                 <textarea
                   value={newReview.comment}
-                  onChange={(e) => setNewReview({...newReview, comment: e.target.value})}
+                  onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                   placeholder="Share your experience with this product or farmer..."
                   rows="4"
                   required
@@ -302,14 +274,14 @@ function Rate() {
                 <div key={review.id} className="review-item">
                   <div className="review-header">
                     <div className="reviewer-info">
-                      <img 
-                        src={`https://i.pravatar.cc/40?img=${review.id}`} 
-                        alt={review.customer}
+                      <img
+                        src={`https://i.pravatar.cc/40?img=${review.id}`}
+                        alt={review.reviewer_name}
                         className="reviewer-avatar"
                       />
                       <div>
-                        <h4>{review.customer}</h4>
-                        <p className="review-date">{new Date(review.date).toLocaleDateString()}</p>
+                        <h4>{review.reviewer_name}</h4>
+                        <p className="review-date">{new Date(review.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <div className="review-rating">
@@ -319,22 +291,28 @@ function Rate() {
 
                   <div className="review-content">
                     <div className="review-details">
-                      <span className="product-name">Product: {review.product}</span>
-                      <span className="farmer-name">Farmer: {review.farmer}</span>
+                      <span className="product-name">Product: {review.product.name}</span>
+                      <span className="farmer-name">Farmer: {review.reviewee_name}</span>
                     </div>
                     <p className="review-comment">{review.comment}</p>
                   </div>
 
                   <div className="review-actions">
-                    <button 
+                    <button
                       className="helpful-btn"
                       onClick={() => handleHelpful(review.id)}
                     >
-                      👍 Helpful ({review.helpful})
+                      👍 Helpful ({review.helpful_count})
                     </button>
-                    <button className="reply-btn">
+                    <button className="reply-btn" onClick={() => setReply({ reviewId: review.id, text: '' })}>
                       💬 Reply
                     </button>
+                    {reply.reviewId === review.id && (
+                      <div className="reply-form">
+                        <textarea value={reply.text} onChange={(e) => setReply({ ...reply, text: e.target.value })} />
+                        <button onClick={() => handleReply(review.id)}>Submit Reply</button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

@@ -30,7 +30,11 @@ const EditProduct = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('products/categories/');
+        const response = await axios.get('/api/products/categories/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
         setCategories(response.data.results);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -39,7 +43,11 @@ const EditProduct = () => {
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`products/${id}/`);
+        const response = await axios.get(`/api/products/products/${id}/`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
         setFormData(response.data);
       } catch (err) {
         console.error('Error fetching product:', err);
@@ -91,7 +99,7 @@ const EditProduct = () => {
     }
 
     try {
-      await axios.put(`products/products/${id}/`, productData, {
+      await axios.put(`/api/products/products/${id}/`, productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

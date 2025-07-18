@@ -8,12 +8,16 @@ const CartIcon = () => {
 
     useEffect(() => {
         const fetchCart = async () => {
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('access_token');
             if (!token) {
                 return;
             }
             try {
-                const response = await axios.get('products/cart/current/');
+                const response = await axios.get('/api/products/cart/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 setCartCount(response.data.total_items);
             } catch (err) {
                 console.error('Error fetching cart:', err);

@@ -10,14 +10,18 @@ const CartPage = () => {
 
   useEffect(() => {
     const fetchCart = async () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('access_token');
       if (!token) {
         setError('Please log in to see your cart.');
         setLoading(false);
         return;
       }
       try {
-        const response = await axios.get('products/cart/current/');
+        const response = await axios.get('/api/products/cart/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setCart(response.data);
       } catch (err) {
         setError('There was an error fetching your cart.');
@@ -31,7 +35,11 @@ const CartPage = () => {
 
   const handleUpdateQuantity = async (itemId, quantity) => {
     try {
-      const response = await axios.patch(`products/cart/update_item/${itemId}/`, { quantity });
+      const response = await axios.patch(`/api/products/cart/${cart.id}/`, { items: [{ id: itemId, quantity }] }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       setCart(response.data);
     } catch (err) {
       console.error('Error updating cart item:', err);
@@ -40,8 +48,14 @@ const CartPage = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      const response = await axios.delete(`products/cart/remove_item/${itemId}/`);
-      setCart(response.data);
+      await axios.delete(`/api/products/cart/items/${itemId}/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      const newCart = { ...cart };
+      newCart.items = newCart.items.filter(item => item.id !== itemId);
+      setCart(newCart);
     } catch (err) {
       console.error('Error removing cart item:', err);
     }
@@ -69,9 +83,17 @@ const CartPage = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      await axios.post('orders/', { cart_id: cart.id });
+      await axios.post('/api/v1/orders/orders/', { cart_id: cart.id }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       alert('Order placed successfully!');
-      const response = await axios.get('products/cart/current/');
+      const response = await axios.get('/api/products/cart/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       setCart(response.data);
     } catch (err) {
       console.error('Error placing order:', err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import "../styles/Admin.css";
 
 function Admin() {
@@ -24,7 +24,11 @@ function Admin() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/admin/stats/");
+      const response = await axios.get("/api/v1/analytics/dashboard-stats/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
       setStats(response.data);
     } catch (error) {
       setError("Failed to fetch stats.");
@@ -34,8 +38,12 @@ function Admin() {
 
   const fetchFarmers = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/admin/farmers/");
-      setFarmers(response.data);
+      const response = await axios.get("/api/auth/farmers/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setFarmers(response.data.results);
     } catch (error) {
       setError("Failed to fetch farmers.");
       console.error("Error fetching farmers:", error);
@@ -44,18 +52,27 @@ function Admin() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/admin/products/");
-      setProducts(response.data);
-    } catch (error) {
-      setError("Failed to fetch products.");
-      console.error("Error fetching products:", error);
-    }
+      const response = await axios.get("/api/products/products/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setProducts(response.data.results);
+    } catch (error)
+      {
+          setError("Failed to fetch products.");
+          console.error("Error fetching products:", error);
+      }
   };
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/admin/orders/");
-      setOrders(response.data);
+      const response = await axios.get("/api/v1/orders/orders/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setOrders(response.data.results);
     } catch (error) {
       setError("Failed to fetch orders.");
       console.error("Error fetching orders:", error);
@@ -64,8 +81,19 @@ function Admin() {
 
   const handleStatusChange = async (type, id, newStatus) => {
     try {
-      await axios.patch(`http://localhost:8000/api/admin/${type}/${id}/`, {
-        status: newStatus,
+      let endpoint = '';
+      if (type === 'orders') {
+        endpoint = `/api/v1/orders/orders/${id}/`;
+      } else {
+        // The endpoints for updating farmer and product status are not defined in the schema.
+        // This is a placeholder for the actual implementation.
+        alert(`Updating ${type} status is not yet implemented.`);
+        return;
+      }
+      await axios.patch(endpoint, { status: newStatus }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
       });
       alert(`${type} status updated to ${newStatus}`);
       // Refetch data to show updated status
@@ -91,10 +119,10 @@ function Admin() {
   const renderOverview = () => (
     <div className="overview-section">
       <div className="stats-grid">
-        <StatCard title="Total Farmers" value={stats.totalFarmers} icon="👨‍🌾" color="green" />
-        <StatCard title="Total Products" value={stats.totalProducts} icon="🌾" color="blue" />
-        <StatCard title="Total Orders" value={stats.totalOrders} icon="📦" color="orange" />
-        <StatCard title="Total Suppliers" value={stats.totalSuppliers} icon="🏪" color="purple" />
+        <StatCard title="Total Farmers" value={stats.total_farmers} icon="👨‍🌾" color="green" />
+        <StatCard title="Total Products" value={stats.total_products} icon="🌾" color="blue" />
+        <StatCard title="Total Orders" value={stats.total_orders} icon="📦" color="orange" />
+        <StatCard title="Total Suppliers" value={stats.total_suppliers} icon="🏪" color="purple" />
       </div>
       <div className="recent-activities">
         <h3>Recent Activities</h3>
