@@ -10,10 +10,17 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('api/v1/orders/orders/');
+        const response = await axios.get('/api/v1/orders/orders/');
         setOrders(response.data.results);
+        if (response.data.results.length === 0) {
+          setError('You have no orders.');
+        }
       } catch (err) {
-        setError('There was an error fetching your orders.');
+        if (err.response && err.response.status === 401) {
+          setError('You must be logged in to view your orders.');
+        } else {
+          setError('There was an error fetching your orders.');
+        }
       } finally {
         setLoading(false);
       }

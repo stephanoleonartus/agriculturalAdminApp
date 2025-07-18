@@ -46,12 +46,19 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_superuser:
+            return Order.objects.all()
         if user.role == 'buyer':
             return Order.objects.filter(buyer=user)
+
+        elif user.role == 'farmer':
+            return Order.objects.filter(product__owner=user)
+
         elif user.role in ['farmer', 'supplier']:
             return Order.objects.filter(supplier=user)
         elif user.is_staff:
             return Order.objects.all()
+
         return Order.objects.none()
 
     def perform_create(self, serializer):
