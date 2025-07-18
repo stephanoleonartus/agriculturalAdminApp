@@ -24,13 +24,6 @@ const TopHeader = () => {
         };
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('userInfo');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.dispatchEvent(new Event('authChange'));
-        navigate('/');
-    };
 
     return (
         <div className="top-header">
@@ -59,7 +52,6 @@ const TopHeader = () => {
                         <i className="fas fa-user"></i>
                         <Link to="/profile">Account</Link>
                         {showDropdown && <ProfileDropdown user={user} />}
-                        <button onClick={handleLogout}>Logout</button>
                     </div>
                 ) : (
                     <div className="action-item">

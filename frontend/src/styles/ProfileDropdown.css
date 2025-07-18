@@ -37,3 +37,22 @@
 .greeting {
   color: green;
 }
+
+.profile-dropdown-footer {
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.profile-dropdown-footer button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #dc3545;
+  color: #fff;
+  cursor: pointer;
+}
+
+.profile-dropdown-footer button:hover {
+  background-color: #c82333;
+}

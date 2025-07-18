@@ -1,8 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/ProfileDropdown.css';
 
 const ProfileDropdown = ({ user }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.dispatchEvent(new Event('authChange'));
+    navigate('/');
+  };
+
   return (
     <div className="profile-dropdown">
       <div className="profile-dropdown-header">
@@ -35,6 +45,9 @@ const ProfileDropdown = ({ user }) => {
             <Link to="/profile/help-center">Help Center</Link>
           </li>
         </ul>
+      </div>
+      <div className="profile-dropdown-footer">
+        <button onClick={handleLogout}>Logout</button>
       </div>
     </div>
   );
