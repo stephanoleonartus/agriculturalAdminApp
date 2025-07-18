@@ -1,25 +1,15 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import CategoryMenu from './CategoryMenu';
-import SupplierNav from './SupplierNav';
-import FarmerNav from './FarmerNav';
+import { Link } from 'react-router-dom';
 
 const CategoryNav = () => {
-    const location = useLocation();
-
-    const renderNav = () => {
-        if (location.pathname.startsWith('/suppliers')) {
-            return <SupplierNav />;
-        } else if (location.pathname.startsWith('/farmers')) {
-            return <FarmerNav />;
-        } else {
-            return <CategoryMenu />;
-        }
-    };
-
     return (
         <nav className="category-nav">
-            {renderNav()}
+            <ul>
+                <li><Link to="/products">All Categories</Link></li>
+                <li><Link to="/products">Products</Link></li>
+                <li><Link to="/suppliers">Suppliers</Link></li>
+                <li><Link to="/farmers">Farmers</Link></li>
+            </ul>
         </nav>
     );
 };
