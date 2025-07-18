@@ -45,8 +45,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         if user.role == 'farmer':
             FarmerProfile.objects.create(user=user)
         elif user.role == 'supplier':
-            SupplierProfile.objects.create(user=user)
-        # No special profile needed for buyers
+            SupplierProfile.objects.create(
+                user=user,
+                business_name=f"{user.first_name} {user.last_name}'s Business",
+                supplier_type='general'
+            )
         
         return user
 class UserSerializer(serializers.ModelSerializer):

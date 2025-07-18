@@ -1,236 +1,114 @@
-# products/views.py (updated)
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.pagination import PageNumberPagination
-from .models import Product, Category, ProductImage, ProductVideo, Wishlist, Cart, CartItem
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from .models import Product, Category, Wishlist, Cart, CartItem
 from .serializers import (
-    ProductSerializer, CategorySerializer, ProductCreateSerializer, 
-    ProductUpdateSerializer, ProductImageSerializer, ProductVideoSerializer,
-    ProductStockUpdateSerializer, ProductPriceUpdateSerializer,
-    ProductStatusSerializer, WishlistSerializer, CartSerializer, CartItemSerializer
+    ProductSerializer, CategorySerializer, 
+    WishlistSerializer, CartSerializer, CartItemSerializer
 )
 from .permissions import IsOwnerOrReadOnly, IsFarmerOrSupplier
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
+# ====================== PRODUCTS ======================
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.filter(is_active=True)
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['category', 'region', 'owner', 'is_featured']
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'description', 'category__name']
     ordering_fields = ['price', 'created_at', 'name']
     ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
-
-    def get_queryset(self):
-        queryset = Product.objects.all()
-        if self.request.query_params.get('include_inactive') != 'true':
-            queryset = queryset.filter(is_active=True)
-        return queryset
-
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return ProductCreateSerializer
-        elif self.action in ['update', 'partial_update']:
-            return ProductUpdateSerializer
-        return ProductSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy',
-                          'upload_image', 'update_stock', 'update_price',
-                          'toggle_status']:
-            return [permissions.IsAuthenticated(), IsFarmerOrSupplier(), IsOwnerOrReadOnly()]
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsFarmerOrSupplier()]
         return [permissions.AllowAny()]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    @action(detail=True, methods=['post'])
-    def upload_image(self, request, pk=None):
-        product = self.get_object()
-        serializer = ProductImageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(product=product)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['post'])
-    def update_stock(self, request, pk=None):
-        product = self.get_object()
-        serializer = ProductStockUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            product.quantity = serializer.validated_data['quantity']
-            product.save()
-            return Response({
-                'status': 'stock updated',
-                'quantity': product.quantity
-            })
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['post'])
-    def update_price(self, request, pk=None):
-        product = self.get_object()
-        serializer = ProductPriceUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            product.price = serializer.validated_data['price']
-            product.save()
-            return Response({
-                'status': 'price updated',
-                'price': str(product.price)
-            })
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['post'])
-    def toggle_status(self, request, pk=None):
-        product = self.get_object()
-        product.is_active = not product.is_active
-        product.save()
-        return Response({
-            'status': 'active' if product.is_active else 'inactive',
-            'is_active': product.is_active
-        })
+    # Custom Actions
+    @action(detail=False, methods=['get'])
+    def search(self, request):
+        """Search products by name, description, or category"""
+        queryset = self.filter_queryset(self.get_queryset())
+        query = request.query_params.get('q', '')
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) | 
+                Q(description__icontains=query) |
+                Q(category__name__icontains=query)
+            )
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        featured_products = self.get_queryset().filter(is_featured=True)[:10]
-        serializer = self.get_serializer(featured_products, many=True)
+        """List featured products"""
+        queryset = self.get_queryset().filter(is_featured=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'])
-    def out_of_stock(self, request):
-        out_of_stock = self.get_queryset().filter(quantity__lte=0)
-        serializer = self.get_serializer(out_of_stock, many=True)
-        return Response(serializer.data)
-
-    @action(detail=False, methods=['get'])
-    def my_products(self, request):
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        user_products = Product.objects.filter(owner=request.user)
-        page = self.paginate_queryset(user_products)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        
-        serializer = self.get_serializer(user_products, many=True)
-        return Response(serializer.data)
-
+# ====================== CATEGORIES ======================
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.AllowAny]
     pagination_class = None
 
+    @action(detail=True, methods=['get'])
+    def products(self, request, pk=None):
+        """List products in a category"""
+        category = self.get_object()
+        products = Product.objects.filter(category=category, is_active=True)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+# ====================== MISSING VIEWS ======================
 class CategoryProductsView(generics.ListAPIView):
+    """List products by category slug"""
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['region', 'owner', 'is_featured']
-    search_fields = ['name', 'description']
-    ordering_fields = ['price', 'created_at', 'name']
-    ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
-    
+
     def get_queryset(self):
         category_slug = self.kwargs['category_slug']
-        return Product.objects.filter(
-            category__slug=category_slug,
-            is_active=True
-        )
+        category = get_object_or_404(Category, slug=category_slug)
+        return Product.objects.filter(category=category, is_active=True)
 
 class UserProductsView(generics.ListAPIView):
+    """List products by user ID"""
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['category', 'region', 'is_featured']
-    search_fields = ['name', 'description']
-    ordering_fields = ['price', 'created_at', 'name']
-    ordering = ['-created_at']
-    pagination_class = StandardResultsSetPagination
-    
+
     def get_queryset(self):
         user_id = self.kwargs['user_id']
-        return Product.objects.filter(
-            owner__id=user_id,
-            is_active=True
-        )
+        return Product.objects.filter(owner_id=user_id, is_active=True)
 
+# ====================== WISHLIST ======================
 class WishlistViewSet(viewsets.ModelViewSet):
     serializer_class = WishlistSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get_queryset(self):
         return Wishlist.objects.filter(user=self.request.user)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
     @action(detail=False, methods=['post'])
-    def add_product(self, request):
+    def toggle(self, request):
+        """Add/remove product from wishlist"""
         product_id = request.data.get('product_id')
-        if not product_id:
-            return Response(
-                {'error': 'Product ID is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            product = Product.objects.get(id=product_id)
-            wishlist_item, created = Wishlist.objects.get_or_create(
-                user=request.user,
-                product=product
-            )
-            
-            if created:
-                serializer = self.get_serializer(wishlist_item)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(
-                    {'message': 'Product already in wishlist'}, 
-                    status=status.HTTP_200_OK
-                )
-        except Product.DoesNotExist:
-            return Response(
-                {'error': 'Product not found'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-    @action(detail=False, methods=['post'])
-    def remove_product(self, request):
-        product_id = request.data.get('product_id')
-        if not product_id:
-            return Response(
-                {'error': 'Product ID is required'}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            wishlist_item = Wishlist.objects.get(
-                user=request.user,
-                product__id=product_id
-            )
+        wishlist_item, created = Wishlist.objects.get_or_create(
+            user=request.user, 
+            product_id=product_id
+        )
+        if not created:
             wishlist_item.delete()
-            return Response(
-                {'message': 'Product removed from wishlist'}, 
-                status=status.HTTP_200_OK
-            )
-        except Wishlist.DoesNotExist:
-            return Response(
-                {'error': 'Product not in wishlist'}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({'status': 'removed'}, status=status.HTTP_200_OK)
+        return Response({'status': 'added'}, status=status.HTTP_201_CREATED)
 
+# ====================== CART ======================
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -238,73 +116,21 @@ class CartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
 
-    def get_object(self):
-        cart, created = Cart.objects.get_or_create(user=self.request.user)
-        return cart
-
-    @action(detail=False, methods=['get'])
-    def current(self, request):
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data)
-
     @action(detail=False, methods=['post'])
     def add_item(self, request):
+        """Add product to cart (or update quantity)"""
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         product_id = request.data.get('product_id')
-        quantity = request.data.get('quantity', 1)
-
-        if not product_id:
-            return Response({'error': 'Product ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            product = Product.objects.get(id=product_id)
-            cart, created = Cart.objects.get_or_create(user=request.user)
-            cart_item, created = CartItem.objects.get_or_create(
-                cart=cart, product=product, defaults={'quantity': quantity}
-            )
-
-            if not created:
-                cart_item.quantity += int(quantity)
-                cart_item.save()
-
-            serializer = self.get_serializer(cart)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Product.DoesNotExist:
-            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    @action(detail=True, methods=['patch'])
-    def update_item(self, request, pk=None):
-        cart_item = self.get_cart_item(pk)
-        if not cart_item:
-            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        quantity = request.data.get('quantity')
-        if quantity is None:
-            return Response({'error': 'Quantity is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if int(quantity) <= 0:
-            cart_item.delete()
-        else:
-            cart_item.quantity = quantity
+        quantity = int(request.data.get('quantity', 1))
+        
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, 
+            product_id=product_id,
+            defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
             cart_item.save()
-
-        cart = self.get_object()
-        serializer = self.get_serializer(cart)
+        
+        serializer = CartSerializer(cart)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['delete'])
-    def remove_item(self, request, pk=None):
-        cart_item = self.get_cart_item(pk)
-        if not cart_item:
-            return Response({'error': 'Cart item not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        cart_item.delete()
-        cart = self.get_object()
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def get_cart_item(self, pk):
-        try:
-            return CartItem.objects.get(id=pk, cart__user=self.request.user)
-        except CartItem.DoesNotExist:
-            return None
