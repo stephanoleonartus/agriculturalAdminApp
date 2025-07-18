@@ -163,8 +163,20 @@ class SupplierProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='supplier_profile')
     business_name = models.CharField(max_length=100)
     supplier_type = models.CharField(max_length=20, choices=SUPPLIER_TYPES)
-    license_number = models.CharField(max_length=50, unique=True)
-    tax_id = models.CharField(max_length=30, unique=True)
+    license_number = models.CharField(
+                        max_length=50, 
+                        null=True, 
+                        blank=True, 
+                        unique=True,
+                        default=None
+                    )
+    tax_id = models.CharField(
+                        max_length=30, 
+                        null=True, 
+                        blank=True, 
+                        unique=True,
+                        default=None
+                    )
     products_categories = models.JSONField(default=list, blank=True)
     minimum_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     delivery_areas = models.JSONField(default=list, blank=True)
