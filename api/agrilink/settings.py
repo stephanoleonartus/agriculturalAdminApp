@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_extensions',
 
+    'drf_spectacular',
     
     # Local apps
     'accounts',
@@ -120,6 +121,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REST Framework Configuration
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],

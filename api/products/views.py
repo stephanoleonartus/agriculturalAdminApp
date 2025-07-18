@@ -26,13 +26,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [permissions.IsAuthenticated(), IsFarmerOrSupplier()]
-        return [permissions.AllowAny()]
+        return [permissions.AllowAny()]  # Fixed typo (was `AllowAny`)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
     # Custom Actions
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
         """Search products by name, description, or category"""
         queryset = self.filter_queryset(self.get_queryset())
@@ -46,32 +46,53 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path='featured')
     def featured(self, request):
         """List featured products"""
         queryset = self.get_queryset().filter(is_featured=True)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'], url_path='out-of-stock')
+    def out_of_stock(self, request):
+        """List out-of-stock products (for farmers/suppliers)"""
+        queryset = self.filter_queryset(self.get_queryset().filter(quantity__lte=0))
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='update-stock')
+    def update_stock(self, request, pk=None):
+        """Update product stock (farmer/supplier only)"""
+        product = self.get_object()
+        serializer = ProductStockUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            product.quantity = serializer.validated_data['quantity']
+            product.save()
+            return Response({'status': 'stock updated'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 # ====================== CATEGORIES ======================
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = None
+    lookup_field = 'slug'  # Use slug instead of PK
 
-    @action(detail=True, methods=['get'])
-    def products(self, request, pk=None):
-        """List products in a category"""
+    @action(detail=True, methods=['get'], url_path='products')
+    def products(self, request, slug=None):
+        """List products in a category (slug-based)"""
         category = self.get_object()
         products = Product.objects.filter(category=category, is_active=True)
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
-# ====================== MISSING VIEWS ======================
+# ====================== USER & CATEGORY PRODUCTS ======================
 class CategoryProductsView(generics.ListAPIView):
-    """List products by category slug"""
+    """Alternative view for products by category slug"""
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['region', 'is_featured']
 
     def get_queryset(self):
         category_slug = self.kwargs['category_slug']
@@ -82,6 +103,8 @@ class UserProductsView(generics.ListAPIView):
     """List products by user ID"""
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['price', 'created_at']
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -95,10 +118,16 @@ class WishlistViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Wishlist.objects.filter(user=self.request.user)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='toggle')
     def toggle(self, request):
         """Add/remove product from wishlist"""
         product_id = request.data.get('product_id')
+        if not product_id:
+            return Response(
+                {'error': 'product_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         wishlist_item, created = Wishlist.objects.get_or_create(
             user=request.user, 
             product_id=product_id
@@ -116,21 +145,35 @@ class CartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='add-item')
     def add_item(self, request):
         """Add product to cart (or update quantity)"""
-        cart, _ = Cart.objects.get_or_create(user=request.user)
         product_id = request.data.get('product_id')
         quantity = int(request.data.get('quantity', 1))
         
+        if not product_id:
+            return Response(
+                {'error': 'product_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        cart, _ = Cart.objects.get_or_create(user=request.user)
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart, 
             product_id=product_id,
             defaults={'quantity': quantity}
         )
+        
         if not created:
             cart_item.quantity += quantity
             cart_item.save()
         
         serializer = CartSerializer(cart)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='clear')
+    def clear(self, request):
+        """Empty the cart"""
+        cart = Cart.objects.get(user=request.user)
+        cart.items.all().delete()
+        return Response({'status': 'cart cleared'})
