@@ -155,20 +155,34 @@ const ProductDetailPage = () => {
     <div className="product-detail-page">
       <div className="product-detail-layout">
         <div className="product-images">
-          {product.images.map((image) => (
-            <img key={image.id} src={image.image} alt={image.alt_text} />
-          ))}
+          {product.images && product.images.length > 0 ? (
+            product.images.map((image) => (
+              <img key={image.id} src={image.image} alt={image.alt_text || product.name} />
+            ))
+          ) : (
+            <img src={product.primary_image || FALLBACK_IMAGE_URL} alt={product.name} />
+          )}
         </div>
         <div className="product-info">
           <h2>{product.name}</h2>
-          <p className="price">${product.price} / {product.unit}</p>
+          <p className="price">TZS {parseFloat(product.price).toFixed(2)} / {product.unit}</p>
           <p className="description">{product.description}</p>
           <div className="owner-info">
             <h4>Sold by:</h4>
-            <p>{product.farmer.username}</p>
+            <p>
+              {product.farmer_name || product.farmer?.username || 'Unknown Farmer'}
+              {product.farmer_region && ` (${product.farmer_region})`}
+            </p>
           </div>
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
-          <button className="add-to-wishlist-btn" onClick={handleAddToWishlist}>Add to Wishlist</button>
+          {product.is_organic && <p className="organic-badge">🌿 Organic</p>}
+          {product.is_available ? (
+            <>
+              <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
+              <button className="add-to-wishlist-btn" onClick={handleAddToWishlist}>Add to Wishlist</button>
+            </>
+          ) : (
+            <button className="add-to-cart-btn" disabled>Unavailable</button>
+          )}
         </div>
       </div>
     </div>
