@@ -12,7 +12,7 @@ function Navigation() {
       setIsAuthenticated(!!token);
       if (token) {
         try {
-          const userRes = await axios.get('/api/auth/me/', {
+          const userRes = await axios.get('/auth/me/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setUser(userRes.data);
