@@ -24,6 +24,7 @@ function Navigation() {
           const userRes = await axios.get('/api/auth/me/', {
             headers: { Authorization: `Bearer ${token}` },
           });
+          console.log(userRes.data);
           setUser(userRes.data);
 
           const cartRes = await axios.get('/api/products/cart/', {
@@ -91,7 +92,21 @@ function Navigation() {
         <Notification /> {/* This is for general notifications */}
 
         {isAuthenticated && user ? (
-          <ProfileDropdown user={user} />
+          <div className="auth-links">
+            <span className="nav-item">Hi, {user.first_name}</span>
+            <button onClick={() => {
+              axios.post('auth/logout/', {}, {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                },
+              });
+              localStorage.removeItem('userInfo');
+              localStorage.removeItem('access_token');
+              localStorage.removeItem('refresh_token');
+              window.dispatchEvent(new Event('authChange'));
+              navigate('/');
+            }}>Logout</button>
+          </div>
         ) : (
           <div className="auth-links">
             <Link to="/login" className="nav-item">
