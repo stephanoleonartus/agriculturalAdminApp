@@ -58,7 +58,7 @@ class User(AbstractUser):
     ROLE_CHOICES = [
         ('farmer', 'Farmer'),
         ('supplier', 'Supplier'),
-        ('buyer', 'Buyer'),
+        ('customer', 'Customer'),
     ]
     
     GENDER_CHOICES = [
@@ -68,7 +68,7 @@ class User(AbstractUser):
         ('prefer_not_to_say', 'Prefer not to say'),
     ]
     
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='buyer')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='customer')
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, null=True, blank=True)
     phone_number = models.CharField(
