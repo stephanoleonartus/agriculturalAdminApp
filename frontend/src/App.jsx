@@ -26,6 +26,8 @@ import EditProduct from './components/EditProduct';
 import Dashboard from './components/dashboard/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import CustomerLayout from './components/CustomerLayout';
+import DashboardLayout from './components/DashboardLayout';
 
 
 import Chat from './components/Chat';
@@ -38,30 +40,55 @@ function AppContent() {
   const showHome = location.pathname === '/';
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
+  const user = JSON.parse(localStorage.getItem('userInfo'));
+
   return (
     <>
       {!isDashboardRoute && showHome && <Home />}
       <Routes>
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/add" element={<AddProduct />} />
-        <Route path="/products/edit/:id" element={<EditProduct />} />
-        <Route path="/products/:id" element={<ProductDetailPage />} />
-        <Route path="/products/:id/contact" element={<ContactInfoPage />} />
-        <Route path="/farmers" element={<Farmers />} />
-        <Route path="/suppliers" element={<Suppliers />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/cart" element={<CartPage />} />
+        {user?.role === 'customer' ? (
+          <Route path="/" element={<CustomerLayout />}>
+            <Route path="products" element={<Products />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="products/:id/contact" element={<ContactInfoPage />} />
+            <Route path="farmers" element={<Farmers />} />
+            <Route path="suppliers" element={<Suppliers />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="profile" element={<MyProfile />}>
+              <Route path="orders" element={<Orders />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="payment-methods" element={<PaymentMethods />} />
+              <Route path="rewards" element={<Rewards />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="help-center" element={<HelpCenter />} />
+            </Route>
+          </Route>
+        ) : (
+          <Route path="/" element={<DashboardLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="products/add" element={<AddProduct />} />
+            <Route path="products/edit/:id" element={<EditProduct />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="products/:id/contact" element={<ContactInfoPage />} />
+            <Route path="farmers" element={<Farmers />} />
+            <Route path="suppliers" element={<Suppliers />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="profile" element={<MyProfile />}>
+              <Route path="orders" element={<Orders />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="payment-methods" element={<PaymentMethods />} />
+              <Route path="rewards" element={<Rewards />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="help-center" element={<HelpCenter />} />
+            </Route>
+          </Route>
+        )}
         <Route path="/auth" element={<Auth />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/profile" element={<MyProfile />}>
-          <Route path="orders" element={<Orders />} />
-          <Route path="wishlist" element={<Wishlist />} />
-          <Route path="payment-methods" element={<PaymentMethods />} />
-          <Route path="rewards" element={<Rewards />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="help-center" element={<HelpCenter />} />
-        </Route>
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Admin />} />
@@ -70,7 +97,6 @@ function AppContent() {
           <Route path="users" element={<UserList />} />
           <Route path="orders" element={<OrderList />} />
         </Route>
-        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );
