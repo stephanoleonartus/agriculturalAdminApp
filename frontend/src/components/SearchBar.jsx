@@ -109,42 +109,6 @@ const SearchBar = ({ onSearch }) => {
 
   return (
     <div className="search-bar-container" ref={searchContainerRef}>
-      <div className="search-tabs">
-        <div
-          style={getTabStyle('Products')}
-          onClick={() => handleTabClick('Products')}
-          className={`search-tab ${activeTab === 'Products' ? 'active' : ''}`}
-        >
-          Products
-        </div>
-        <div
-          style={getTabStyle('Farmers')}
-          onClick={() => handleTabClick('Farmers')}
-          className={`search-tab ${activeTab === 'Farmers' ? 'active' : ''}`}
-        >
-          Farmers
-        </div>
-        <div
-          style={getTabStyle('Suppliers')}
-          onClick={() => handleTabClick('Suppliers')}
-          className={`search-tab ${activeTab === 'Suppliers' ? 'active' : ''}`}
-        >
-          Suppliers
-        </div>
-      </div>
-      <form onSubmit={handleSearch} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div className="search-input-container">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleInputChange}
-            placeholder={`Search for ${activeTab}...`}
-          />
-          <button type="submit">
-            Search
-          </button>
-        </div>
-      </form>
       {suggestions.length > 0 && (
         <ul className="suggestions-list">
           {suggestions.map((suggestion, index) => (

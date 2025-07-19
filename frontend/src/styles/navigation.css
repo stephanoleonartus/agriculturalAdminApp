@@ -1,66 +1,60 @@
+/* General Navbar Styling */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease-in-out;
 }
 
-.create-account-btn {
-  background-color: #4CAF50; /* Example color */
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+.navbar:hover {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
-.create-account-btn:hover {
-  background-color: #45a049; /* Darker shade on hover */
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.search-container {
+.search-bar {
   display: flex;
   align-items: center;
-  width: 400px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px 0 0 4px;
-}
-
-.search-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-left: none;
   background-color: #f0f0f0;
+  border-radius: 20px;
+  padding: 5px;
+}
+
+.search-bar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 5px;
+  width: 300px;
+}
+
+.search-bar button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 20px 20px 0;
   cursor: pointer;
-  border-radius: 0 4px 4px 0;
+  padding: 5px 10px;
 }
 
 .menu {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
 }
 
 .nav-item {
+  margin-left: 20px;
   text-decoration: none;
   color: #333;
 }
 
 .icon-link {
-  font-size: 1.5rem;
+  font-size: 20px;
 }
 
 .notification-container {
@@ -71,30 +65,21 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  width: 18px;
-  height: 18px;
   background-color: red;
   color: white;
   border-radius: 50%;
-  font-size: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 2px 5px;
+  font-size: 10px;
 }
 
 .auth-links {
   display: flex;
-  gap: 1rem;
-}
-
-.auth-links .nav-item {
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--primary-color);
-  font-weight: bold;
 }
 
-.auth-icon {
-  stroke: var(--primary-color) !important;
+.create-account-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
 }
