@@ -82,7 +82,8 @@ const TopHeader = () => {
         <Notification /> {/* This is for general notifications */}
 
         {isAuthenticated && user ? (
-          <div className="auth-links">
+          <div className="auth-links profile-menu">
+            <i className="fas fa-user"></i>
             <ProfileDropdown user={user} />
           </div>
         ) : (
