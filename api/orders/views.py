@@ -12,6 +12,48 @@ from .serializers import (
 )
 from products.models import Product
 from accounts.models import User
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_order_from_product(request):
+    product_id = request.data.get('product_id')
+    quantity = int(request.data.get('quantity', 1))
+
+    if not product_id:
+        return Response(
+            {'error': 'product_id is required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return Response(
+            {'error': 'Product not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    buyer = request.user
+    supplier = product.owner
+
+    order = Order.objects.create(
+        buyer=buyer,
+        supplier=supplier,
+        total_amount=product.price * quantity,
+    )
+
+    OrderItem.objects.create(
+        order=order,
+        product=product,
+        quantity=quantity,
+        price=product.price
+    )
+
+    serializer = OrderSerializer(order)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class OrderPermission(permissions.BasePermission):
     """Custom permission for order access control"""
