@@ -20,11 +20,11 @@ const SearchBar = ({ onSearch }) => {
       try {
         let response;
         if (activeTab === 'Products') {
-          response = await axios.get(`/api/products/products/search/?q=${searchTerm}`);
+          response = await axios.get(`/products/products/search/?q=${searchTerm}`);
         } else if (activeTab === 'Farmers') {
-          response = await axios.get(`/api/auth/farmers/?search=${searchTerm}`);
+          response = await axios.get(`/auth/farmers/?search=${searchTerm}`);
         } else if (activeTab === 'Suppliers') {
-          response = await axios.get(`/api/auth/suppliers/?search=${searchTerm}`);
+          response = await axios.get(`/auth/suppliers/?search=${searchTerm}`);
         }
         setSuggestions(response.data.results);
       } catch (error) {
@@ -88,10 +88,10 @@ const SearchBar = ({ onSearch }) => {
 
     if (activeTab === tabName) {
       switch (tabName) {
-        case 'Products':
-          style.backgroundColor = 'darkgreen'; // Dark Green
-          style.color = 'white';
-          break;
+        // case 'Products':
+          // style.backgroundColor = 'darkgreen'; // Dark Green
+          // style.color = 'white';
+          // break;
         case 'Farmers':
           style.backgroundColor = 'green'; // Green
           style.color = 'white';

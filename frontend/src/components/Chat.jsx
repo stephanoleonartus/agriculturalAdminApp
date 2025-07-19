@@ -20,7 +20,7 @@ const Chat = () => {
         return;
       }
       try {
-        const response = await axios.get('/api/v1/chat/rooms/');
+        const response = await axios.get('/v1/chat/rooms/');
         setConversations(response.data.results);
       } catch (err) {
         setError('There was an error fetching your conversations.');
@@ -36,7 +36,7 @@ const Chat = () => {
     if (selectedConversation) {
       const fetchMessages = async () => {
         try {
-          const response = await axios.get(`/api/v1/chat/rooms/${selectedConversation.id}/messages/`);
+          const response = await axios.get(`/v1/chat/rooms/${selectedConversation.id}/messages/`);
           setMessages(response.data);
         } catch (err) {
           console.error('Error fetching messages:', err);
@@ -51,7 +51,7 @@ const Chat = () => {
     if (!newMessage.trim() || !selectedConversation) return;
 
     try {
-      const response = await axios.post(`/api/v1/chat/rooms/${selectedConversation.id}/send_message/`, {
+      const response = await axios.post(`/v1/chat/rooms/${selectedConversation.id}/send_message/`, {
         content: newMessage,
       });
       setMessages([...messages, response.data]);

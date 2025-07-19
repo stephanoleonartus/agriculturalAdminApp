@@ -17,7 +17,7 @@ const CartPage = () => {
         return;
       }
       try {
-        const response = await axios.get('/api/products/cart/', {
+        const response = await axios.get('/products/cart/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -35,7 +35,7 @@ const CartPage = () => {
 
   const handleUpdateQuantity = async (itemId, quantity) => {
     try {
-      const response = await axios.patch(`/api/products/cart/${cart.id}/`, { items: [{ id: itemId, quantity }] }, {
+      const response = await axios.patch(`/products/cart/${cart.id}/`, { items: [{ id: itemId, quantity }] }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -48,7 +48,7 @@ const CartPage = () => {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(`/api/products/cart/items/${itemId}/`, {
+      await axios.delete(`/products/cart/items/${itemId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -83,13 +83,13 @@ const CartPage = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      await axios.post('/api/v1/orders/orders/', { cart_id: cart.id }, {
+      await axios.post('/v1/orders/orders/', { cart_id: cart.id }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       });
       alert('Order placed successfully!');
-      const response = await axios.get('/api/products/cart/', {
+      const response = await axios.get('/products/cart/', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

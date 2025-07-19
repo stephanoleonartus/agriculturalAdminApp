@@ -11,14 +11,14 @@ const Inventory = () => {
     const fetchInventory = async () => {
       setLoading(true);
       try {
-        const productsRes = await axios.get('/api/products/products/', {
+        const productsRes = await axios.get('/products/products/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
         });
         setProducts(productsRes.data.results);
 
-        const outOfStockRes = await axios.get('/api/products/products/out_of_stock/', {
+        const outOfStockRes = await axios.get('/products/products/out_of_stock/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -36,13 +36,13 @@ const Inventory = () => {
 
   const handleUpdateStock = async (productId, newStock) => {
     try {
-      await axios.post(`/api/products/products/${productId}/update_stock/`, { quantity: newStock }, {
+      await axios.post(`/products/products/${productId}/update_stock/`, { quantity: newStock }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       });
       // Refetch inventory to update the list
-      const productsRes = await axios.get('/api/products/products/', {
+      const productsRes = await axios.get('/products/products/', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

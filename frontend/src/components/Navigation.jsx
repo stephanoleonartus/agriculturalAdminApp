@@ -21,18 +21,18 @@ function Navigation() {
       setIsAuthenticated(!!token);
       if (token) {
         try {
-          const userRes = await axios.get('/api/auth/me/', {
+          const userRes = await axios.get('/auth/me/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           console.log(userRes.data);
           setUser(userRes.data);
 
-          const cartRes = await axios.get('/api/products/cart/', {
+          const cartRes = await axios.get('/products/cart/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setCartItemCount(cartRes.data.total_items);
 
-          const chatRes = await axios.get('/api/v1/chat/rooms/', {
+          const chatRes = await axios.get('/v1/chat/rooms/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setMessageCount(chatRes.data.results.reduce((acc, room) => acc + room.unread_count, 0));

@@ -15,7 +15,7 @@ function ForgotPassword() {
     setError('');
 
     try {
-      await axios.post('/api/auth/password-reset/', { email });
+      await axios.post('/auth/password-reset/', { email });
       setMessage('If an account with that email exists, a password reset link has been sent.');
     } catch (err) {
       setError(err.response?.data?.detail || 'An error occurred. Please try again.');

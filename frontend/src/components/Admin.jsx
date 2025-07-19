@@ -24,7 +24,7 @@ function Admin() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("/api/v1/analytics/dashboard-stats/", {
+      const response = await axios.get("/v1/analytics/dashboard-stats/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -38,7 +38,7 @@ function Admin() {
 
   const fetchFarmers = async () => {
     try {
-      const response = await axios.get("/api/auth/farmers/", {
+      const response = await axios.get("/auth/farmers/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -52,7 +52,7 @@ function Admin() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("/api/products/products/", {
+      const response = await axios.get("/products/products/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -67,7 +67,7 @@ function Admin() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/api/v1/orders/orders/", {
+      const response = await axios.get("/v1/orders/orders/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -83,7 +83,7 @@ function Admin() {
     try {
       let endpoint = '';
       if (type === 'orders') {
-        endpoint = `/api/v1/orders/orders/${id}/`;
+        endpoint = `/v1/orders/orders/${id}/`;
       } else {
         // The endpoints for updating farmer and product status are not defined in the schema.
         // This is a placeholder for the actual implementation.

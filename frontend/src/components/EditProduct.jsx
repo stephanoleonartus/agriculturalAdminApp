@@ -30,7 +30,7 @@ const EditProduct = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('/api/products/categories/', {
+        const response = await axios.get('/products/categories/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -43,7 +43,7 @@ const EditProduct = () => {
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/api/products/products/${id}/`, {
+        const response = await axios.get(`/products/products/${id}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -99,7 +99,7 @@ const EditProduct = () => {
     }
 
     try {
-      await axios.put(`/api/products/products/${id}/`, productData, {
+      await axios.put(`/products/products/${id}/`, productData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,

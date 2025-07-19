@@ -11,8 +11,8 @@ const TopHeader = () => {
         <div className="top-header">
             <div className="logo">
                 <Link to="/">
-                    <img src="/agrilink-logo.png" alt="Agrilink Logo" />
-                    <span>Agrilink</span>
+                    {/* <img src="/agrilink-logo.png" alt="Agrilink Logo" /> */}
+                    <span>Agrilink.com</span>
                 </Link>
             </div>
             <SearchBar />

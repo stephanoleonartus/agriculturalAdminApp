@@ -10,7 +10,7 @@ const HelpCenter = () => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/v1/help-center/', {
+        const response = await axios.get('/v1/help-center/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

@@ -10,7 +10,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('/api/v1/orders/orders/mine/', {
+        const response = await axios.get('/v1/orders/orders/mine/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

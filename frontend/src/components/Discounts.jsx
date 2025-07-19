@@ -10,7 +10,7 @@ const Discounts = () => {
     const fetchDiscounts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/v1/discounts/', {
+        const response = await axios.get('/v1/discounts/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

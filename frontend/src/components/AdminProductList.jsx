@@ -22,7 +22,7 @@ const AdminProductList = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/products/products/?include_inactive=true', {
+      const response = await axios.get('/products/products/?include_inactive=true', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -38,7 +38,7 @@ const AdminProductList = () => {
   
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`/api/products/products/${productId}/`, {
+      await axios.delete(`/products/products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

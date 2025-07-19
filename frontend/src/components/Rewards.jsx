@@ -10,7 +10,7 @@ const Rewards = () => {
     const fetchRewards = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/v1/rewards/', {
+        const response = await axios.get('/v1/rewards/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

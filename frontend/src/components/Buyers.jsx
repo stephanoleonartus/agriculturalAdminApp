@@ -10,7 +10,7 @@ const Buyers = () => {
     const fetchBuyers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/auth/buyers/', {
+        const response = await axios.get('/auth/buyers/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

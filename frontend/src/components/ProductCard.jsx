@@ -9,7 +9,7 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post('/api/products/cart/add_item/', {
+      await axios.post('/products/cart/add_item/', {
         product_id: product.id,
         quantity: 1
       }, {
@@ -26,7 +26,7 @@ const ProductCard = ({ product, onDelete }) => {
 
   const handleAddToWishlist = async () => {
     try {
-      await axios.post('/api/products/wishlist/toggle/', {
+      await axios.post('/products/wishlist/toggle/', {
         product_id: product.id
       }, {
         headers: {

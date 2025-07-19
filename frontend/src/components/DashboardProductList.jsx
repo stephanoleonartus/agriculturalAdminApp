@@ -27,7 +27,7 @@ const DashboardProductList = () => {
   const fetchProducts = async (userId, role) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/products/products/?owner=${userId}`, {
+      const response = await axios.get(`/products/products/?owner=${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -43,7 +43,7 @@ const DashboardProductList = () => {
   
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`/api/products/products/${productId}/`, {
+      await axios.delete(`/products/products/${productId}/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

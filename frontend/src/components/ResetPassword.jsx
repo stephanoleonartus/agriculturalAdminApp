@@ -25,7 +25,7 @@ function ResetPassword() {
     }
 
     try {
-      await axios.post('/api/auth/password-reset-confirm/', {
+      await axios.post('/auth/password-reset-confirm/', {
         uidb64,
         token,
         password,

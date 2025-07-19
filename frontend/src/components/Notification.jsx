@@ -11,7 +11,7 @@ function Notification() {
   const [error, setError] = useState(null);
   const notificationPanelRef = useRef(null);
 
-  const API_BASE_URL = "/api/v1/notifications/notifications"; // Base URL
+  const API_BASE_URL = "/v1/notifications/notifications"; // Base URL
 
   const getToken = () => localStorage.getItem("authToken");
 

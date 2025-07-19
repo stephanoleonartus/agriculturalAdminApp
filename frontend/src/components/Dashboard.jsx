@@ -16,7 +16,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('/api/auth/me/', {
+        const response = await axios.get('/auth/me/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get('/api/v1/analytics/dashboard-stats/', {
+        const response = await axios.get('/v1/analytics/dashboard-stats/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
@@ -42,7 +42,7 @@ const Dashboard = () => {
 
     const fetchChartData = async () => {
       try {
-        const response = await axios.get('/api/v1/analytics/sales/revenue_chart/', {
+        const response = await axios.get('/v1/analytics/sales/revenue_chart/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },

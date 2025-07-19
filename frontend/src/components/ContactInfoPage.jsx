@@ -12,7 +12,7 @@ const ContactInfoPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`/api/products/products/${id}/`);
+        const response = await axios.get(`/products/products/${id}/`);
         setProduct(response.data);
       } catch (err) {
         setError('There was an error fetching the product details.');

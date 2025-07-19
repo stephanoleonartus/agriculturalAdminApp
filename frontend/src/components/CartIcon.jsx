@@ -13,7 +13,7 @@ const CartIcon = () => {
                 return;
             }
             try {
-                const response = await axios.get('/api/products/cart/', {
+                const response = await axios.get('/products/cart/', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
