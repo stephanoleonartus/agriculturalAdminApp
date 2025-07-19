@@ -1,27 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from '../api/axios';
 import '../styles/ProfileDropdown.css';
 
-const ProfileDropdown = ({ user }) => {
+const ProfileDropdown = ({ user = {} }) => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await axios.post('auth/logout/', {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-    } catch (error) {
-      console.error('Error logging out:', error);
-    } finally {
-      localStorage.removeItem('userInfo');
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.dispatchEvent(new Event('authChange'));
-      navigate('/');
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.dispatchEvent(new Event('authChange'));
+    navigate('/');
   };
 
   return (
