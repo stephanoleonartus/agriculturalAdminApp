@@ -5,7 +5,9 @@ import axios from '../api/axios';
 import '../styles/product.css';
 import '../styles/ProductDetailPage.css';
 import '../styles/Auth.css';
+import '../styles/Modal.css';
 import CategoryMenu from './CategoryMenu';
+import OrderForm from './OrderForm';
 
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/150?text=No+Image";
 
@@ -50,7 +52,7 @@ const ProductCard = ({ product, onDelete }) => {
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-card-link">
-        <img src={product.primary_image || FALLBACK_IMAGE_URL} alt={product.name} className="product-image" />
+        <img src={product.image ? `http://localhost:8000${product.image}` : FALLBACK_IMAGE_URL} alt={product.name} className="product-image" />
         <h3>{product.name}</h3>
       </Link>
       <p className="product-price">
@@ -97,6 +99,15 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+
+  const handleOpenOrderModal = () => {
+    setIsOrderModalOpen(true);
+  };
+
+  const handleCloseOrderModal = () => {
+    setIsOrderModalOpen(false);
+  };
 
   const handleAddToCart = async () => {
     try {
@@ -179,12 +190,30 @@ const ProductDetailPage = () => {
             <>
               <button className="add-to-cart-btn" onClick={handleAddToCart}>Add to Cart</button>
               <button className="add-to-wishlist-btn" onClick={handleAddToWishlist}>Add to Wishlist</button>
+              <button className="btn btn-order" onClick={handleOpenOrderModal}>
+                Order Now
+              </button>
             </>
           ) : (
             <button className="add-to-cart-btn" disabled>Unavailable</button>
           )}
         </div>
       </div>
+      {isOrderModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">Place Order</h3>
+              <button className="modal-close-btn" onClick={handleCloseOrderModal}>
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <OrderForm product={product} onClose={handleCloseOrderModal} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
