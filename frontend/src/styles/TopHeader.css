@@ -21,6 +21,25 @@
   align-items: center;
 }
 
+.profile-menu {
+    position: relative;
+}
+
+.profile-menu .profile-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.profile-menu:hover .profile-dropdown {
+    display: block;
+}
+
 .top-header-right .nav-item {
   margin-left: 1rem;
   display: flex;
