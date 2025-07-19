@@ -54,15 +54,11 @@ function Navigation() {
 
 
   const handleSearch = () => {
-    // Handle search functionality
+    navigate(`/products/products?search=${searchTerm}`);
   };
 
   return (
     <div className="navbar">
-      {/* Geolocation Status */}
-      <div className="location-info-section" onClick={fetchLocation}>
-        Deliver to: {location ? location.region : '...'}
-      </div>
       {/* Logo Section */}
       <div className="logo">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
@@ -70,6 +66,11 @@ function Navigation() {
         </Link>
       </div>
 
+      {/* Search Bar */}
+      <div className="search-bar">
+        <input type="text" placeholder="Search for products..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <button onClick={handleSearch}>Search</button>
+      </div>
 
       {/* Menu navigation */}
       <div className="menu">
