@@ -1,6 +1,31 @@
 import React, { useState } from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from 'chart.js';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import '../styles/Chart.css';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 const Chart = ({ data }) => {
   const [chartType, setChartType] = useState('line');
@@ -18,14 +43,29 @@ const Chart = ({ data }) => {
     ],
   };
 
+  // Chart options to ensure proper cleanup
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Sales Chart',
+      },
+    },
+  };
+
   const renderChart = () => {
     switch (chartType) {
       case 'line':
-        return <Line data={chartData} />;
+        return <Line data={chartData} options={options} />;
       case 'bar':
-        return <Bar data={chartData} />;
+        return <Bar data={chartData} options={options} />;
       case 'pie':
-        return <Pie data={chartData} />;
+        return <Pie data={chartData} options={options} />;
       default:
         return null;
     }
@@ -36,9 +76,24 @@ const Chart = ({ data }) => {
       <div className="chart-header">
         <h3>Sales Chart</h3>
         <div className="chart-options">
-          <button onClick={() => setChartType('line')}>Line</button>
-          <button onClick={() => setChartType('bar')}>Bar</button>
-          <button onClick={() => setChartType('pie')}>Pie</button>
+          <button 
+            onClick={() => setChartType('line')}
+            className={chartType === 'line' ? 'active' : ''}
+          >
+            Line
+          </button>
+          <button 
+            onClick={() => setChartType('bar')}
+            className={chartType === 'bar' ? 'active' : ''}
+          >
+            Bar
+          </button>
+          <button 
+            onClick={() => setChartType('pie')}
+            className={chartType === 'pie' ? 'active' : ''}
+          >
+            Pie
+          </button>
         </div>
       </div>
       <div className="chart-body">

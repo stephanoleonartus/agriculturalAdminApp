@@ -28,7 +28,7 @@ const DashboardLayout = () => {
     <div className="dashboard-layout">
       <div className="dashboard-sidebar">
         <ul>
-          <li><Link to="/dashboard"><i className="fas fa-tachometer-alt"></i>Dashboard</Link></li>
+          <li><Link to="/dashboard"><i className="fas fa-tachometer-alt"></i>Home</Link></li>
           <li><Link to="/dashboard/orders"><i className="fas fa-shopping-cart"></i>Orders</Link></li>
           <li><Link to="/dashboard/products"><i className="fas fa-box"></i>Products</Link></li>
           <li><Link to="/products/add"><i className="fas fa-plus-square"></i>Add Product</Link></li>
