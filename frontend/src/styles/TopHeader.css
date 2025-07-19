@@ -42,6 +42,7 @@
 
 .notification-menu {
     position: relative;
+    margin-right: 1rem;
 }
 
 .top-header-right .nav-item {

@@ -36,10 +36,11 @@ import { LocationProvider } from './contexts/LocationContext'; // Import Locatio
 function AppContent() {
   const location = useLocation();
   const showHome = location.pathname === '/';
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
   return (
     <>
-      {showHome && <Home />}
+      {!isDashboardRoute && showHome && <Home />}
       <Routes>
         <Route path="/products" element={<Products />} />
         <Route path="/products/add" element={<AddProduct />} />
