@@ -7,7 +7,15 @@
   border-bottom: 1px solid #dee2e6;
 }
 
-.top-header-left,
+.top-header-left .logo img {
+  height: 40px;
+}
+
+.top-header-center {
+  flex-grow: 1;
+  margin: 0 2rem;
+}
+
 .top-header-right {
   display: flex;
   align-items: center;
@@ -15,6 +23,12 @@
 
 .top-header-right .nav-item {
   margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.top-header-right .nav-item i {
+  margin-right: 0.5rem;
 }
 
 .notification-container {

@@ -4,6 +4,7 @@ import axios from '../api/axios';
 import '../styles/TopHeader.css';
 import Notification from "./Notification";
 import ProfileDropdown from "./ProfileDropdown";
+import SearchBar from './SearchBar';
 import { useLocation } from '../contexts/LocationContext';
 
 const TopHeader = () => {
@@ -53,12 +54,19 @@ const TopHeader = () => {
   return (
     <div className="top-header">
       <div className="top-header-left">
-        {/* Delivery to region */}
-        <div className="nav-item">
-          <span>Delivery to: {locationLoading ? 'Loading...' : (location ? `${location.city}, ${location.country}` : 'N/A')}</span>
-        </div>
+        <Link to="/" className="logo">
+          <img src="/logo.png" alt="Agrilink" />
+        </Link>
+      </div>
+      <div className="top-header-center">
+        <SearchBar />
       </div>
       <div className="top-header-right">
+        {/* Delivery to region */}
+        <div className="nav-item">
+          <i className="fas fa-map-marker-alt"></i>
+          <span>Delivery to: {locationLoading ? 'Loading...' : (location ? `${location.city}, ${location.country}` : 'N/A')}</span>
+        </div>
         {/* Message Icon */}
         <Link to="/chat" className="nav-item icon-link notification-container">
           <i className="fas fa-comment"></i>
