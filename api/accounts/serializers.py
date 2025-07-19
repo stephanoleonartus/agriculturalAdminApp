@@ -50,6 +50,10 @@ class RegisterSerializer(serializers.ModelSerializer):
                 business_name=f"{user.first_name} {user.last_name}'s Business",
                 supplier_type='general'
             )
+        elif user.role == 'customer':
+            # For customers, a basic UserProfile is already created.
+            # You can add customer-specific profile logic here if needed in the future.
+            pass
         
         return user
 class UserSerializer(serializers.ModelSerializer):
