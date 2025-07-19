@@ -40,6 +40,10 @@
     display: block;
 }
 
+.notification-menu {
+    position: relative;
+}
+
 .top-header-right .nav-item {
   margin-left: 1rem;
   display: flex;
