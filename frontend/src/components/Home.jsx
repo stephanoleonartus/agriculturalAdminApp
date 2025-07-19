@@ -3,6 +3,7 @@ import '../styles/Home.css';
 import BusinessCategories from './BusinessCategories';
 import ProductShowcase from './ProductShowcase';
 import FeaturedSuppliers from './FeaturedSuppliers';
+import AllProducts from './AllProducts';
 
 const Home = () => {
   return (
@@ -20,6 +21,9 @@ const Home = () => {
         </div>
         <div className="grid-item">
           <FeaturedSuppliers />
+        </div>
+        <div className="grid-item-full-width">
+          <AllProducts />
         </div>
       </div>
     </div>
