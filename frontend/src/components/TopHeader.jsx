@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import '../styles/TopHeader.css';
-import Notification from "./Notification";
+import NotificationDropdown from "./NotificationDropdown";
 import ProfileDropdown from "./ProfileDropdown";
 import SearchBar from './SearchBar';
 import { useLocation } from '../contexts/LocationContext';
@@ -65,8 +65,18 @@ const TopHeader = () => {
         {/* Delivery to region */}
         <div className="nav-item">
           <i className="fas fa-map-marker-alt"></i>
-          <span>Delivery to: {locationLoading ? 'Loading...' : (location ? `${location.city}, ${location.country}` : 'N/A')}</span>
+          <span>
+            Delivery to: {locationLoading ? 'Loading...' : (user && user.region ? user.region : (location ? `${location.city}, ${location.country}` : 'N/A'))}
+          </span>
         </div>
+
+        {/* Dashboard Link */}
+        {isAuthenticated && (user?.role === 'farmer' || user?.role === 'supplier') && (
+          <a href="/dashboard" target="_blank" rel="noopener noreferrer" className="nav-item icon-link">
+            <i className="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        )}
         {/* Message Icon */}
         <Link to="/chat" className="nav-item icon-link notification-container">
           <i className="fas fa-comment"></i>
@@ -79,7 +89,10 @@ const TopHeader = () => {
           {cartItemCount > 0 && <span className="dot cart-dot">{cartItemCount > 9 ? '9+' : cartItemCount}</span>}
         </Link>
 
-        <Notification /> {/* This is for general notifications */}
+        <div className="notification-menu">
+          <i className="fas fa-bell"></i>
+          <NotificationDropdown />
+        </div>
 
         {isAuthenticated && user ? (
           <div className="auth-links profile-menu">

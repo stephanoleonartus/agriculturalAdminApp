@@ -21,11 +21,7 @@ const ProfileDropdown = ({ user = {} }) => {
       <div className="profile-dropdown-body">
         <ul>
           <li>
-            {user.role === 'farmer' || user.role === 'supplier' ? (
-              <a href="/dashboard" target="_blank" rel="noopener noreferrer">My Agrilink</a>
-            ) : (
-              <Link to="/dashboard">My Agrilink</Link>
-            )}
+            <Link to="/dashboard">My Agrilink</Link>
           </li>
           <li>
             <Link to="/profile">Account</Link>
