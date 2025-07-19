@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/SearchBar.css'; // Import the CSS file
 
 const SearchBar = ({ onSearch }) => {
-  const [activeTab, setActiveTab] = useState('Products'); // Products, Farmers, Suppliers
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,14 +17,7 @@ const SearchBar = ({ onSearch }) => {
       }
       setLoading(true);
       try {
-        let response;
-        if (activeTab === 'Products') {
-          response = await axios.get(`/api/products/products/search/?q=${searchTerm}`);
-        } else if (activeTab === 'Farmers') {
-          response = await axios.get(`/api/auth/farmers/?search=${searchTerm}`);
-        } else if (activeTab === 'Suppliers') {
-          response = await axios.get(`/api/auth/suppliers/?search=${searchTerm}`);
-        }
+        const response = await axios.get(`/api/products/products/search/?q=${searchTerm}`);
         setSuggestions(response.data.results);
       } catch (error) {
         console.error('Error fetching search suggestions:', error);
@@ -38,7 +30,7 @@ const SearchBar = ({ onSearch }) => {
     }, 300);
 
     return () => clearTimeout(debounceFetch);
-  }, [searchTerm, activeTab]);
+  }, [searchTerm]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -52,12 +44,6 @@ const SearchBar = ({ onSearch }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const handleTabClick = (tabName) => {
-    setActiveTab(tabName);
-    setSearchTerm('');
-    setSuggestions([]);
-  };
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -74,65 +60,12 @@ const SearchBar = ({ onSearch }) => {
     }
   };
 
-  const getTabStyle = (tabName) => {
-    let style = {
-      padding: '10px 20px',
-      cursor: 'pointer',
-      border: '1px solid #ccc',
-      borderBottom: 'none',
-      marginRight: '5px',
-      borderRadius: '5px 5px 0 0',
-      fontWeight: activeTab === tabName ? 'bold' : 'normal',
-      backgroundColor: '#f0f0f0', // Default background
-    };
-
-    if (activeTab === tabName) {
-      switch (tabName) {
-        // case 'Products':
-          // style.backgroundColor = 'darkgreen'; // Dark Green
-          // style.color = 'white';
-          // break;
-        case 'Farmers':
-          style.backgroundColor = 'green'; // Green
-          style.color = 'white';
-          break;
-        case 'Suppliers':
-          style.backgroundColor = 'orange'; // Orange
-          style.color = 'white';
-          break;
-        default:
-          break;
-      }
-    }
-    return style;
-  };
-
   return (
     <div className="search-bar-container" ref={searchContainerRef}>
-      <div className="search-tabs">
-        <div
-          style={getTabStyle('Products')}
-          onClick={() => handleTabClick('Products')}
-        >
-          Products
-        </div>
-        <div
-          style={getTabStyle('Farmers')}
-          onClick={() => handleTabClick('Farmers')}
-        >
-          Farmers
-        </div>
-        <div
-          style={getTabStyle('Suppliers')}
-          onClick={() => handleTabClick('Suppliers')}
-        >
-          Suppliers
-        </div>
-      </div>
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
-          placeholder={`Search for ${activeTab}...`}
+          placeholder="Search for products..."
           value={searchTerm}
           onChange={handleInputChange}
           className="search-input"
