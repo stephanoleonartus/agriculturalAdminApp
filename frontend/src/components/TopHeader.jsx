@@ -51,6 +51,30 @@ const TopHeader = () => {
     };
   }, [fetchLocation]);
 
+  // Helper function to get delivery location text
+  const getDeliveryLocationText = () => {
+    if (locationLoading) {
+      return 'Loading...';
+    }
+    
+    if (user && user.region) {
+      // Handle region object - extract the name property
+      if (typeof user.region === 'object' && user.region.name) {
+        return user.region.name;
+      }
+      // If it's already a string, return it
+      if (typeof user.region === 'string') {
+        return user.region;
+      }
+    }
+    
+    if (location) {
+      return `${location.city}, ${location.country}`;
+    }
+    
+    return 'N/A';
+  };
+
   return (
     <div className="top-header">
       <div className="top-header-left">
@@ -66,7 +90,7 @@ const TopHeader = () => {
         <div className="nav-item">
           <i className="fas fa-map-marker-alt"></i>
           <span>
-            Delivery to: {locationLoading ? 'Loading...' : (user && user.region ? user.region : (location ? `${location.city}, ${location.country}` : 'N/A'))}
+            Delivery to: {getDeliveryLocationText()}
           </span>
         </div>
 

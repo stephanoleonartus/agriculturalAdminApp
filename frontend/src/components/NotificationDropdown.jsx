@@ -4,23 +4,60 @@ import '../styles/NotificationDropdown.css';
 
 const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
+        setLoading(true);
         const response = await axios.get('/v1/notifications/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
         });
-        setNotifications(response.data.results);
+        
+        // Handle different possible response structures
+        const notificationData = response.data?.results || response.data || [];
+        setNotifications(Array.isArray(notificationData) ? notificationData : []);
+        setError(null);
       } catch (error) {
         console.error('Error fetching notifications:', error);
+        setError('Failed to load notifications');
+        setNotifications([]); // Set to empty array on error
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchNotifications();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="notification-dropdown">
+        <div className="notification-dropdown-header">
+          <p>Notifications</p>
+        </div>
+        <div className="notification-dropdown-body">
+          <p>Loading notifications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="notification-dropdown">
+        <div className="notification-dropdown-header">
+          <p>Notifications</p>
+        </div>
+        <div className="notification-dropdown-body">
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="notification-dropdown">
@@ -28,7 +65,7 @@ const NotificationDropdown = () => {
         <p>Notifications</p>
       </div>
       <div className="notification-dropdown-body">
-        {notifications.length > 0 ? (
+        {notifications && notifications.length > 0 ? (
           <ul>
             {notifications.map((notification) => (
               <li key={notification.id}>
