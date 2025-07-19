@@ -4,7 +4,6 @@ import axios from '../api/axios';
 import '../styles/navigation.css';
 import '../styles/Auth.css';
 import Notification from "./Notification";
-import ProfileDropdown from "./ProfileDropdown";
 import { useLocation } from '../contexts/LocationContext';
 
 function Navigation() {
@@ -63,7 +62,7 @@ function Navigation() {
       {/* Logo Section */}
       <div className="logo">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          🌾 AgriLink.com
+
         </Link>
       </div>
 
@@ -75,24 +74,6 @@ function Navigation() {
 
       {/* Menu navigation */}
       <div className="menu">
-        <Link to="/products" className="nav-item">Products</Link>
-        <Link to="/farmers" className="nav-item">Farmers</Link>
-        <Link to="/suppliers" className="nav-item">Region Supplier</Link>
-
-        {/* Message Icon */}
-        <Link to="/chat" className="nav-item icon-link notification-container">
-          💬
-          {messageCount > 0 && <span className="dot message-dot">{messageCount > 9 ? '9+' : messageCount}</span>}
-        </Link>
-
-        {/* Cart Icon */}
-        <Link to="/cart" className="nav-item icon-link notification-container">
-          🛒
-          {cartItemCount > 0 && <span className="dot cart-dot">{cartItemCount > 9 ? '9+' : cartItemCount}</span>}
-        </Link>
-
-        <Notification /> {/* This is for general notifications */}
-
         {isAuthenticated && user ? (
           <div className="auth-links">
             <span className="nav-item">Hi, {user.first_name}</span>
