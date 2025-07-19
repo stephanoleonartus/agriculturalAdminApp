@@ -1,40 +1,60 @@
-/* SearchBar.css */
-
 .search-bar-container {
-  /* Styles from inline are good, this is a placeholder or for overrides/additions */
-  font-family: Arial, sans-serif;
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .search-tabs {
-  /* Styles from inline are good */
+  display: flex;
 }
 
-.search-tab {
-  transition: background-color 0.3s ease, color 0.3s ease;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+.search-form {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 0 5px 5px 5px;
 }
 
-.search-tab:not(.active):hover {
-  background-color: #e0e0e0; /* Lighter grey for hover on non-active tabs */
+.search-input {
+  flex-grow: 1;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
 }
 
-.search-input-container {
-  /* Styles from inline are good */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for the input area */
+.search-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.search-input-container input[type="text"] {
-  /* Styles from inline are good, this is for potential overrides */
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;
 }
 
-.search-input-container button {
-  transition: background-color 0.3s ease;
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
 }
 
-/* Example of how you might style the active tab more distinctly if not using inline for all */
-/*
-.search-tab.active.products { background-color: darkgreen; color: white; }
-.search-tab.active.farmers { background-color: green; color: white; }
-.search-tab.active.suppliers { background-color: orange; color: white; }
-*/
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.loader {
+  padding: 10px;
+  text-align: center;
+}

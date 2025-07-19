@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from '../api/axios';
 import '../styles/navigation.css';
 import '../styles/Auth.css';
@@ -14,6 +14,7 @@ function Navigation() {
   const { location, locationError, locationLoading, permissionStatus, fetchLocation } = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {

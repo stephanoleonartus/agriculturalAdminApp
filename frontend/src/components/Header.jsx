@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TopHeader from './TopHeader';
+import Navigation from './Navigation';
 import CategoryNav from './CategoryNav';
 import '../styles/Header.css';
 
@@ -26,6 +27,7 @@ const Header = () => {
     return (
         <header className={`main-header ${isScrolled ? 'scrolled' : ''}`}>
             <TopHeader />
+            <Navigation />
             <CategoryNav />
         </header>
     );

@@ -20,11 +20,11 @@ const SearchBar = ({ onSearch }) => {
       try {
         let response;
         if (activeTab === 'Products') {
-          response = await axios.get(`/products/products/search/?q=${searchTerm}`);
+          response = await axios.get(`/api/products/products/search/?q=${searchTerm}`);
         } else if (activeTab === 'Farmers') {
-          response = await axios.get(`/auth/farmers/?search=${searchTerm}`);
+          response = await axios.get(`/api/auth/farmers/?search=${searchTerm}`);
         } else if (activeTab === 'Suppliers') {
-          response = await axios.get(`/auth/suppliers/?search=${searchTerm}`);
+          response = await axios.get(`/api/auth/suppliers/?search=${searchTerm}`);
         }
         setSuggestions(response.data.results);
       } catch (error) {
@@ -109,6 +109,39 @@ const SearchBar = ({ onSearch }) => {
 
   return (
     <div className="search-bar-container" ref={searchContainerRef}>
+      <div className="search-tabs">
+        <div
+          style={getTabStyle('Products')}
+          onClick={() => handleTabClick('Products')}
+        >
+          Products
+        </div>
+        <div
+          style={getTabStyle('Farmers')}
+          onClick={() => handleTabClick('Farmers')}
+        >
+          Farmers
+        </div>
+        <div
+          style={getTabStyle('Suppliers')}
+          onClick={() => handleTabClick('Suppliers')}
+        >
+          Suppliers
+        </div>
+      </div>
+      <form onSubmit={handleSearch} className="search-form">
+        <input
+          type="text"
+          placeholder={`Search for ${activeTab}...`}
+          value={searchTerm}
+          onChange={handleInputChange}
+          className="search-input"
+        />
+        <button type="submit" className="search-button">
+          Search
+        </button>
+      </form>
+      {loading && <div className="loader">Loading...</div>}
       {suggestions.length > 0 && (
         <ul className="suggestions-list">
           {suggestions.map((suggestion, index) => (
