@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import '../styles/DashboardLayout.css';
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('userInfo'));
+
+  useEffect(() => {
+    if (user?.role === 'customer') {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleLogout = async () => {
     try {
