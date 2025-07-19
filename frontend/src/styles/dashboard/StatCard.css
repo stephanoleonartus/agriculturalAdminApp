@@ -1,0 +1,71 @@
+.stat-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-title {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.stat-card-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.stat-card-trend {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.stat-card-trend.up {
+  color: #10b981;
+}
+
+.stat-card-trend.down {
+  color: #ef4444;
+}
+
+.stat-card-trend i {
+  margin-right: 4px;
+}
+
+.stat-card-icon {
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+}
+
+.stat-card-icon i {
+  font-size: 1.5rem;
+}
+
+.stat-card.emerald .stat-card-icon {
+  background: linear-gradient(to right, #10b981, #6ee7b7);
+}
+
+.stat-card.blue .stat-card-icon {
+  background: linear-gradient(to right, #3b82f6, #60a5fa);
+}
+
+.stat-card.purple .stat-card-icon {
+  background: linear-gradient(to right, #8b5cf6, #a78bfa);
+}
+
+.stat-card.orange .stat-card-icon {
+  background: linear-gradient(to right, #f97316, #fb923c);
+}
