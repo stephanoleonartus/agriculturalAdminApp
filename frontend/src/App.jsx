@@ -24,6 +24,7 @@ import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
 import Dashboard from './components/Dashboard';
+import MyAgrilink from './components/MyAgrilink';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import DashboardLayout from './components/DashboardLayout';
@@ -53,6 +54,7 @@ function AppContent() {
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<EditProduct />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="my-agrilink" element={<MyAgrilink />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
             <Route path="farmers" element={<Farmers />} />
             <Route path="suppliers" element={<Suppliers />} />

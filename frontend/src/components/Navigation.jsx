@@ -36,6 +36,9 @@ function Navigation() {
       {isAuthenticated && user ? (
         <p>
           Hello Welcome {user.first_name} to Agrilink.com, Enjoy to look and view Products
+          {(user.role === 'farmer' || user.role === 'supplier') && (
+            <a href="/my-agrilink">My Agrilink</a>
+          )}
         </p>
       ) : (
         <p>
