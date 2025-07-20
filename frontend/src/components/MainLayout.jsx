@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import TopHeader from './TopHeader';
 import Navigation from './Navigation';
 import CategoryNav from './CategoryNav';
 import '../styles/Header.css';
 
-const Header = () => {
+const MainLayout = () => {
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -25,12 +26,17 @@ const Header = () => {
     }, []);
 
     return (
-        <header className={`main-header ${isScrolled ? 'scrolled' : ''}`}>
-            <TopHeader />
-            <Navigation />
-            <CategoryNav />
-        </header>
+        <div className="main-layout">
+            <header className={`main-header ${isScrolled ? 'scrolled' : ''}`}>
+                <TopHeader />
+                <Navigation />
+                <CategoryNav />
+            </header>
+            <main className="main-content">
+                <Outlet />
+            </main>
+        </div>
     );
 };
 
-export default Header;
+export default MainLayout;

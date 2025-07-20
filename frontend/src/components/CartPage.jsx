@@ -34,6 +34,9 @@ const CartPage = () => {
   }, []);
 
   const handleUpdateQuantity = async (itemId, quantity) => {
+    // Prevent quantity from going below 1
+    if (quantity < 1) return;
+    
     try {
       const response = await axios.patch(`/products/cart/${cart.id}/`, { items: [{ id: itemId, quantity }] }, {
         headers: {
@@ -69,7 +72,8 @@ const CartPage = () => {
     return <div className="error-message">{error}</div>;
   }
 
-  if (!cart || cart.items.length === 0) {
+  // Fixed: Check if cart exists AND if cart.items exists AND if it has items
+  if (!cart || !cart.items || cart.items.length === 0) {
     return (
       <div className="cart-page">
         <h2>Your Cart is Empty</h2>
@@ -109,13 +113,21 @@ const CartPage = () => {
           {cart.items.map((item) => (
             <div key={item.id} className="cart-item">
               <div className="item-image">
-                <img src={item.product.images.find(img => img.is_primary)?.image || 'https://via.placeholder.com/150'} alt={item.product.name} />
+                <img 
+                  src={item.product.images?.find(img => img.is_primary)?.image || 'https://via.placeholder.com/150'} 
+                  alt={item.product.name} 
+                />
               </div>
               <div className="item-details">
                 <h3>{item.product.name}</h3>
                 <p>Price: ${item.product.price}</p>
                 <div className="item-quantity">
-                  <button onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}>-</button>
+                  <button 
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
                   <span>{item.quantity}</span>
                   <button onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}>+</button>
                 </div>
