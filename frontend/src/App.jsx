@@ -1,7 +1,7 @@
 // App.js
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Header from './components/Header';
+import MainLayout from './components/MainLayout';
 import Home from './components/Home';
 import { Products, ProductDetailPage, AddProduct } from './components/Product';
 import Farmers from './components/Farmers';
@@ -26,7 +26,6 @@ import EditProduct from './components/EditProduct';
 import Dashboard from './components/dashboard/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
-import CustomerLayout from './components/CustomerLayout';
 import DashboardLayout from './components/DashboardLayout';
 
 
@@ -47,7 +46,7 @@ function AppContent() {
       {!isDashboardRoute && showHome && <Home />}
       <Routes>
         {user?.role === 'customer' ? (
-          <Route path="/" element={<CustomerLayout />}>
+          <Route path="/" element={<MainLayout />}>
             <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
@@ -107,7 +106,6 @@ function App() {
     <LocationProvider> {/* Wrap with LocationProvider */}
       <div className="App">
         <Router>
-          <Header />
           <AppContent />
         </Router>
       </div>
