@@ -1,317 +1,282 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
-import Card from './Card';
-import Widget from './Widget';
-import Chart from './Chart';
-import '../styles/AccountDetail.css';
 import '../styles/Dashboard.css';
-
-import { BarChart3, Users, ShoppingCart, DollarSign, TrendingUp, Package, Bell, Search, Settings, Sprout, Truck, Eye } from 'lucide-react';
+import { 
+  BarChart3, Users, ShoppingCart, DollarSign, 
+  Package, Bell, Search, Settings, 
+  Calendar, Truck, Crop, Activity,
+  FileText, AlertCircle, CreditCard, PieChart
+} from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
-  const [chartData, setChartData] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [timeRange, setTimeRange] = useState('week');
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('/auth/me/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        setUser(response.data);
+        const [userRes, statsRes] = await Promise.all([
+          axios.get('/auth/me/', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+          }),
+          axios.get('/v1/analytics/dashboard-stats/', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+          })
+        ]);
+        
+        setUser(userRes.data);
+        setDashboardData(statsRes.data);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    const fetchDashboardData = async () => {
-      try {
-        const response = await axios.get('/v1/analytics/dashboard-stats/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      }
-    };
-
-    const fetchChartData = async () => {
-      try {
-        const response = await axios.get('/v1/analytics/sales/revenue_chart/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        setChartData(response.data);
-      } catch (error) {
-        console.error('Error fetching chart data:', error);
-      }
-    };
-
-    fetchUser();
-    fetchDashboardData();
-    fetchChartData();
+    fetchData();
   }, []);
 
+  // Simplified data for demonstration
+  const demoData = {
+    overview: {
+      cards: [
+        { title: "Total Products", value: "1,245", icon: <Package />, trend: "+12%", color: "blue" },
+        { title: "Active Orders", value: "56", icon: <ShoppingCart />, trend: "+5%", color: "green" },
+        { title: "Suppliers", value: "32", icon: <Truck />, trend: "+3%", color: "purple" },
+        { title: "Farmers", value: "128", icon: <Crop />, trend: "+8%", color: "orange" },
+      ],
+      recentActivities: [
+        { title: "New order from Farmer John", time: "10 mins ago", icon: <ShoppingCart /> },
+        { title: "Payment received from Agro Ltd", time: "25 mins ago", icon: <CreditCard /> },
+        { title: "New supplier registered", time: "1 hour ago", icon: <Truck /> },
+        { title: "Inventory low for Fertilizer X", time: "2 hours ago", icon: <AlertCircle /> },
+      ]
+    },
+    inventory: {
+      items: [
+        { name: "Organic Seeds", stock: "450kg", threshold: "50kg" },
+        { name: "Fertilizer A", stock: "1,200kg", threshold: "100kg" },
+        { name: "Pesticide B", stock: "800L", threshold: "50L" },
+        { name: "Irrigation Parts", stock: "45", threshold: "10" },
+      ]
+    }
+  };
+
   return (
-    <div className="dashboard">
-      {/* Header Card */}
-      <Card>
-        <header className="header">
-          <div className="header-container">
-            <div className="header-content">
-              <div className="header-left">
-                <div className="logo">
-                  {user?.role === 'farmer' ? <Sprout className="logo-icon" /> : <Truck className="logo-icon" />}
-                </div>
-                <div>
-                  <h1 className="header-title">{user?.role === 'farmer' ? 'Farmer' : 'Supplier'} Dashboard</h1>
-                </div>
-              </div>
-              
-              <div className="header-right">
-                <div className="search-container">
-                  <Search className="search-icon" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="search-input"
-                  />
-                </div>
-                <button className="header-button">
-                  <Bell className="button-icon" />
-                </button>
-                <button className="header-button">
-                  <Settings className="button-icon" />
-                </button>
-                <div className="avatar">
-                  <span>{user?.username ? user.username.substring(0, 2).toUpperCase() : 'US'}</span>
-                </div>
-              </div>
-            </div>
+    <div className="dashboard-container">
+      {/* Header */}
+      <header className="dashboard-header">
+        <div className="header-left">
+          <h1>FarmConnect Admin</h1>
+          <p>Welcome back, {user?.username || 'Admin'}!</p>
+        </div>
+        <div className="header-right">
+          <div className="search-box">
+            <Search className="search-icon" />
+            <input type="text" placeholder="Search..." />
           </div>
-        </header>
-      </Card>
+          <button className="notification-btn">
+            <Bell />
+            <span className="badge">3</span>
+          </button>
+          <div className="user-profile">
+            <div className="avatar">
+              {user?.username?.substring(0, 1).toUpperCase() || 'A'}
+            </div>
+            <span>{user?.username || 'Admin'}</span>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main className="main-content">
-        {/* Account Detail Card */}
-        <Card title="Account Information">
-          <div className="account-detail-container">
-            <div className="account-detail">
-              <div className="header">
-                <div className="profile-photo">
-                  <img src={user?.profile_picture || "https://via.placeholder.com/150"} alt="Profile" />
-                  <a href="#">Upload Photo</a>
+      <main className="dashboard-main">
+        {/* Navigation Tabs */}
+        <div className="dashboard-tabs">
+          <button 
+            className={activeTab === 'overview' ? 'active' : ''}
+            onClick={() => setActiveTab('overview')}
+          >
+            <Activity /> Overview
+          </button>
+          <button 
+            className={activeTab === 'inventory' ? 'active' : ''}
+            onClick={() => setActiveTab('inventory')}
+          >
+            <Package /> Inventory
+          </button>
+          <button 
+            className={activeTab === 'orders' ? 'active' : ''}
+            onClick={() => setActiveTab('orders')}
+          >
+            <ShoppingCart /> Orders
+          </button>
+          <button 
+            className={activeTab === 'reports' ? 'active' : ''}
+            onClick={() => setActiveTab('reports')}
+          >
+            <FileText /> Reports
+          </button>
+        </div>
+
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="tab-content">
+            {/* Summary Cards */}
+            <div className="summary-cards">
+              {demoData.overview.cards.map((card, index) => (
+                <div key={index} className={`summary-card ${card.color}`}>
+                  <div className="card-icon">{card.icon}</div>
+                  <div className="card-content">
+                    <h3>{card.title}</h3>
+                    <p className="value">{card.value}</p>
+                    <p className="trend">{card.trend}</p>
+                  </div>
                 </div>
-                <div className="vertical-line"></div>
-                <div className="account-info">
-                  <h3>{user?.username} ({user?.role === 'farmer' ? 'Farmer' : 'Supplier'})</h3>
-                  <p>Email: {user?.email} <a href="#">Change email address</a></p>
-                  <p>Mobile: {user?.phone_number || 'N/A'} <a href="#">Change Mobile number</a></p>
-                  <p>Location: {user?.location || 'Not specified'}</p>
+              ))}
+            </div>
+
+            {/* Quick Stats */}
+            <div className="quick-stats">
+              <div className="stats-card">
+                <h3>Recent Activities</h3>
+                <div className="activities-list">
+                  {demoData.overview.recentActivities.map((activity, index) => (
+                    <div key={index} className="activity-item">
+                      <div className="activity-icon">{activity.icon}</div>
+                      <div className="activity-details">
+                        <p>{activity.title}</p>
+                        <span>{activity.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="stats-card">
+                <h3>Sales Overview</h3>
+                <div className="time-range-selector">
+                  <button 
+                    className={timeRange === 'week' ? 'active' : ''}
+                    onClick={() => setTimeRange('week')}
+                  >
+                    Week
+                  </button>
+                  <button 
+                    className={timeRange === 'month' ? 'active' : ''}
+                    onClick={() => setTimeRange('month')}
+                  >
+                    Month
+                  </button>
+                  <button 
+                    className={timeRange === 'year' ? 'active' : ''}
+                    onClick={() => setTimeRange('year')}
+                  >
+                    Year
+                  </button>
+                </div>
+                <div className="chart-placeholder">
+                  <PieChart className="chart-icon" />
+                  <p>Sales data visualization</p>
                 </div>
               </div>
             </div>
-          </div>
-        </Card>
 
-        {/* Welcome Card */}
-        <Card>
-          <div className="welcome-section">
-            <h2 className="welcome-title">Welcome back, {user?.username || 'User'}!</h2>
-            <p className="welcome-subtitle">
-              {user?.role === 'farmer' 
-                ? "Manage your crops and connect with buyers today." 
-                : "Manage your supply chain and inventory today."}
-            </p>
+            {/* Quick Actions */}
+            <div className="quick-actions">
+              <h3>Quick Actions</h3>
+              <div className="action-buttons">
+                <button className="action-btn">
+                  <ShoppingCart /> Create Order
+                </button>
+                <button className="action-btn">
+                  <Package /> Add Product
+                </button>
+                <button className="action-btn">
+                  <Users /> Manage Users
+                </button>
+                <button className="action-btn">
+                  <Truck /> Add Supplier
+                </button>
+              </div>
+            </div>
           </div>
-        </Card>
+        )}
 
-        {/* Dashboard Widgets Card */}
-        {dashboardData && dashboardData.widgets && (
-          <Card title="Overview Metrics">
-            <div className="widgets-container">
-              <div className="widgets">
-                {dashboardData.widgets.map((widget, index) => (
-                  <Widget key={index} title={widget.title} value={widget.value} />
+        {/* Inventory Tab */}
+        {activeTab === 'inventory' && (
+          <div className="tab-content">
+            <div className="inventory-header">
+              <h2>Inventory Management</h2>
+              <button className="primary-btn">
+                <Package /> Add New Item
+              </button>
+            </div>
+            
+            <div className="inventory-grid">
+              <div className="inventory-filters">
+                <div className="filter-group">
+                  <label>Category</label>
+                  <select>
+                    <option>All Categories</option>
+                    <option>Seeds</option>
+                    <option>Fertilizers</option>
+                    <option>Equipment</option>
+                  </select>
+                </div>
+                <div className="filter-group">
+                  <label>Stock Status</label>
+                  <select>
+                    <option>All Items</option>
+                    <option>Low Stock</option>
+                    <option>In Stock</option>
+                    <option>Out of Stock</option>
+                  </select>
+                </div>
+                <button className="filter-btn">
+                  <Search /> Filter
+                </button>
+              </div>
+
+              <div className="inventory-list">
+                <div className="inventory-list-header">
+                  <span>Item Name</span>
+                  <span>Current Stock</span>
+                  <span>Reorder Level</span>
+                  <span>Actions</span>
+                </div>
+                {demoData.inventory.items.map((item, index) => (
+                  <div key={index} className="inventory-item">
+                    <span>{item.name}</span>
+                    <span className={parseInt(item.stock) < parseInt(item.threshold) * 2 ? 'warning' : ''}>
+                      {item.stock}
+                    </span>
+                    <span>{item.threshold}</span>
+                    <div className="item-actions">
+                      <button className="edit-btn">Edit</button>
+                      <button className="restock-btn">Restock</button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          </Card>
+          </div>
         )}
 
-        {/* Stats Cards Grid */}
-        <div className="stats-grid">
-          <Card>
-            <div className="stat-card">
-              <div className="stat-content">
-                <div className="stat-info">
-                  <p className="stat-label">Total Revenue</p>
-                  <p className="stat-value">
-                    {dashboardData?.revenue || '$12,450'}
-                  </p>
-                  <p className="stat-change positive">+18.2% from last month</p>
-                </div>
-                <div className="stat-icon green">
-                  <DollarSign className="icon" />
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="stat-card">
-              <div className="stat-content">
-                <div className="stat-info">
-                  <p className="stat-label">{user?.role === 'farmer' ? 'Crop Orders' : 'Supply Orders'}</p>
-                  <p className="stat-value">
-                    {dashboardData?.orders || '147'}
-                  </p>
-                  <p className="stat-change blue">+12.5% from last month</p>
-                </div>
-                <div className="stat-icon blue">
-                  <ShoppingCart className="icon" />
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="stat-card">
-              <div className="stat-content">
-                <div className="stat-info">
-                  <p className="stat-label">{user?.role === 'farmer' ? 'Buyers' : 'Customers'}</p>
-                  <p className="stat-value">
-                    {dashboardData?.customers || '89'}
-                  </p>
-                  <p className="stat-change purple">+8.2% from last month</p>
-                </div>
-                <div className="stat-icon purple">
-                  <Users className="icon" />
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="stat-card">
-              <div className="stat-content">
-                <div className="stat-info">
-                  <p className="stat-label">{user?.role === 'farmer' ? 'Active Crops' : 'Products'}</p>
-                  <p className="stat-value">
-                    {dashboardData?.products || '23'}
-                  </p>
-                  <p className="stat-change orange">+5.1% from last month</p>
-                </div>
-                <div className="stat-icon orange">
-                  <Package className="icon" />
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Quick Actions and Recent Activity Cards */}
-        <div className="section-grid">
-          <Card title="Quick Actions">
-            <div className="actions-grid">
-              <button className="action-button blue">
-                <Package className="action-icon" />
-                <span className="action-text">
-                  {user?.role === 'farmer' ? 'Add Crop' : 'Add Product'}
-                </span>
-              </button>
-              <button className="action-button green">
-                <ShoppingCart className="action-icon" />
-                <span className="action-text">View Orders</span>
-              </button>
-              <button className="action-button purple">
-                <Eye className="action-icon" />
-                <span className="action-text">View Inventory</span>
-              </button>
-              <button className="action-button orange">
-                <TrendingUp className="action-icon" />
-                <span className="action-text">Sales Analytics</span>
-              </button>
-            </div>
-          </Card>
-
-          <Card title="Recent Activity">
-            <div className="activity-list">
-              <div className="activity-item">
-                <div className="activity-icon green">
-                  <ShoppingCart className="activity-icon-svg" />
-                </div>
-                <div className="activity-content">
-                  <p className="activity-title">
-                    {user?.role === 'farmer' ? 'New crop order #1234' : 'New supply order #1234'}
-                  </p>
-                  <p className="activity-time">2 minutes ago</p>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon blue">
-                  <Users className="activity-icon-svg" />
-                </div>
-                <div className="activity-content">
-                  <p className="activity-title">
-                    {user?.role === 'farmer' ? 'New buyer inquiry' : 'New customer registered'}
-                  </p>
-                  <p className="activity-time">15 minutes ago</p>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon purple">
-                  <Package className="activity-icon-svg" />
-                </div>
-                <div className="activity-content">
-                  <p className="activity-title">
-                    {user?.role === 'farmer' ? 'Tomato harvest updated' : 'Inventory restocked'}
-                  </p>
-                  <p className="activity-time">1 hour ago</p>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Chart Card */}
-        <Card title="Sales Overview">
-          <div className="chart-section">
-            <div className="chart-header">
-              <h3 className="chart-title">
-                {user?.role === 'farmer' ? 'Crop Sales Trends' : 'Supply Sales Trends'}
-              </h3>
-              <div className="chart-controls">
-                <button className="chart-button active">7 days</button>
-                <button className="chart-button">30 days</button>
-                <button className="chart-button">90 days</button>
-              </div>
-            </div>
-            
-            {/* Use Chart component if data is available */}
-            {chartData ? (
-              <Chart data={chartData} />
-            ) : (
-              <div className="chart-placeholder">
-                <div className="chart-content">
-                  <TrendingUp className="chart-icon" />
-                  <p className="chart-text">
-                    {user?.role === 'farmer' 
-                      ? 'Your crop sales visualization will appear here' 
-                      : 'Your supply sales visualization will appear here'}
-                  </p>
-                </div>
-              </div>
-            )}
+        {/* Orders Tab */}
+        {activeTab === 'orders' && (
+          <div className="tab-content">
+            <h2>Order Management</h2>
+            <p>Order management content will go here</p>
           </div>
-        </Card>
+        )}
+
+        {/* Reports Tab */}
+        {activeTab === 'reports' && (
+          <div className="tab-content">
+            <h2>Reports & Analytics</h2>
+            <p>Reports content will go here</p>
+          </div>
+        )}
       </main>
     </div>
   );
