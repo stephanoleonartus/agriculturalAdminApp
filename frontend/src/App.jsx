@@ -28,25 +28,22 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import DashboardLayout from './components/DashboardLayout';
 
-
 import Chat from './components/Chat';
 import CartPage from './components/CartPage';
 import { LocationProvider } from './contexts/LocationContext'; // Import LocationProvider
 
-
 function AppContent() {
   const location = useLocation();
-  const showHome = location.pathname === '/';
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
 
   const user = JSON.parse(localStorage.getItem('userInfo'));
 
   return (
     <>
-      {!isDashboardRoute && showHome && <Home />}
       <Routes>
         {user?.role === 'customer' ? (
           <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
@@ -63,12 +60,31 @@ function AppContent() {
               <Route path="help-center" element={<HelpCenter />} />
             </Route>
           </Route>
-        ) : (
+        ) : (user?.role === 'farmer' || user?.role === 'supplier') ? (
           <Route path="/" element={<DashboardLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route index element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<EditProduct />} />
+            <Route path="products/:id" element={<ProductDetailPage />} />
+            <Route path="products/:id/contact" element={<ContactInfoPage />} />
+            <Route path="farmers" element={<Farmers />} />
+            <Route path="suppliers" element={<Suppliers />} />
+            <Route path="chat" element={<Chat />} />
+            <Route path="cart" element={<CartPage />} />
+            <Route path="profile" element={<MyProfile />}>
+              <Route path="orders" element={<Orders />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="payment-methods" element={<PaymentMethods />} />
+              <Route path="rewards" element={<Rewards />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="help-center" element={<HelpCenter />} />
+            </Route>
+          </Route>
+        ) : (
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
             <Route path="farmers" element={<Farmers />} />
