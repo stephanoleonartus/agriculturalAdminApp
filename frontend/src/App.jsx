@@ -23,7 +23,7 @@ import AddProductForm from './components/AddProductForm';
 import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
-import Dashboard from './components/dashboard/Dashboard';
+import Dashboard from './components/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import DashboardLayout from './components/DashboardLayout';
