@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Auth.css';
-import '../styles/Admin.css';
+import '../styles/AdminDashboard.css';
 
 const AddProductForm = () => {
   const [formData, setFormData] = useState({

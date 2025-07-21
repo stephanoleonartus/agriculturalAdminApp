@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
-import '../styles/Admin.css';
+import '../styles/AdminDashboard.css';
 
 const OrderList = () => {
   const [orders, setOrders] = useState([]);
