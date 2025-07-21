@@ -5,7 +5,6 @@ import MainLayout from './components/MainLayout';
 import Home from './components/Home';
 import { Products, ProductDetailPage, AddProduct } from './components/Product';
 import Farmers from './components/Farmers';
-import Suppliers from './components/Suppliers';
 import Auth from './components/Auth';
 import Login from './components/Login';
 import MyProfile from './components/MyProfile';
@@ -43,7 +42,7 @@ function AppContent() {
   return (
     <>
       <Routes>
-        {(user?.role === 'farmer' || user?.role === 'supplier') ? (
+        {(user?.role === 'farmer') ? (
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="dashboard" element={<DashboardLayout />} >
@@ -55,7 +54,6 @@ function AppContent() {
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
             <Route path="farmers" element={<Farmers />} />
-            <Route path="suppliers" element={<Suppliers />} />
             <Route path="chat" element={<Chat />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="profile" element={<MyProfile />}>
@@ -74,7 +72,6 @@ function AppContent() {
             <Route path="products/:id" element={<ProductDetailPage />} />
             <Route path="products/:id/contact" element={<ContactInfoPage />} />
             <Route path="farmers" element={<Farmers />} />
-            <Route path="suppliers" element={<Suppliers />} />
             <Route path="chat" element={<Chat />} />
             <Route path="cart" element={<CartPage />} />
             <Route path="profile" element={<MyProfile />}>

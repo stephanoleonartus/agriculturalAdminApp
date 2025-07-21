@@ -7,7 +7,6 @@ const CategoryNav = () => {
             <ul>
                 <li><Link to="/products">All Categories</Link></li>
                 <li><Link to="/products">Products</Link></li>
-                <li><Link to="/suppliers">Suppliers</Link></li>
                 <li><Link to="/farmers">Farmers</Link></li>
             </ul>
         </nav>

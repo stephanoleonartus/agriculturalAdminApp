@@ -8,7 +8,6 @@ function Admin() {
     totalFarmers: 0,
     totalProducts: 0,
     totalOrders: 0,
-    totalSuppliers: 0,
   });
   const [farmers, setFarmers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -122,7 +121,6 @@ function Admin() {
         <StatCard title="Total Farmers" value={stats.total_farmers} icon="👨‍🌾" color="green" />
         <StatCard title="Total Products" value={stats.total_products} icon="🌾" color="blue" />
         <StatCard title="Total Orders" value={stats.total_orders} icon="📦" color="orange" />
-        <StatCard title="Total Suppliers" value={stats.total_suppliers} icon="🏪" color="purple" />
       </div>
       <div className="recent-activities">
         <h3>Recent Activities</h3>
@@ -130,7 +128,6 @@ function Admin() {
           <li>New farmer John Mwakyusa registered</li>
           <li>Product "Fresh Apples" added by Asha Komba</li>
           <li>Order #001 completed successfully</li>
-          <li>New supplier registered in Arusha region</li>
         </ul>
       </div>
     </div>

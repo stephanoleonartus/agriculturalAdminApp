@@ -10,7 +10,7 @@ from .serializers import (
     ProductSerializer, CategorySerializer, 
     WishlistSerializer, CartSerializer, CartItemSerializer
 )
-from .permissions import IsOwnerOrReadOnly, IsFarmerOrSupplier
+from .permissions import IsOwnerOrReadOnly, IsFarmer
 
 # ====================== PRODUCTS ======================
 class ProductViewSet(viewsets.ModelViewSet):
@@ -25,7 +25,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAuthenticated(), IsFarmerOrSupplier()]
+            return [permissions.IsAuthenticated(), IsFarmer()]
         return [permissions.AllowAny()]  # Fixed typo (was `AllowAny`)
 
     def perform_create(self, serializer):
@@ -53,23 +53,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path='out-of-stock')
-    def out_of_stock(self, request):
-        """List out-of-stock products (for farmers/suppliers)"""
-        queryset = self.filter_queryset(self.get_queryset().filter(quantity__lte=0))
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'], url_path='update-stock')
-    def update_stock(self, request, pk=None):
-        """Update product stock (farmer/supplier only)"""
-        product = self.get_object()
-        serializer = ProductStockUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            product.quantity = serializer.validated_data['quantity']
-            product.save()
-            return Response({'status': 'stock updated'})
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # ====================== CATEGORIES ======================
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):

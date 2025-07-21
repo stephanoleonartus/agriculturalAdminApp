@@ -103,13 +103,3 @@ class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     pagination_class = None
 
-class SupplierViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.filter(role='supplier')
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        queryset = User.objects.filter(role='supplier')
-        region = self.request.query_params.get('region')
-        if region is not None:
-            queryset = queryset.filter(region__name=region)
-        return queryset

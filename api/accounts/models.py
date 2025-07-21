@@ -57,7 +57,6 @@ class Region(models.Model):
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('farmer', 'Farmer'),
-        ('supplier', 'Supplier'),
         ('customer', 'Customer'),
     ]
     
@@ -148,39 +147,3 @@ class FarmerProfile(models.Model):
     def __str__(self):
         return f"{self.farm_name} - {self.user.username}"
 
-
-class SupplierProfile(models.Model):
-    SUPPLIER_TYPES = [
-        ('seeds', 'Seeds'),
-        ('fertilizers', 'Fertilizers'),
-        ('tools', 'Tools & Equipment'),
-        ('pesticides', 'Pesticides'),
-        ('irrigation', 'Irrigation Systems'),
-        ('packaging', 'Packaging Materials'),
-        ('general', 'General Supplies'),
-    ]
-    
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='supplier_profile')
-    business_name = models.CharField(max_length=100)
-    supplier_type = models.CharField(max_length=20, choices=SUPPLIER_TYPES)
-    license_number = models.CharField(
-                        max_length=50, 
-                        null=True, 
-                        blank=True, 
-                        unique=True,
-                        default=None
-                    )
-    tax_id = models.CharField(
-                        max_length=30, 
-                        null=True, 
-                        blank=True, 
-                        unique=True,
-                        default=None
-                    )
-    products_categories = models.JSONField(default=list, blank=True)
-    minimum_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    delivery_areas = models.JSONField(default=list, blank=True)
-    payment_terms = models.TextField(blank=True)
-    
-    def __str__(self):
-        return f"{self.business_name} - {self.user.username}"

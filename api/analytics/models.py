@@ -56,21 +56,4 @@ class UserAnalytics(models.Model):
     def __str__(self):
         return f"Analytics for {self.user.username}"
 
-class SalesAnalytics(models.Model):
-    supplier = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sales_analytics')
-    date = models.DateField()
-    total_orders = models.PositiveIntegerField(default=0)
-    total_revenue = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    completed_orders = models.PositiveIntegerField(default=0)
-    cancelled_orders = models.PositiveIntegerField(default=0)
-    avg_order_value = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        unique_together = ['supplier', 'date']
-        ordering = ['-date']
-    
-    def __str__(self):
-        return f"Sales Analytics for {self.supplier.username} on {self.date}"
 

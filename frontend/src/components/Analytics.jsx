@@ -47,7 +47,6 @@ const Analytics = () => {
           <p>Total Farmers: {dashboardStats.total_farmers}</p>
           <p>Total Products: {dashboardStats.total_products}</p>
           <p>Total Orders: {dashboardStats.total_orders}</p>
-          <p>Total Suppliers: {dashboardStats.total_suppliers}</p>
         </div>
       )}
       {salesAnalytics.length > 0 && (

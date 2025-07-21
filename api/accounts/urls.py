@@ -1,10 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import FarmerViewSet, SupplierViewSet, BuyerViewSet, RegisterView, LoginView, RegionViewSet, LogoutView, CurrentUserView, ChangePasswordView
+from .views import FarmerViewSet, BuyerViewSet, RegisterView, LoginView, RegionViewSet, LogoutView, CurrentUserView, ChangePasswordView
 
 router = DefaultRouter()
 router.register(r'farmers', FarmerViewSet, basename='farmer')
-router.register(r'suppliers', SupplierViewSet, basename='supplier')
 router.register(r'buyers', BuyerViewSet, basename='buyer')  # Add this line
 router.register(r'regions', RegionViewSet, basename='region')
 

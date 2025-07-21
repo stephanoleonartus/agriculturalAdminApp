@@ -46,9 +46,6 @@ const Login = () => {
         case "farmer":
           navigate("/dashboard");
           break;
-        case "supplier":
-          navigate("/dashboard");
-          break;
         default:
           navigate("/");
           break;

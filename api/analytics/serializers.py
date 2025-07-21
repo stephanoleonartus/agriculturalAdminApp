@@ -1,6 +1,6 @@
 #  analytics/serializers.py
 from rest_framework import serializers
-from .models import AnalyticsEvent, UserAnalytics, SalesAnalytics
+from .models import AnalyticsEvent, UserAnalytics
 
 class AnalyticsEventSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,13 +22,3 @@ class UserAnalyticsSerializer(serializers.ModelSerializer):
             'last_login_at', 'total_login_count', 'created_at', 'updated_at'
         ]
 
-class SalesAnalyticsSerializer(serializers.ModelSerializer):
-    supplier_name = serializers.CharField(source='supplier.username', read_only=True)
-    
-    class Meta:
-        model = SalesAnalytics
-        fields = [
-            'id', 'supplier', 'supplier_name', 'date', 'total_orders',
-            'total_revenue', 'completed_orders', 'cancelled_orders',
-            'avg_order_value', 'created_at', 'updated_at'
-        ]

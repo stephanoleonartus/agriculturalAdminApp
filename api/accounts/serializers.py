@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, Region, UserProfile, FarmerProfile, SupplierProfile
+from .models import User, Region, UserProfile, FarmerProfile
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,12 +44,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Handle profile creation based on role
         if user.role == 'farmer':
             FarmerProfile.objects.create(user=user)
-        elif user.role == 'supplier':
-            SupplierProfile.objects.create(
-                user=user,
-                business_name=f"{user.first_name} {user.last_name}'s Business",
-                supplier_type='general'
-            )
         elif user.role == 'customer':
             # For customers, a basic UserProfile is already created.
             # You can add customer-specific profile logic here if needed in the future.
