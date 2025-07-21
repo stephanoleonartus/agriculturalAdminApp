@@ -1,10 +1,10 @@
-// AdminProductList.jsx
+// UserDashboardProductList.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from '../api/axios';
-import '../styles/Admin.css';
+import '../styles/UserDashboard.css';
 
-const AdminProductList = () => {
+const UserDashboardProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -59,16 +59,15 @@ const AdminProductList = () => {
   }
 
   return (
-    <div className="admin-product-list">
+    <div className="user-dashboard-product-list">
       <h2>Manage Products</h2>
-      <Link to="/admin/products/add" className="add-product-btn">
+      <Link to="/user-dashboard/products/add" className="add-product-btn">
         Add New Product
       </Link>
       <table>
         <thead>
           <tr>
             <th>Name</th>
-            <th>Farmer</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -77,7 +76,6 @@ const AdminProductList = () => {
           {products.map((product) => (
             <tr key={product.id}>
               <td>{product.name}</td>
-              <td>{product.farmer_name}</td>
               <td>{product.status}</td>
               <td>
                 <Link to={`/products/edit/${product.id}`} className="edit-btn">
@@ -95,4 +93,4 @@ const AdminProductList = () => {
   );
 };
 
-export default AdminProductList;
+export default UserDashboardProductList;
