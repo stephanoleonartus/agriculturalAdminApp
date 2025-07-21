@@ -36,11 +36,9 @@ def create_order_from_product(request):
         )
 
     buyer = request.user
-    supplier = product.owner
 
     order = Order.objects.create(
         buyer=buyer,
-        supplier=supplier,
         total_amount=product.price * quantity,
     )
 
@@ -64,9 +62,6 @@ class OrderPermission(permissions.BasePermission):
         # Buyers can see their own orders
         if request.user == obj.buyer:
             return True
-        # Suppliers/farmers can see orders of their products
-        if request.user == obj.supplier:
-            return True
         # Admins can see all orders
         return request.user.is_staff
 
@@ -81,8 +76,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [OrderPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['status', 'payment_status', 'buyer', 'supplier']
-    search_fields = ['order_id', 'tracking_number', 'buyer__name', 'supplier__name']
+    filterset_fields = ['status', 'payment_status', 'buyer']
+    search_fields = ['order_id', 'tracking_number', 'buyer__name']
     ordering_fields = ['order_date', 'total_amount', 'updated_at']
     ordering = ['-order_date']
 
@@ -96,8 +91,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif user.role == 'farmer':
             return Order.objects.filter(product__owner=user)
 
-        elif user.role in ['farmer', 'supplier']:
-            return Order.objects.filter(supplier=user)
         elif user.is_staff:
             return Order.objects.all()
 
@@ -124,43 +117,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             cart.items.all().delete()
 
     # ================= ORDER STATUS ACTIONS =================
-    @action(detail=True, methods=['post'])
-    def confirm(self, request, pk=None):
-        """Supplier confirms an order"""
-        order = self.get_object()
-        if order.status != 'pending':
-            return Response(
-                {'error': 'Only pending orders can be confirmed'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        order.status = 'confirmed'
-        order.save()
-        self._create_history(order, 'confirmed', request.user)
-        return Response({'status': 'confirmed'})
-
-    @action(detail=True, methods=['post'])
-    def ship(self, request, pk=None):
-        """Supplier marks order as shipped"""
-        order = self.get_object()
-        if order.status != 'confirmed':
-            return Response(
-                {'error': 'Only confirmed orders can be shipped'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        tracking_number = request.data.get('tracking_number')
-        if not tracking_number:
-            return Response(
-                {'error': 'Tracking number is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        order.status = 'shipped'
-        order.tracking_number = tracking_number
-        order.save()
-        self._create_history(order, 'shipped', request.user)
-        return Response({'status': 'shipped'})
 
     @action(detail=True, methods=['post'])
     def deliver(self, request, pk=None):

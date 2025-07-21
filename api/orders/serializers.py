@@ -23,12 +23,11 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     history = OrderHistorySerializer(many=True, read_only=True)
     buyer = UserSerializer(read_only=True)
-    supplier = UserSerializer(read_only=True)
     
     class Meta:
         model = Order
         fields = [
-            'order_id', 'buyer', 'supplier', 'status', 'payment_status', 
+            'order_id', 'buyer', 'status', 'payment_status',
             'total_amount', 'order_date', 'updated_at', 'shipping_address',
             'billing_address', 'tracking_number', 'notes', 'items', 'history'
         ]

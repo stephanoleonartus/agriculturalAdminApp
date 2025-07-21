@@ -42,13 +42,11 @@ const Dashboard = () => {
       cards: [
         { title: "Total Products", value: "1,245", icon: <Package />, trend: "+12%", color: "blue" },
         { title: "Active Orders", value: "56", icon: <ShoppingCart />, trend: "+5%", color: "green" },
-        { title: "Suppliers", value: "32", icon: <Truck />, trend: "+3%", color: "purple" },
         { title: "Farmers", value: "128", icon: <Crop />, trend: "+8%", color: "orange" },
       ],
       recentActivities: [
         { title: "New order from Farmer John", time: "10 mins ago", icon: <ShoppingCart /> },
         { title: "Payment received from Agro Ltd", time: "25 mins ago", icon: <CreditCard /> },
-        { title: "New supplier registered", time: "1 hour ago", icon: <Truck /> },
         { title: "Inventory low for Fertilizer X", time: "2 hours ago", icon: <AlertCircle /> },
       ]
     },
@@ -193,9 +191,6 @@ const Dashboard = () => {
                 </button>
                 <button className="action-btn">
                   <Users /> Manage Users
-                </button>
-                <button className="action-btn">
-                  <Truck /> Add Supplier
                 </button>
               </div>
             </div>

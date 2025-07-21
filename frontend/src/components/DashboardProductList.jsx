@@ -16,7 +16,7 @@ const DashboardProductList = () => {
     if (userInfo) {
       const parsedUser = JSON.parse(userInfo);
       setUser(parsedUser);
-      if (parsedUser.role === 'farmer' || parsedUser.role === 'supplier') {
+      if (parsedUser.role === 'farmer') {
         fetchProducts(parsedUser.id, parsedUser.role);
       } else {
         setLoading(false);

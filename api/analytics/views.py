@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Count, Sum, Avg, Q
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import AnalyticsEvent, UserAnalytics, SalesAnalytics
-from .serializers import AnalyticsEventSerializer, UserAnalyticsSerializer, SalesAnalyticsSerializer
+from .models import AnalyticsEvent, UserAnalytics
+from .serializers import AnalyticsEventSerializer, UserAnalyticsSerializer
 
 class AnalyticsEventViewSet(viewsets.ModelViewSet):
     serializer_class = AnalyticsEventSerializer
@@ -175,129 +175,6 @@ class UserAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
         
         serializer = self.get_serializer(user_analytics)
         return Response(serializer.data)
-
-class SalesAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = SalesAnalyticsSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        if self.request.user.is_staff:
-            return SalesAnalytics.objects.all()
-        return SalesAnalytics.objects.filter(supplier=self.request.user)
-    
-    @action(detail=False, methods=['get'])
-    def revenue_chart(self, request):
-        """Get revenue chart data"""
-        days = int(request.query_params.get('days', 30))
-        start_date = timezone.now().date() - timedelta(days=days)
-        
-        if request.user.is_staff:
-            # Admin can see all suppliers
-            supplier_id = request.query_params.get('supplier_id')
-            if supplier_id:
-                queryset = SalesAnalytics.objects.filter(
-                    supplier_id=supplier_id,
-                    date__gte=start_date
-                )
-            else:
-                # Aggregate all suppliers
-                queryset = SalesAnalytics.objects.filter(
-                    date__gte=start_date
-                ).values('date').annotate(
-                    total_revenue=Sum('total_revenue'),
-                    total_orders=Sum('total_orders')
-                ).order_by('date')
-                return Response(list(queryset))
-        else:
-            # Supplier can only see their own data
-            queryset = SalesAnalytics.objects.filter(
-                supplier=request.user,
-                date__gte=start_date
-            )
-        
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def summary(self, request):
-        """Get sales summary"""
-        days = int(request.query_params.get('days', 30))
-        start_date = timezone.now().date() - timedelta(days=days)
-        
-        if request.user.is_staff:
-            supplier_id = request.query_params.get('supplier_id')
-            if supplier_id:
-                queryset = SalesAnalytics.objects.filter(
-                    supplier_id=supplier_id,
-                    date__gte=start_date
-                )
-            else:
-                queryset = SalesAnalytics.objects.filter(date__gte=start_date)
-        else:
-            queryset = SalesAnalytics.objects.filter(
-                supplier=request.user,
-                date__gte=start_date
-            )
-        
-        summary = queryset.aggregate(
-            total_revenue=Sum('total_revenue'),
-            total_orders=Sum('total_orders'),
-            total_completed=Sum('completed_orders'),
-            total_cancelled=Sum('cancelled_orders'),
-            avg_order_value=Avg('avg_order_value')
-        )
-        
-        return Response(summary)
-    
-    @action(detail=False, methods=['post'])
-    def generate_daily_stats(self, request):
-        """Generate daily sales statistics (for admin or automated tasks)"""
-        if not request.user.is_staff:
-            return Response({'error': 'Admin access required'}, 
-                          status=status.HTTP_403_FORBIDDEN)
-        
-        target_date = request.data.get('date')
-        if target_date:
-            target_date = datetime.strptime(target_date, '%Y-%m-%d').date()
-        else:
-            target_date = timezone.now().date()
-        
-        # This would typically be called by a background task
-        from orders.models import Order
-        from django.contrib.auth.models import User
-        
-        suppliers = User.objects.filter(supplier_orders__isnull=False).distinct()
-        
-        for supplier in suppliers:
-            orders = Order.objects.filter(
-                supplier=supplier,
-                order_date__date=target_date
-            )
-            
-            completed_orders = orders.filter(status='delivered')
-            cancelled_orders = orders.filter(status='cancelled')
-            
-            total_revenue = completed_orders.aggregate(
-                total=Sum('total_amount')
-            )['total'] or 0
-            
-            avg_order_value = completed_orders.aggregate(
-                avg=Avg('total_amount')
-            )['avg'] or 0
-            
-            SalesAnalytics.objects.update_or_create(
-                supplier=supplier,
-                date=target_date,
-                defaults={
-                    'total_orders': orders.count(),
-                    'total_revenue': total_revenue,
-                    'completed_orders': completed_orders.count(),
-                    'cancelled_orders': cancelled_orders.count(),
-                    'avg_order_value': avg_order_value
-                }
-            )
-        
-        return Response({'message': f'Daily stats generated for {target_date}'})
 
 
 class DashboardStatsView(APIView):

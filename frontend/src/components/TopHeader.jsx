@@ -95,7 +95,7 @@ const TopHeader = () => {
         </div>
 
         {/* Dashboard Link */}
-        {isAuthenticated && (user?.role === 'farmer' || user?.role === 'supplier') && (
+        {isAuthenticated && (user?.role === 'farmer') && (
           <a href="/dashboard" target="_blank" rel="noopener noreferrer" className="nav-item icon-link">
             <i className="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>

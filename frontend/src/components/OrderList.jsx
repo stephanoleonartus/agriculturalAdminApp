@@ -69,7 +69,6 @@ const OrderList = () => {
           <tr>
             <th>Order ID</th>
             <th>Customer</th>
-            <th>Supplier</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -79,7 +78,6 @@ const OrderList = () => {
             <tr key={order.id}>
               <td>{order.order_id}</td>
               <td>{order.customer_name}</td>
-              <td>{order.supplier_name}</td>
               <td>{order.status}</td>
               <td>
                 <select

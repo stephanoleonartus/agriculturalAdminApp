@@ -86,9 +86,6 @@ const Auth = () => {
         case "farmer":
           navigate("/dashboard");
           break;
-        case "supplier":
-          navigate("/dashboard");
-          break;
         default:
           navigate("/");
           break;
@@ -274,14 +271,6 @@ const Auth = () => {
                   title="Farmer"
                   description="Sell your harvest"
                   selected={formData.userType === "farmer"}
-                  onClick={(type) => setFormData({ ...formData, userType: type })}
-                />
-                <UserTypeCard
-                  type="supplier"
-                  icon="🏪"
-                  title="Supplier"
-                  description="Provide supplies"
-                  selected={formData.userType === "supplier"}
                   onClick={(type) => setFormData({ ...formData, userType: type })}
                 />
               </div>

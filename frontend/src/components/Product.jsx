@@ -472,13 +472,6 @@ const Products = () => {
           Products
         </h2>
         <h2
-          className="supplier-heading"
-          onMouseEnter={() => setPageClass('supplier-hover')}
-          onMouseLeave={() => setPageClass('')}
-        >
-          Suppliers
-        </h2>
-        <h2
           className="farmer-heading"
           onMouseEnter={() => setPageClass('farmer-hover')}
           onMouseLeave={() => setPageClass('')}

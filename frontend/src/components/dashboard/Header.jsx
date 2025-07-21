@@ -10,7 +10,6 @@ const Header = ({ sidebarOpen, setSidebarOpen, activeSection, user }) => {
     { id: 'categories', label: 'Categories' },
     { id: 'inventory', label: 'Inventory' },
     { id: 'buyers', label: 'Buyers' },
-    { id: 'suppliers', label: 'Suppliers' },
     { id: 'farmers', label: 'Farmers' },
     { id: 'messages', label: 'Messages / Chat' },
     { id: 'analytics', label: 'Analytics / Reports' },

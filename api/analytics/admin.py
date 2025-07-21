@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AnalyticsEvent, UserAnalytics, SalesAnalytics
+from .models import AnalyticsEvent, UserAnalytics
 
 class AnalyticsEventAdmin(admin.ModelAdmin):
     list_display = ('id', 'event_type', 'user_display', 'content_object_display', 'ip_address', 'created_at')
@@ -22,13 +22,5 @@ class UserAnalyticsAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email')
     readonly_fields = ('created_at', 'updated_at')
 
-class SalesAnalyticsAdmin(admin.ModelAdmin):
-    list_display = ('supplier', 'date', 'total_orders', 'total_revenue', 'completed_orders', 'updated_at')
-    list_filter = ('date', 'supplier__region')
-    search_fields = ('supplier__username', 'supplier__email')
-    readonly_fields = ('created_at', 'updated_at')
-    date_hierarchy = 'date'
-
 admin.site.register(AnalyticsEvent, AnalyticsEventAdmin)
 admin.site.register(UserAnalytics, UserAnalyticsAdmin)
-admin.site.register(SalesAnalytics, SalesAnalyticsAdmin)

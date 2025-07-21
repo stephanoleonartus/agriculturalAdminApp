@@ -78,7 +78,7 @@ const Dashboard = () => {
               <div className="logo-text">
                 <h1>AgriConnect</h1>
                 <span className="supplier-badge">
-                  {user?.role === 'farmer' ? 'Farmer' : 'Supplier'} Dashboard
+                  Farmer Dashboard
                 </span>
               </div>
             </div>
@@ -167,9 +167,7 @@ const Dashboard = () => {
               <div className="welcome-text">
                 <h2>Welcome back, {user?.username || 'User'}!</h2>
                 <p>
-                  {user?.role === 'farmer' 
-                    ? "Manage your agricultural products and connect with global buyers." 
-                    : "Expand your business reach with our comprehensive supplier tools."}
+                  Manage your agricultural products and connect with global buyers.
                 </p>
               </div>
               <div className="banner-actions">
@@ -215,7 +213,7 @@ const Dashboard = () => {
               </div>
               <div className="metric-content">
                 <h3 className="metric-value">{dashboardData?.orders || '147'}</h3>
-                <p className="metric-label">{user?.role === 'farmer' ? 'Crop Orders' : 'Supply Orders'}</p>
+                <p className="metric-label">Crop Orders</p>
                 <span className="metric-period">This month</span>
               </div>
             </div>
@@ -232,7 +230,7 @@ const Dashboard = () => {
               </div>
               <div className="metric-content">
                 <h3 className="metric-value">{dashboardData?.customers || '89'}</h3>
-                <p className="metric-label">{user?.role === 'farmer' ? 'Active Buyers' : 'Customers'}</p>
+                <p className="metric-label">'Active Buyers'</p>
                 <span className="metric-period">This month</span>
               </div>
             </div>
@@ -249,7 +247,7 @@ const Dashboard = () => {
               </div>
               <div className="metric-content">
                 <h3 className="metric-value">{dashboardData?.products || '23'}</h3>
-                <p className="metric-label">{user?.role === 'farmer' ? 'Active Crops' : 'Products'}</p>
+                <p className="metric-label">Active Crops</p>
                 <span className="metric-period">Listed</span>
               </div>
             </div>
@@ -411,7 +409,7 @@ const Dashboard = () => {
                   </div>
                   <div className="info-item">
                     <label>Specialization</label>
-                    <span>{user?.role === 'farmer' ? 'Organic Farming' : 'Agricultural Supplies'}</span>
+                    <span>Organic Farming</span>
                   </div>
                 </div>
               </div>
