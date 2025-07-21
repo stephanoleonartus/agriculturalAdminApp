@@ -15,9 +15,9 @@ import Rewards from './components/Rewards';
 import Settings from './components/Settings';
 import HelpCenter from './components/HelpCenter';
 import ContactInfoPage from './components/ContactInfoPage';
-import AdminLayout from './components/AdminLayout';
-import Admin from './components/Admin';
-import AdminProductList from './components/AdminProductList';
+import UserDashboardLayout from './components/UserDashboardLayout';
+import UserDashboard from './components/UserDashboard';
+import UserDashboardProductList from './components/UserDashboardProductList';
 import AddProductForm from './components/AddProductForm';
 import UserList from './components/UserList';
 import OrderList from './components/OrderList';
@@ -88,9 +88,9 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Admin />} />
-          <Route path="products" element={<AdminProductList />} />
+        <Route path="/user-dashboard" element={<UserDashboardLayout />}>
+          <Route index element={<UserDashboard />} />
+          <Route path="products" element={<UserDashboardProductList />} />
           <Route path="products/add" element={<AddProductForm />} />
           <Route path="users" element={<UserList />} />
           <Route path="orders" element={<OrderList />} />
