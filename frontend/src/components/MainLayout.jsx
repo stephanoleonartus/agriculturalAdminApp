@@ -6,28 +6,9 @@ import CategoryNav from './CategoryNav';
 import '../styles/Header.css';
 
 const MainLayout = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setIsScrolled(true);
-                document.body.classList.add('scrolled');
-            } else {
-                setIsScrolled(false);
-                document.body.classList.remove('scrolled');
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
     return (
         <div className="main-layout">
-            <header className={`main-header ${isScrolled ? 'scrolled' : ''}`}>
+            <header className="main-header">
                 <TopHeader />
                 <Navigation />
                 <CategoryNav />
