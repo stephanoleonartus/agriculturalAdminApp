@@ -22,10 +22,10 @@ import AddProductForm from './components/AddProductForm';
 import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
-import Dashboard from './components/Dashboard';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import DashboardLayout from './components/DashboardLayout';
+import DashboardPage from './components/DashboardPage';
 
 
 import Chat from './components/Chat';
@@ -45,9 +45,6 @@ function AppContent() {
         {(user?.role === 'farmer') ? (
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
-            <Route path="dashboard" element={<DashboardLayout />} >
-              <Route index element={<Dashboard />} />
-            </Route>
             <Route path="products" element={<Products />} />
             <Route path="products/add" element={<AddProduct />} />
             <Route path="products/edit/:id" element={<EditProduct />} />
@@ -94,6 +91,9 @@ function AppContent() {
           <Route path="products/add" element={<AddProductForm />} />
           <Route path="users" element={<UserList />} />
           <Route path="orders" element={<OrderList />} />
+        </Route>
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<DashboardPage />} />
         </Route>
       </Routes>
     </>
