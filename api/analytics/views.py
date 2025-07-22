@@ -176,6 +176,34 @@ class UserAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(user_analytics)
         return Response(serializer.data)
 
+class SalesAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        # Return empty queryset for now - you'll need to define your sales model
+        return AnalyticsEvent.objects.none()
+    
+    @action(detail=False, methods=['get'])
+    def sales_summary(self, request):
+        """Get sales analytics summary"""
+        if not request.user.is_staff:
+            return Response({'error': 'Admin access required'}, 
+                          status=status.HTTP_403_FORBIDDEN)
+        
+        days = int(request.query_params.get('days', 30))
+        start_date = timezone.now() - timedelta(days=days)
+        
+        # You'll need to implement this based on your actual sales/order models
+        # This is a placeholder implementation
+        sales_data = {
+            'total_sales': 0,
+            'total_orders': 0,
+            'average_order_value': 0,
+            'top_products': [],
+            'sales_by_date': []
+        }
+        
+        return Response(sales_data)
 
 class DashboardStatsView(APIView):
     permission_classes = [IsAuthenticated]
