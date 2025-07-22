@@ -123,7 +123,7 @@ const Auth = () => {
         <div className="auth-header">
           <div className="logo">
             <h1>🌾 AgriLink.com</h1>
-            <p>Connecting Farmers, Suppliers & Customers</p>
+            <p>Connecting Farmers & Customers</p>
           </div>
         </div>
 

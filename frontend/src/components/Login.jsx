@@ -27,7 +27,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("auth/login/", formData);
+      const response = await axios.post(" auth/login/", formData);
       const { data: responseData } = response;
 
       // Store JWT token and user info
@@ -64,7 +64,7 @@ const Login = () => {
         <div className="auth-header">
           <div className="logo">
             <h1>🌾 AgriLink.com</h1>
-            <p>Connecting Farmers, Suppliers & Customers</p>
+            <p>Connecting Farmers & Customers</p>
           </div>
         </div>
 
