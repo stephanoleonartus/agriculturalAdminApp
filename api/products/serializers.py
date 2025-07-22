@@ -96,10 +96,28 @@ class ProductStatusSerializer(serializers.Serializer):
 
 class WishlistSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
+    product_id = serializers.IntegerField(write_only=True)
     
     class Meta:
         model = Wishlist
-        fields = ['id', 'product', 'created_at']
+        fields = ['id', 'product', 'product_id', 'created_at']
+        read_only_fields = ['id', 'product', 'created_at']
+    
+    def validate_product_id(self, value):
+        try:
+            product = Product.objects.get(id=value, is_active=True)
+        except Product.DoesNotExist:
+            raise serializers.ValidationError("Product not found or not available")
+        return value
+    
+    def create(self, validated_data):
+        product_id = validated_data.pop('product_id')
+        product = Product.objects.get(id=product_id)
+        return Wishlist.objects.create(
+            user=self.context['request'].user,
+            product=product,
+            **validated_data
+        )
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
