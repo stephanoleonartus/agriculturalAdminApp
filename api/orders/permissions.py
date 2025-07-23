@@ -1,15 +1,17 @@
-# orders/permissions.py
 from rest_framework import permissions
 
-class IsBuyer(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.buyer == request.user
+class OrderPermission(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit it.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
 
-class CanChangeOrderStatus(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
-            return True
-        # Only farmer can change status after creation
-        return obj.product.owner == request.user
+            return request.user.is_staff or obj.buyer == request.user
+
+        # Write permissions are only allowed to the owner of the order.
+        return request.user.is_staff or obj.buyer == request.user

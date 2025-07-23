@@ -33,8 +33,9 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.order_id:
+            from django.utils import timezone
             # Generate a unique order_id, e.g., using timestamp and user id
-            self.order_id = f"ORD-{self.order_date.strftime('%Y%m%d%H%M%S')}-{self.buyer.id}"
+            self.order_id = f"ORD-{(self.order_date or timezone.now()).strftime('%Y%m%d%H%M%S')}-{self.buyer.id}"
 
         # Recalculate total amount from items if they exist
         if self.pk: # If order is saved and has items
