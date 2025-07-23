@@ -503,4 +503,4 @@ const Products = () => {
   );
 };
 
-export { Products, ProductDetailPage, AddProduct };
+export { Products, ProductDetailPage, AddProduct, ProductCard };
