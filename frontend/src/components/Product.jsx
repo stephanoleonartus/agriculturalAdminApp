@@ -11,9 +11,10 @@ import OrderForm from './OrderForm';
 
 const FALLBACK_IMAGE_URL = "https://via.placeholder.com/150?text=No+Image";
 
-const ProductCard = ({ product, onDelete }) => {
+const ProductCard = ({ product, onDelete, onPlaceOrder }) => {
   const user = JSON.parse(localStorage.getItem('userInfo'));
   const isOwner = user && user.id === product.farmer;
+  const navigate = useNavigate();
 
   const handleAddToCart = async () => {
     try {
@@ -49,6 +50,14 @@ const ProductCard = ({ product, onDelete }) => {
     }
   };
 
+  const handlePlaceOrderClick = () => {
+    if (onPlaceOrder) {
+      onPlaceOrder();
+    } else {
+      navigate(`/products/${product.id}`);
+    }
+  };
+
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-card-link">
@@ -72,7 +81,7 @@ const ProductCard = ({ product, onDelete }) => {
             Add to Cart
           </button>
         ) : (
-          <button onClick={handleOpenOrderModal} className="btn btn-order">
+          <button onClick={handlePlaceOrderClick} className="btn btn-order">
             Place Order
           </button>
         )}
@@ -392,6 +401,7 @@ const Products = () => {
   const [error, setError] = useState('');
   const [pageClass, setPageClass] = useState(''); // Moved to the top with other hooks
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -481,7 +491,12 @@ const Products = () => {
       <CategoryMenu />
       <div className="products-grid">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} onDelete={handleDelete} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onDelete={handleDelete}
+            onPlaceOrder={() => navigate(`/products/${product.id}`)}
+          />
         ))}
       </div>
     </div>
