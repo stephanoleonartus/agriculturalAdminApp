@@ -15,7 +15,7 @@ const CreateOrderModal = ({ closeModal }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/orders/orders/', formData, {
+            await axios.post('/orders/orders/', formData, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
             });
             closeModal();
