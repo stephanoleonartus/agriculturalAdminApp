@@ -10,7 +10,7 @@ const PaymentMethods = () => {
     const fetchPaymentMethods = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/v1/payment-methods/', {
+        const response = await axios.get('/payment-methods/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
