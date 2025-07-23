@@ -72,8 +72,8 @@ const ProductCard = ({ product, onDelete }) => {
             Add to Cart
           </button>
         ) : (
-          <button className="btn-unavailable" disabled>
-            Unavailable
+          <button onClick={handleOpenOrderModal} className="btn btn-order">
+            Place Order
           </button>
         )}
         <button onClick={handleAddToWishlist} className="btn btn-wishlist">
@@ -188,7 +188,9 @@ const ProductDetailPage = () => {
               </button>
             </>
           ) : (
-            <button className="add-to-cart-btn" disabled>Unavailable</button>
+            <button className="btn btn-order" onClick={handleOpenOrderModal}>
+              Place Order
+            </button>
           )}
         </div>
       </div>
