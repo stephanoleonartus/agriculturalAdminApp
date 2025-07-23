@@ -9,7 +9,7 @@ const ProductShowcase = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('products/products/featured/');
+        const response = await axios.get('/products/products/featured/');
         if (response.data && Array.isArray(response.data)) {
           setProducts(response.data);
         }
