@@ -62,7 +62,7 @@ const ProductCard = ({ product, onDelete }) => {
       <Link to={`/products/${product.id}`}>
         <img src={product.image} alt={product.name} className="product-image" />
         <h3>{product.name}</h3>
-        <p className="price">${product.price}</p>
+        <p className="price">TZS {product.price}</p>
       </Link>
       <div className="product-actions">
         <button onClick={handleOrder} className="btn-order">Click Order</button>
