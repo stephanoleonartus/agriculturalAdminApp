@@ -11,7 +11,7 @@ const NotificationDropdown = () => {
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/v1/notifications/', {
+        const response = await axios.get('/notifications/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
