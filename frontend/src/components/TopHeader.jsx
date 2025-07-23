@@ -31,7 +31,7 @@ const TopHeader = () => {
           });
           setCartItemCount(cartRes.data.total_items);
 
-          const chatRes = await axios.get('/v1/chat/rooms/', {
+          const chatRes = await axios.get('/chat/rooms/', {
             headers: { Authorization: `Bearer ${token}` },
           });
           setMessageCount(chatRes.data.results.reduce((acc, room) => acc + room.unread_count, 0));
