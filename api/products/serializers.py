@@ -33,6 +33,9 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner', 'created_at']
 
     def get_image(self, obj):
+        if obj.image:
+            return obj.image.url
+
         primary_image = obj.images.filter(is_primary=True).first()
         if primary_image:
             return primary_image.image.url
