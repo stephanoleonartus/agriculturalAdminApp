@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
-import ProductCard from './ProductCard';
+import {ProductCard} from './Product';
 import '../styles/AllProducts.css';
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,7 +33,11 @@ const AllProducts = () => {
       <h2>All Products</h2>
       <div className="products-grid">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onPlaceOrder={() => navigate(`/products/${product.id}`)}
+          />
         ))}
       </div>
     </div>
