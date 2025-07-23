@@ -25,7 +25,7 @@ function Rate() {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get('/v1/reviews/reviews/', {
+      const response = await axios.get('/reviews/reviews/', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -67,7 +67,7 @@ function Rate() {
     setLoading(true);
 
     try {
-      await axios.post('/v1/reviews/reviews/', newReview, {
+      await axios.post('/reviews/reviews/', newReview, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -90,7 +90,7 @@ function Rate() {
 
   const handleHelpful = async (reviewId) => {
     try {
-      await axios.post(`/v1/reviews/reviews/${reviewId}/mark_helpful/`, {}, {
+      await axios.post(`/reviews/reviews/${reviewId}/mark_helpful/`, {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -103,7 +103,7 @@ function Rate() {
 
   const handleReply = async (reviewId) => {
     try {
-      await axios.post(`/v1/reviews/reviews/${reviewId}/respond/`, { response_text: reply.text }, {
+      await axios.post(`/reviews/reviews/${reviewId}/respond/`, { response_text: reply.text }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
