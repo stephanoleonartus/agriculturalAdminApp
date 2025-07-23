@@ -12,7 +12,7 @@ const OrderList = () => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/v1/orders/orders/');
+        const response = await axios.get('/orders/orders/');
         setOrders(response.data.results);
       } catch (err) {
         setError('There was an error fetching the orders.');
@@ -46,7 +46,7 @@ const OrderList = () => {
       }
       await axios.post(`api/v1/orders/orders/${orderId}/${endpoint}/`);
       // Refetch orders to update the list
-      const response = await axios.get('/v1/orders/orders/');
+      const response = await axios.get('/orders/orders/');
       setOrders(response.data.results);
     } catch (err) {
       setError('There was an error updating the order status.');
