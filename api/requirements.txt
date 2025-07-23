@@ -8,6 +8,8 @@ python-decouple==3.8
 psycopg2-binary==2.9.9
 Pillow==10.4.0
 sqlparse==0.5.3
+django-extensions==4.1
+drf-spectacular==0.28.0
 # Added djangorestframework for API development
 # Added django-filter for filtering capabilities
 # Added simplejwt for token authentication
