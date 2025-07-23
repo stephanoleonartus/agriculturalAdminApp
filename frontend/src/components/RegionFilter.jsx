@@ -9,7 +9,7 @@ const RegionFilter = ({ onRegionFilter }) => {
   useEffect(() => {
     const fetchRegions = async () => {
       try {
-        const response = await axios.get('auth/regions/');
+        const response = await axios.get('/auth/regions/');
         setRegions(response.data || []);
       } catch (err) {
         console.error('Error fetching regions:', err);
