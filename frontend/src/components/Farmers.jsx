@@ -15,7 +15,7 @@ const Farmers = () => {
     const fetchFarmers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`auth/farmers/${location.search}`);
+        const response = await axios.get(`/auth/farmers/${location.search}`);
         setFarmers(response.data.results || []);
       } catch (err) {
         console.error(err);
