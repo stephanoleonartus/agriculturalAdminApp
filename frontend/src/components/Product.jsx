@@ -52,7 +52,7 @@ const ProductCard = ({ product, onDelete }) => {
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-card-link">
-        <img src={product.image ? `http://localhost:8000${product.image}` : FALLBACK_IMAGE_URL} alt={product.name} className="product-image" />
+        <img src={product.image ? product.image : FALLBACK_IMAGE_URL} alt={product.name} className="product-image" />
         <h3>{product.name}</h3>
       </Link>
       <p className="product-price">
@@ -72,7 +72,7 @@ const ProductCard = ({ product, onDelete }) => {
             Add to Cart
           </button>
         ) : (
-          <button className="btn btn-unavailable" disabled>
+          <button className="btn-unavailable" disabled>
             Unavailable
           </button>
         )}
@@ -166,18 +166,11 @@ const ProductDetailPage = () => {
     <div className="product-detail-page">
       <div className="product-detail-layout">
         <div className="product-images">
-          {product.images && product.images.length > 0 ? (
-            product.images.map((image) => (
-              <img key={image.id} src={image.image} alt={image.alt_text || product.name} />
-            ))
-          ) : (
-            <img src={product.primary_image || FALLBACK_IMAGE_URL} alt={product.name} />
-          )}
+          <img src={product.image ? product.image : FALLBACK_IMAGE_URL} alt={product.name} />
         </div>
         <div className="product-info">
           <h2>{product.name}</h2>
           <p className="price">TZS {parseFloat(product.price).toFixed(2)} / {product.unit}</p>
-          <p className="description">{product.description}</p>
           <div className="owner-info">
             <h4>Sold by:</h4>
             <p>
@@ -198,6 +191,10 @@ const ProductDetailPage = () => {
             <button className="add-to-cart-btn" disabled>Unavailable</button>
           )}
         </div>
+      </div>
+      <div className="product-description">
+        <h3>Product Description</h3>
+        <p>{product.description}</p>
       </div>
       {isOrderModalOpen && (
         <div className="modal-overlay">
