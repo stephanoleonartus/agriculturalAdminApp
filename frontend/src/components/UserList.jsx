@@ -12,7 +12,7 @@ const UserList = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('auth/users/');
+        const response = await axios.get('/auth/users/');
         setUsers(response.data.results);
       } catch (err) {
         setError('There was an error fetching the users.');
