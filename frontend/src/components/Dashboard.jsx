@@ -26,13 +26,13 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [userRes, statsRes, productsRes] = await Promise.all([
-          axios.get('/api/auth/me/', {
+          axios.get('/auth/me/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           }),
-          axios.get('/api/analytics/dashboard-stats/', {
+          axios.get('/analytics/dashboard-stats/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           }),
-          axios.get('/api/products/farmer/products/', {
+          axios.get('/products/farmer/products/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           })
         ]);
