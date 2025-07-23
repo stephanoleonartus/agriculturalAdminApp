@@ -25,11 +25,24 @@ class ProductSerializer(serializers.ModelSerializer):
     videos = ProductVideoSerializer(many=True, read_only=True)
     region = RegionSerializer(read_only=True)
     farmer_name = serializers.CharField(source='owner.get_full_name', read_only=True)
+    image = serializers.SerializerMethodField()
     
     class Meta:
         model = Product
         fields = '__all__'
         read_only_fields = ['owner', 'created_at']
+
+    def get_image(self, obj):
+        primary_image = obj.images.filter(is_primary=True).first()
+        if primary_image:
+            return primary_image.image.url
+
+        # Fallback to the first image if no primary is designated
+        first_image = obj.images.first()
+        if first_image:
+            return first_image.image.url
+
+        return None
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     uploaded_images = serializers.ListField(
