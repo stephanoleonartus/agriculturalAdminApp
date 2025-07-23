@@ -20,7 +20,7 @@ function UserDashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get("/v1/analytics/dashboard-stats/", {
+      const response = await axios.get("/analytics/dashboard-stats/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -49,7 +49,7 @@ function UserDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("/v1/orders/orders/", {
+      const response = await axios.get("/orders/orders/", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -65,7 +65,7 @@ function UserDashboard() {
     try {
       let endpoint = '';
       if (type === 'orders') {
-        endpoint = `/v1/orders/orders/${id}/`;
+        endpoint = `/orders/orders/${id}/`;
       } else {
         // The endpoints for updating farmer and product status are not defined in the schema.
         // This is a placeholder for the actual implementation.
