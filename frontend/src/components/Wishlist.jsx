@@ -16,7 +16,7 @@ const Wishlist = () => {
         return;
       }
       try {
-        const response = await axios.get('products/wishlist/');
+        const response = await axios.get('/products/wishlist/');
         setWishlist(response.data.results);
       } catch (err) {
         setError('There was an error fetching your wishlist.');
@@ -30,7 +30,7 @@ const Wishlist = () => {
 
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      await axios.delete(`products/wishlist/${productId}/`);
+      await axios.delete(`/products/wishlist/${productId}/`);
       setWishlist(wishlist.filter((item) => item.product.id !== productId));
     } catch (err) {
       console.error('Error removing from wishlist:', err);
