@@ -11,7 +11,7 @@ const CropDemandTrends = () => {
     const fetchTrends = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/v1/analytics/crop-demand-trends/', {
+        const response = await axios.get('/analytics/crop-demand-trends/', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
           },
