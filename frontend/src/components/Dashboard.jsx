@@ -7,27 +7,39 @@ import {
   Calendar, Truck, Crop, Activity,
   FileText, AlertCircle, CreditCard, PieChart
 } from 'lucide-react';
+import CreateOrderModal from './CreateOrderModal';
+import AddProductModal from './AddProductModal';
+import ManageUsersModal from './ManageUsersModal';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [dashboardData, setDashboardData] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('week');
+  const [isCreateOrderModalOpen, setCreateOrderModalOpen] = useState(false);
+  const [isAddProductModalOpen, setAddProductModalOpen] = useState(false);
+  const [isManageUsersModalOpen, setManageUsersModalOpen] = useState(false);
+
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, statsRes] = await Promise.all([
-          axios.get('/auth/me/', {
+        const [userRes, statsRes, productsRes] = await Promise.all([
+          axios.get('/api/auth/me/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           }),
-          axios.get('/v1/analytics/dashboard-stats/', {
+          axios.get('/api/analytics/dashboard-stats/', {
+            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+          }),
+          axios.get('/api/products/farmer/products/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           })
         ]);
         
         setUser(userRes.data);
         setDashboardData(statsRes.data);
+        setProducts(productsRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -35,30 +47,6 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
-
-  // Simplified data for demonstration
-  const demoData = {
-    overview: {
-      cards: [
-        { title: "Total Products", value: "1,245", icon: <Package />, trend: "+12%", color: "blue" },
-        { title: "Active Orders", value: "56", icon: <ShoppingCart />, trend: "+5%", color: "green" },
-        { title: "Farmers", value: "128", icon: <Crop />, trend: "+8%", color: "orange" },
-      ],
-      recentActivities: [
-        { title: "New order from Farmer John", time: "10 mins ago", icon: <ShoppingCart /> },
-        { title: "Payment received from Agro Ltd", time: "25 mins ago", icon: <CreditCard /> },
-        { title: "Inventory low for Fertilizer X", time: "2 hours ago", icon: <AlertCircle /> },
-      ]
-    },
-    inventory: {
-      items: [
-        { name: "Organic Seeds", stock: "450kg", threshold: "50kg" },
-        { name: "Fertilizer A", stock: "1,200kg", threshold: "100kg" },
-        { name: "Pesticide B", stock: "800L", threshold: "50L" },
-        { name: "Irrigation Parts", stock: "45", threshold: "10" },
-      ]
-    }
-  };
 
   return (
     <div className="dashboard-container">
@@ -120,33 +108,40 @@ const Dashboard = () => {
         {activeTab === 'overview' && (
           <div className="tab-content">
             {/* Summary Cards */}
-            <div className="summary-cards">
-              {demoData.overview.cards.map((card, index) => (
-                <div key={index} className={`summary-card ${card.color}`}>
-                  <div className="card-icon">{card.icon}</div>
+            {dashboardData ? (
+              <div className="summary-cards">
+                <div className="summary-card blue">
+                  <div className="card-icon"><Package /></div>
                   <div className="card-content">
-                    <h3>{card.title}</h3>
-                    <p className="value">{card.value}</p>
-                    <p className="trend">{card.trend}</p>
+                    <h3>Total Products</h3>
+                    <p className="value">{dashboardData.total_products}</p>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="summary-card green">
+                  <div className="card-icon"><ShoppingCart /></div>
+                  <div className="card-content">
+                    <h3>Active Orders</h3>
+                    <p className="value">{dashboardData.active_orders}</p>
+                  </div>
+                </div>
+                <div className="summary-card orange">
+                  <div className="card-icon"><Crop /></div>
+                  <div className="card-content">
+                    <h3>Farmers</h3>
+                    <p className="value">{dashboardData.total_farmers}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p>Loading dashboard data...</p>
+            )}
 
             {/* Quick Stats */}
             <div className="quick-stats">
               <div className="stats-card">
                 <h3>Recent Activities</h3>
                 <div className="activities-list">
-                  {demoData.overview.recentActivities.map((activity, index) => (
-                    <div key={index} className="activity-item">
-                      <div className="activity-icon">{activity.icon}</div>
-                      <div className="activity-details">
-                        <p>{activity.title}</p>
-                        <span>{activity.time}</span>
-                      </div>
-                    </div>
-                  ))}
+                  {/* This will be implemented later */}
                 </div>
               </div>
 
@@ -183,19 +178,23 @@ const Dashboard = () => {
             <div className="quick-actions">
               <h3>Quick Actions</h3>
               <div className="action-buttons">
-                <button className="action-btn">
+                <button className="action-btn" onClick={() => setCreateOrderModalOpen(true)}>
                   <ShoppingCart /> Create Order
                 </button>
-                <button className="action-btn">
+                <button className="action-btn" onClick={() => setAddProductModalOpen(true)}>
                   <Package /> Add Product
                 </button>
-                <button className="action-btn">
+                <button className="action-btn" onClick={() => setManageUsersModalOpen(true)}>
                   <Users /> Manage Users
                 </button>
               </div>
             </div>
           </div>
         )}
+
+        {isCreateOrderModalOpen && <CreateOrderModal closeModal={() => setCreateOrderModalOpen(false)} />}
+        {isAddProductModalOpen && <AddProductModal closeModal={() => setAddProductModalOpen(false)} />}
+        {isManageUsersModalOpen && <ManageUsersModal closeModal={() => setManageUsersModalOpen(false)} />}
 
         {/* Inventory Tab */}
         {activeTab === 'inventory' && (
@@ -239,19 +238,23 @@ const Dashboard = () => {
                   <span>Reorder Level</span>
                   <span>Actions</span>
                 </div>
-                {demoData.inventory.items.map((item, index) => (
-                  <div key={index} className="inventory-item">
-                    <span>{item.name}</span>
-                    <span className={parseInt(item.stock) < parseInt(item.threshold) * 2 ? 'warning' : ''}>
-                      {item.stock}
-                    </span>
-                    <span>{item.threshold}</span>
-                    <div className="item-actions">
-                      <button className="edit-btn">Edit</button>
-                      <button className="restock-btn">Restock</button>
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <div key={product.id} className="inventory-item">
+                      <span>{product.name}</span>
+                      <span className={product.stock < product.reorder_level ? 'warning' : ''}>
+                        {product.stock}
+                      </span>
+                      <span>{product.reorder_level}</span>
+                      <div className="item-actions">
+                        <button className="edit-btn">Edit</button>
+                        <button className="restock-btn">Restock</button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No products found.</p>
+                )}
               </div>
             </div>
           </div>
