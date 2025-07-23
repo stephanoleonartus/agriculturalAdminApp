@@ -1,69 +1,12 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from django.db.models import Q
 from .models import Order, OrderItem, OrderHistory
-from .serializers import (
-    OrderSerializer, 
-    OrderItemSerializer,
-    OrderHistorySerializer
-)
+from .serializers import OrderSerializer, OrderCreateSerializer
+from .permissions import OrderPermission
 from products.models import Product
-from accounts.models import User
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_order_from_product(request):
-    product_id = request.data.get('product_id')
-    quantity = int(request.data.get('quantity', 1))
-
-    if not product_id:
-        return Response(
-            {'error': 'product_id is required'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    try:
-        product = Product.objects.get(id=product_id)
-    except Product.DoesNotExist:
-        return Response(
-            {'error': 'Product not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    buyer = request.user
-
-    order = Order.objects.create(
-        buyer=buyer,
-        total_amount=product.price * quantity,
-    )
-
-    OrderItem.objects.create(
-        order=order,
-        product=product,
-        quantity=quantity,
-        price=product.price
-    )
-
-    serializer = OrderSerializer(order)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class OrderPermission(permissions.BasePermission):
-    """Custom permission for order access control"""
-    def has_permission(self, request, view):
-        return request.user.is_authenticated
-
-    def has_object_permission(self, request, view, obj):
-        # Buyers can see their own orders
-        if request.user == obj.buyer:
-            return True
-        # Admins can see all orders
-        return request.user.is_staff
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -73,50 +16,27 @@ class OrderViewSet(viewsets.ModelViewSet):
     - Filtering by status/user/date
     """
     queryset = Order.objects.all()
-    serializer_class = OrderSerializer
     permission_classes = [OrderPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'payment_status', 'buyer']
-    search_fields = ['order_id', 'tracking_number', 'buyer__name']
+    search_fields = ['order_id', 'tracking_number', 'buyer__username']
     ordering_fields = ['order_date', 'total_amount', 'updated_at']
     ordering = ['-order_date']
 
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderCreateSerializer
+        return OrderSerializer
+
     def get_queryset(self):
         user = self.request.user
-        if user.is_superuser:
+        if user.is_superuser or user.is_staff:
             return Order.objects.all()
-        if user.role == 'buyer':
-            return Order.objects.filter(buyer=user)
-
-        elif user.role == 'farmer':
-            return Order.objects.filter(product__owner=user)
-
-        elif user.is_staff:
-            return Order.objects.all()
-
-        return Order.objects.none()
+        return Order.objects.filter(buyer=user)
 
     def perform_create(self, serializer):
-        """Auto-set buyer and calculate total on order creation"""
-        order = serializer.save(buyer=self.request.user)
-        
-        # Calculate total from cart items if available
-        if hasattr(self.request.user, 'cart'):
-            cart = self.request.user.cart
-            order.total_amount = cart.total_price
-            order.save()
-            
-            # Convert cart items to order items
-            for item in cart.items.all():
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    quantity=item.quantity,
-                    price=item.product.price
-                )
-            cart.items.all().delete()
-
-    # ================= ORDER STATUS ACTIONS =================
+        """Create an order from a product or from the cart."""
+        serializer.save()
 
     @action(detail=True, methods=['post'])
     def deliver(self, request, pk=None):
@@ -141,7 +61,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         if order.status not in valid_statuses:
             return Response(
-                {'error': f'Orders can only be cancelled when {valid_statuses}'},
+                {'error': f'Orders can only be cancelled when in {valid_statuses}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -150,7 +70,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         self._create_history(order, 'cancelled', request.user)
         return Response({'status': 'cancelled'})
 
-    # ================= FILTERED ORDER VIEWS =================
     @action(detail=False, methods=['get'])
     def pending(self, request):
         """List all pending orders (for suppliers)"""
@@ -172,7 +91,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    # ================= HELPER METHODS =================
     def _create_history(self, order, status, user):
         """Create order history record"""
         OrderHistory.objects.create(
