@@ -16,7 +16,7 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('auth/logout/', {}, {
+      await axios.post('/auth/logout/', {}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
