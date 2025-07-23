@@ -8,7 +8,7 @@ const ManageUsersModal = ({ closeModal }) => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('/api/accounts/farmers/', {
+                const response = await axios.get('/auth/farmers/', {
                     headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
                 });
                 setUsers(response.data);
