@@ -26,6 +26,7 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import DashboardLayout from './components/DashboardLayout';
 import DashboardPage from './components/DashboardPage';
+import FarmerDashboard from './components/FarmerDashboard';
 
 
 import Chat from './components/Chat';
@@ -93,7 +94,7 @@ function AppContent() {
           <Route path="orders" element={<OrderList />} />
         </Route>
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<DashboardPage />} />
+          <Route index element={user?.role === 'farmer' ? <FarmerDashboard /> : <DashboardPage />} />
         </Route>
       </Routes>
     </>

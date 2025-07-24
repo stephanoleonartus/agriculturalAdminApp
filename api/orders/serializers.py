@@ -52,7 +52,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Product not found")
 
         total_amount = product.price * quantity
-        order = Order.objects.create(buyer=buyer, total_amount=total_amount, **validated_data)
+        order = Order.objects.create(buyer=buyer, farmer=product.owner, total_amount=total_amount, **validated_data)
         OrderItem.objects.create(order=order, product=product, quantity=quantity, price=product.price)
 
         return order
