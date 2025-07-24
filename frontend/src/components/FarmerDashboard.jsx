@@ -10,7 +10,34 @@ import {
 import CreateOrderModal from './CreateOrderModal';
 import ProductForm from './ProductForm';
 import DeleteProductModal from './DeleteProductModal';
+import OrderDetailsModal from './OrderDetailsModal';
 import ManageUsersModal from './ManageUsersModal';
+
+const fetchData = async (setUser, setDashboardData, setProducts, setOrders) => {
+  try {
+    const [userRes, statsRes, productsRes, ordersRes] = await Promise.all([
+      axios.get('/auth/me/', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }),
+      axios.get('/analytics/dashboard-stats/', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }),
+      axios.get('/products/farmer/products/', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      }),
+      axios.get('/orders/mine/', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+      })
+    ]);
+
+    setUser(userRes.data);
+    setDashboardData(statsRes.data);
+    setProducts(productsRes.data);
+    setOrders(ordersRes.data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
 const FarmerDashboard = () => {
   const [user, setUser] = useState(null);
@@ -22,39 +49,15 @@ const FarmerDashboard = () => {
   const [isEditProductModalOpen, setEditProductModalOpen] = useState(false);
   const [isDeleteProductModalOpen, setDeleteProductModalOpen] = useState(false);
   const [isManageUsersModalOpen, setManageUsersModalOpen] = useState(false);
+  const [isOrderDetailsModalOpen, setOrderDetailsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
 
-  const fetchData = async () => {
-    try {
-      const [userRes, statsRes, productsRes, ordersRes] = await Promise.all([
-        axios.get('/auth/me/', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        }),
-        axios.get('/analytics/dashboard-stats/', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        }),
-        axios.get('/products/farmer/products/', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        }),
-        axios.get('/orders/mine/', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        })
-      ]);
-
-      setUser(userRes.data);
-      setDashboardData(statsRes.data);
-      setProducts(productsRes.data);
-      setOrders(ordersRes.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    fetchData(setUser, setDashboardData, setProducts, setOrders);
   }, []);
 
   return (
@@ -189,9 +192,9 @@ const FarmerDashboard = () => {
           </div>
         )}
 
-        {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} refreshProducts={fetchData} />}
-        {isEditProductModalOpen && <ProductForm closeModal={() => setEditProductModalOpen(false)} product={selectedProduct} refreshProducts={fetchData} />}
-        {isDeleteProductModalOpen && <DeleteProductModal closeModal={() => setDeleteProductModalOpen(false)} product={selectedProduct} refreshProducts={fetchData} />}
+        {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} refreshProducts={() => fetchData(setUser, setDashboardData, setProducts, setOrders)} />}
+        {isEditProductModalOpen && <ProductForm closeModal={() => setEditProductModalOpen(false)} product={selectedProduct} refreshProducts={() => fetchData(setUser, setDashboardData, setProducts, setOrders)} />}
+        {isDeleteProductModalOpen && <DeleteProductModal closeModal={() => setDeleteProductModalOpen(false)} product={selectedProduct} refreshProducts={() => fetchData(setUser, setDashboardData, setProducts, setOrders)} />}
 
         {/* Orders Tab */}
         {activeTab === 'orders' && (
@@ -213,7 +216,10 @@ const FarmerDashboard = () => {
                     <span>${order.total_amount}</span>
                     <span>{order.status}</span>
                     <div className="item-actions">
-                      <button className="view-btn">View</button>
+                      <button className="view-btn" onClick={() => {
+                        setSelectedOrder(order);
+                        setOrderDetailsModalOpen(true);
+                      }}>View</button>
                     </div>
                   </div>
                 ))
@@ -223,6 +229,8 @@ const FarmerDashboard = () => {
             </div>
           </div>
         )}
+
+        {isOrderDetailsModalOpen && <OrderDetailsModal closeModal={() => setOrderDetailsModalOpen(false)} order={selectedOrder} />}
 
         {/* Reports Tab */}
         {activeTab === 'reports' && (

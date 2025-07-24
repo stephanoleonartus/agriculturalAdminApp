@@ -20,26 +20,20 @@ const Dashboard = () => {
   const [isAddProductModalOpen, setAddProductModalOpen] = useState(false);
   const [isManageUsersModalOpen, setManageUsersModalOpen] = useState(false);
 
-  const [products, setProducts] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, statsRes, productsRes] = await Promise.all([
+        const [userRes, statsRes] = await Promise.all([
           axios.get('/auth/me/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           }),
           axios.get('/analytics/dashboard-stats/', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          }),
-          axios.get('/products/farmer/products/', {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           })
         ]);
         
         setUser(userRes.data);
         setDashboardData(statsRes.data);
-        setProducts(productsRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -83,12 +77,6 @@ const Dashboard = () => {
             onClick={() => setActiveTab('overview')}
           >
             <Activity /> Overview
-          </button>
-          <button 
-            className={activeTab === 'inventory' ? 'active' : ''}
-            onClick={() => setActiveTab('inventory')}
-          >
-            <Package /> Inventory
           </button>
           <button 
             className={activeTab === 'orders' ? 'active' : ''}
@@ -195,70 +183,6 @@ const Dashboard = () => {
         {isCreateOrderModalOpen && <CreateOrderModal closeModal={() => setCreateOrderModalOpen(false)} />}
         {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} />}
         {isManageUsersModalOpen && <ManageUsersModal closeModal={() => setManageUsersModalOpen(false)} />}
-
-        {/* Inventory Tab */}
-        {activeTab === 'inventory' && (
-          <div className="tab-content">
-            <div className="inventory-header">
-              <h2>Inventory Management</h2>
-              <button className="primary-btn">
-                <Package /> Add New Item
-              </button>
-            </div>
-            
-            <div className="inventory-grid">
-              <div className="inventory-filters">
-                <div className="filter-group">
-                  <label>Category</label>
-                  <select>
-                    <option>All Categories</option>
-                    <option>Seeds</option>
-                    <option>Fertilizers</option>
-                    <option>Equipment</option>
-                  </select>
-                </div>
-                <div className="filter-group">
-                  <label>Stock Status</label>
-                  <select>
-                    <option>All Items</option>
-                    <option>Low Stock</option>
-                    <option>In Stock</option>
-                    <option>Out of Stock</option>
-                  </select>
-                </div>
-                <button className="filter-btn">
-                  <Search /> Filter
-                </button>
-              </div>
-
-              <div className="inventory-list">
-                <div className="inventory-list-header">
-                  <span>Item Name</span>
-                  <span>Current Stock</span>
-                  <span>Reorder Level</span>
-                  <span>Actions</span>
-                </div>
-                {products.length > 0 ? (
-                  products.map((product) => (
-                    <div key={product.id} className="inventory-item">
-                      <span>{product.name}</span>
-                      <span className={product.stock < product.reorder_level ? 'warning' : ''}>
-                        {product.stock}
-                      </span>
-                      <span>{product.reorder_level}</span>
-                      <div className="item-actions">
-                        <button className="edit-btn">Edit</button>
-                        <button className="restock-btn">Restock</button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No products found.</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Orders Tab */}
         {activeTab === 'orders' && (

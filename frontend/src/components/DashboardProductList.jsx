@@ -8,33 +8,23 @@ const DashboardProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
   const [view, setView] = useState('grid'); // 'grid' or 'table'
 
   useEffect(() => {
-    const userInfo = localStorage.getItem('userInfo');
-    if (userInfo) {
-      const parsedUser = JSON.parse(userInfo);
-      setUser(parsedUser);
-      if (parsedUser.role === 'farmer') {
-        fetchProducts(parsedUser.id, parsedUser.role);
-      } else {
-        setLoading(false);
-      }
-    }
+    fetchProducts();
   }, []);
 
-  const fetchProducts = async (userId, role) => {
+  const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/products/products/?owner=${userId}`, {
+      const response = await axios.get('/products/products/', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       });
       setProducts(response.data.results || []);
     } catch (err) {
-      setError('Error loading your products');
+      setError('Error loading products');
       console.error('Error fetching products:', err);
     } finally {
       setLoading(false);
