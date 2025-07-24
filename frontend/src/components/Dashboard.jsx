@@ -8,7 +8,7 @@ import {
   FileText, AlertCircle, CreditCard, PieChart
 } from 'lucide-react';
 import CreateOrderModal from './CreateOrderModal';
-import AddProductModal from './AddProductModal';
+import ProductForm from './ProductForm';
 import ManageUsersModal from './ManageUsersModal';
 
 const Dashboard = () => {

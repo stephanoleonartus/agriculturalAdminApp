@@ -189,8 +189,8 @@ const FarmerDashboard = () => {
           </div>
         )}
 
-        {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} />}
-        {isEditProductModalOpen && <ProductForm closeModal={() => setEditProductModalOpen(false)} product={selectedProduct} />}
+        {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} refreshProducts={fetchData} />}
+        {isEditProductModalOpen && <ProductForm closeModal={() => setEditProductModalOpen(false)} product={selectedProduct} refreshProducts={fetchData} />}
         {isDeleteProductModalOpen && <DeleteProductModal closeModal={() => setDeleteProductModalOpen(false)} product={selectedProduct} refreshProducts={fetchData} />}
 
         {/* Orders Tab */}
