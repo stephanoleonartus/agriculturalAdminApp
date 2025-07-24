@@ -193,7 +193,7 @@ const Dashboard = () => {
         )}
 
         {isCreateOrderModalOpen && <CreateOrderModal closeModal={() => setCreateOrderModalOpen(false)} />}
-        {isAddProductModalOpen && <AddProductModal closeModal={() => setAddProductModalOpen(false)} />}
+        {isAddProductModalOpen && <ProductForm closeModal={() => setAddProductModalOpen(false)} />}
         {isManageUsersModalOpen && <ManageUsersModal closeModal={() => setManageUsersModalOpen(false)} />}
 
         {/* Inventory Tab */}

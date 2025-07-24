@@ -27,33 +27,33 @@ const FarmerDashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
 
+  const fetchData = async () => {
+    try {
+      const [userRes, statsRes, productsRes, ordersRes] = await Promise.all([
+        axios.get('/auth/me/', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        }),
+        axios.get('/analytics/dashboard-stats/', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        }),
+        axios.get('/products/farmer/products/', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        }),
+        axios.get('/orders/mine/', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+        })
+      ]);
+
+      setUser(userRes.data);
+      setDashboardData(statsRes.data);
+      setProducts(productsRes.data);
+      setOrders(ordersRes.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [userRes, statsRes, productsRes, ordersRes] = await Promise.all([
-          axios.get('/auth/me/', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          }),
-          axios.get('/analytics/dashboard-stats/', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          }),
-          axios.get('/products/farmer/products/', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          }),
-          axios.get('/orders/mine/', {
-            headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-          })
-        ]);
-
-        setUser(userRes.data);
-        setDashboardData(statsRes.data);
-        setProducts(productsRes.data);
-        setOrders(ordersRes.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -231,8 +231,6 @@ const FarmerDashboard = () => {
             <p>Reports content will go here</p>
           </div>
         )}
-
-        {isAddProductModalOpen && <AddProductModal closeModal={() => setAddProductModalOpen(false)} />}
       </main>
     </div>
   );
