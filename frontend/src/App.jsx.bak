@@ -15,17 +15,17 @@ import Rewards from './components/Rewards';
 import Settings from './components/Settings';
 import HelpCenter from './components/HelpCenter';
 import ContactInfoPage from './components/ContactInfoPage';
-import BuyerDashboardLayout from './components/BuyerDashboardLayout';
-import BuyerDashboard from './components/BuyerDashboard';
-import BuyerDashboardProductList from './components/BuyerDashboardProductList';
+import UserDashboardLayout from './components/UserDashboardLayout';
+import UserDashboard from './components/UserDashboard';
+import UserDashboardProductList from './components/UserDashboardProductList';
 import AddProductForm from './components/AddProductForm';
-import BuyerList from './components/BuyerList';
+import UserList from './components/UserList';
 import OrderList from './components/OrderList';
 import EditProduct from './components/EditProduct';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
-import FarmerDashboardLayout from './components/FarmerDashboardLayout';
-import FDashboard from './components/FDashboard';
+import DashboardLayout from './components/DashboardLayout';
+import DashboardPage from './components/DashboardPage';
 import FarmerDashboard from './components/FarmerDashboard';
 
 
@@ -74,43 +74,4 @@ function AppContent() {
             <Route path="cart" element={<CartPage />} />
             <Route path="profile" element={<MyProfile />}>
               <Route path="orders" element={<Orders />} />
-              <Route path="wishlist" element={<Wishlist />} />
-              <Route path="payment-methods" element={<PaymentMethods />} />
-              <Route path="rewards" element={<Rewards />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="help-center" element={<HelpCenter />} />
-            </Route>
-          </Route>
-        )}
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:uidb64/:token/" element={<ResetPassword />} />
-        <Route path="/buyer-dashboard" element={<BuyerDashboardLayout />}>
-          <Route index element={<BuyerDashboard />} />
-          <Route path="products" element={<BuyerDashboardProductList />} />
-          <Route path="products/add" element={<AddProductForm />} />
-          <Route path="users" element={<BuyerList />} />
-          <Route path="orders" element={<OrderList />} />
-        </Route>
-        <Route path="/dashboard" element={<FarmerDashboardLayout />}>
-          <Route index element={user?.role === 'farmer' ? <FarmerDashboard /> : <FDashboard />} />
-        </Route>
-      </Routes>
-    </>
-  );
-}
-
-function App() {
-  return (
-    <LocationProvider> {/* Wrap with LocationProvider */}
-      <div className="App">
-        <Router>
-          <AppContent />
-        </Router>
-      </div>
-    </LocationProvider>
-  );
-}
-
-export default App;
+              <Rout

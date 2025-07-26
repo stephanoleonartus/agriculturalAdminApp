@@ -7,11 +7,18 @@ import {
   Calendar, Truck, Crop, Activity,
   FileText, AlertCircle, CreditCard, PieChart
 } from 'lucide-react';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import CreateOrderModal from './CreateOrderModal';
 import ProductForm from './ProductForm';
 import DeleteProductModal from './DeleteProductModal';
 import OrderDetailsModal from './OrderDetailsModal';
 import ManageUsersModal from './ManageUsersModal';
+import Notification from './Notification';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const fetchData = async (setUser, setDashboardData, setProducts, setOrders) => {
   try {
@@ -59,6 +66,41 @@ const FarmerDashboard = () => {
   useEffect(() => {
     fetchData(setUser, setDashboardData, setProducts, setOrders);
   }, []);
+
+  const getChartData = () => {
+    const labels = [];
+    const data = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      labels.push(date.toLocaleDateString());
+      const ordersOnDate = orders.filter(order => new Date(order.created_at).toDateString() === date.toDateString());
+      data.push(ordersOnDate.length);
+    }
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Orders',
+          data,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        },
+      ],
+    };
+  };
+
+  const chartData = getChartData();
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text('Orders Report', 20, 10);
+    doc.autoTable({
+      head: [['Order ID', 'Buyer', 'Total Amount', 'Status']],
+      body: orders.map(order => [order.order_id, order.buyer.username, `$${order.total_amount}`, order.status]),
+    });
+    doc.save('orders-report.pdf');
+  };
 
   return (
     <div className="dashboard-container">
@@ -114,6 +156,18 @@ const FarmerDashboard = () => {
           >
             <FileText /> Reports
           </button>
+          <button
+            className={activeTab === 'buyers' ? 'active' : ''}
+            onClick={() => setActiveTab('buyers')}
+          >
+            <Users /> Buyers
+          </button>
+          <button
+            className={activeTab === 'notifications' ? 'active' : ''}
+            onClick={() => setActiveTab('notifications')}
+          >
+            <Bell /> Notifications
+          </button>
         </div>
 
         {/* Overview Tab */}
@@ -147,6 +201,10 @@ const FarmerDashboard = () => {
             ) : (
               <p>Loading dashboard data...</p>
             )}
+            <div className="chart-container">
+              <h3>Sales Overview</h3>
+              <Bar data={chartData} />
+            </div>
           </div>
         )}
 
@@ -236,7 +294,41 @@ const FarmerDashboard = () => {
         {activeTab === 'reports' && (
           <div className="tab-content">
             <h2>Reports & Analytics</h2>
-            <p>Reports content will go here</p>
+            <button className="primary-btn" onClick={generatePDF}>
+              <FileText /> Generate PDF Report
+            </button>
+          </div>
+        )}
+
+        {/* Buyers Tab */}
+        {activeTab === 'buyers' && (
+          <div className="tab-content">
+            <h2>My Buyers</h2>
+            <div className="inventory-list">
+              <div className="inventory-list-header">
+                <span>Buyer Name</span>
+                <span>Email</span>
+                <span>Phone</span>
+              </div>
+              {orders.length > 0 ? (
+                [...new Map(orders.map(order => [order.buyer.id, order.buyer])).values()].map(buyer => (
+                  <div key={buyer.id} className="inventory-item">
+                    <span>{buyer.username}</span>
+                    <span>{buyer.email}</span>
+                    <span>{buyer.phone_number}</span>
+                  </div>
+                ))
+              ) : (
+                <p>No buyers found.</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Notifications Tab */}
+        {activeTab === 'notifications' && (
+          <div className="tab-content">
+            <Notification />
           </div>
         )}
       </main>
