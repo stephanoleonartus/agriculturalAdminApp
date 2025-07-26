@@ -97,6 +97,29 @@ function UserDashboard() {
     </div>
   );
 
+  const [farmers, setFarmers] = useState([]);
+
+  useEffect(() => {
+    fetchStats();
+    fetchProducts();
+    fetchOrders();
+    fetchFarmers();
+  }, []);
+
+  const fetchFarmers = async () => {
+    try {
+      const response = await axios.get("/accounts/farmers/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setFarmers(response.data.results);
+    } catch (error) {
+      setError("Failed to fetch farmers.");
+      console.error("Error fetching farmers:", error);
+    }
+  };
+
   const renderOverview = () => (
     <div className="overview-section">
       <div className="stats-grid">
@@ -113,19 +136,115 @@ function UserDashboard() {
     </div>
   );
 
+  const renderProducts = () => (
+    <div className="tab-content">
+      <h2>Products</h2>
+      <div className="inventory-list">
+        <div className="inventory-list-header">
+          <span>Product Name</span>
+          <span>Price</span>
+          <span>Farmer</span>
+        </div>
+        {products.length > 0 ? (
+          products.map((product) => (
+            <div key={product.id} className="inventory-item">
+              <span>{product.name}</span>
+              <span>${product.price}</span>
+              <span>{product.farmer.farm_name}</span>
+            </div>
+          ))
+        ) : (
+          <p>No products found.</p>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderFarmers = () => (
+    <div className="tab-content">
+      <h2>Farmers</h2>
+      <div className="inventory-list">
+        <div className="inventory-list-header">
+          <span>Farm Name</span>
+          <span>Location</span>
+        </div>
+        {farmers.length > 0 ? (
+          farmers.map((farmer) => (
+            <div key={farmer.id} className="inventory-item">
+              <span>{farmer.farm_name}</span>
+              <span>{farmer.location}</span>
+            </div>
+          ))
+        ) : (
+          <p>No farmers found.</p>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderOrders = () => (
+    <div className="tab-content">
+      <h2>My Orders</h2>
+      <div className="inventory-list">
+        <div className="inventory-list-header">
+          <span>Order ID</span>
+          <span>Total Amount</span>
+          <span>Status</span>
+        </div>
+        {orders.length > 0 ? (
+          orders.map((order) => (
+            <div key={order.order_id} className="inventory-item">
+              <span>{order.order_id}</span>
+              <span>${order.total_amount}</span>
+              <span>{order.status}</span>
+            </div>
+          ))
+        ) : (
+          <p>No orders found.</p>
+        )}
+      </div>
+    </div>
+  );
+
 
   return (
     <div className="user-dashboard">
       <div className="user-dashboard-header">
-        <h1>🎛️ User Dashboard</h1>
-        <div className="user-dashboard-actions">
-          <button className="btn-primary">Generate Report</button>
-          <button className="btn-secondary">Settings</button>
-        </div>
+        <h1>Buyer Dashboard</h1>
+      </div>
+
+      <div className="dashboard-tabs">
+        <button
+          className={activeTab === 'overview' ? 'active' : ''}
+          onClick={() => setActiveTab('overview')}
+        >
+          Overview
+        </button>
+        <button
+          className={activeTab === 'products' ? 'active' : ''}
+          onClick={() => setActiveTab('products')}
+        >
+          Products
+        </button>
+        <button
+          className={activeTab === 'farmers' ? 'active' : ''}
+          onClick={() => setActiveTab('farmers')}
+        >
+          Farmers
+        </button>
+        <button
+          className={activeTab === 'orders' ? 'active' : ''}
+          onClick={() => setActiveTab('orders')}
+        >
+          My Orders
+        </button>
       </div>
 
       <div className="user-dashboard-content">
-        {renderOverview()}
+        {activeTab === 'overview' && renderOverview()}
+        {activeTab === 'products' && renderProducts()}
+        {activeTab === 'farmers' && renderFarmers()}
+        {activeTab === 'orders' && renderOrders()}
       </div>
     </div>
   );
