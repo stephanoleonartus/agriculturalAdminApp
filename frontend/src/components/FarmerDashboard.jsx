@@ -41,6 +41,7 @@ const fetchData = async (setUser, setDashboardData, setProducts, setOrders) => {
     setDashboardData(statsRes.data);
     setProducts(productsRes.data);
     setOrders(ordersRes.data);
+    console.log('Fetched orders:', ordersRes.data);
   } catch (error) {
     console.error('Error fetching data:', error);
   }

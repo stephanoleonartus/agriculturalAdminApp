@@ -32,11 +32,50 @@ class OrderViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_superuser or user.is_staff:
             return Order.objects.all()
+
+        # For farmers, return orders they are assigned to
+        if hasattr(user, 'farmer_profile'):
+            return Order.objects.filter(farmer=user)
+
+        # For buyers, return orders they have created
         return Order.objects.filter(buyer=user)
 
     def perform_create(self, serializer):
-        """Create an order from a product or from the cart."""
-        serializer.save()
+        """
+        Create an order and assign the correct farmer based on the product.
+        """
+        # The buyer is the request user
+        validated_data = serializer.validated_data
+        validated_data['buyer'] = self.request.user
+
+        items_data = validated_data.pop('items', [])
+
+        # Get the first item to determine the farmer
+        if not items_data:
+            raise serializers.ValidationError("An order must have at least one item.")
+
+        product_id = items_data[0]['product_id']
+        try:
+            product = Product.objects.get(id=product_id)
+            farmer = product.owner
+        except Product.DoesNotExist:
+            raise serializers.ValidationError(f"Product with id {product_id} not found.")
+
+        # Create the order and assign the farmer
+        order = Order.objects.create(farmer=farmer, **validated_data)
+
+        # Create order items
+        for item_data in items_data:
+            product = Product.objects.get(id=item_data['product_id'])
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=item_data['quantity'],
+                price=product.price  # Use the current product price
+            )
+
+        # Recalculate the total amount based on the items
+        order.save()
 
     @action(detail=True, methods=['post'])
     def deliver(self, request, pk=None):
