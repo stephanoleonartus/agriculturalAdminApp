@@ -11,22 +11,22 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const statsRes = await axios.get('/v1/analytics/dashboard-stats/', {
+        const statsRes = await axios.get('/analytics/dashboard-stats/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         });
         setDashboardStats(statsRes.data);
 
-        const salesRes = await axios.get('/v1/analytics/sales/', {
+        const salesRes = await axios.get('/analytics/sales/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         });
         setSalesAnalytics(salesRes.data.results);
 
-        const usersRes = await axios.get('/v1/analytics/users/', {
+        const usersRes = await axios.get('/analytics/users/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         });
         setUserAnalytics(usersRes.data.results);
 
-        const eventsRes = await axios.get('/v1/analytics/events/', {
+        const eventsRes = await axios.get('/analytics/events/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` },
         });
         setAnalyticsEvents(eventsRes.data.results);
