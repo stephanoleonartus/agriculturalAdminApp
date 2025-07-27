@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "../api/axios";
 import "../styles/UserDashboard.css";
+import OrderTracking from "./OrderTracking";
+import OrderDetailsModal from "./OrderDetailsModal";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 function UserDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [stats, setStats] = useState({
-    totalProducts: 0,
-    totalOrders: 0,
-  });
-  const [products, setProducts] = useState([]);
+  const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     fetchStats();
@@ -136,51 +135,7 @@ function UserDashboard() {
     </div>
   );
 
-  const renderProducts = () => (
-    <div className="tab-content">
-      <h2>Products</h2>
-      <div className="inventory-list">
-        <div className="inventory-list-header">
-          <span>Product Name</span>
-          <span>Price</span>
-          <span>Farmer</span>
-        </div>
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className="inventory-item">
-              <span>{product.name}</span>
-              <span>${product.price}</span>
-              <span>{product.farmer.farm_name}</span>
-            </div>
-          ))
-        ) : (
-          <p>No products found.</p>
-        )}
-      </div>
-    </div>
-  );
 
-  const renderFarmers = () => (
-    <div className="tab-content">
-      <h2>Farmers</h2>
-      <div className="inventory-list">
-        <div className="inventory-list-header">
-          <span>Farm Name</span>
-          <span>Location</span>
-        </div>
-        {farmers.length > 0 ? (
-          farmers.map((farmer) => (
-            <div key={farmer.id} className="inventory-item">
-              <span>{farmer.farm_name}</span>
-              <span>{farmer.location}</span>
-            </div>
-          ))
-        ) : (
-          <p>No farmers found.</p>
-        )}
-      </div>
-    </div>
-  );
 
   const renderOrders = () => (
     <div className="tab-content">
@@ -190,6 +145,7 @@ function UserDashboard() {
           <span>Order ID</span>
           <span>Total Amount</span>
           <span>Status</span>
+          <span>Actions</span>
         </div>
         {orders.length > 0 ? (
           orders.map((order) => (
@@ -197,12 +153,22 @@ function UserDashboard() {
               <span>{order.order_id}</span>
               <span>${order.total_amount}</span>
               <span>{order.status}</span>
+              <span>
+                <button onClick={() => setSelectedOrder(order)}>View Details</button>
+              </span>
             </div>
           ))
         ) : (
           <p>No orders found.</p>
         )}
       </div>
+      {selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+          onOrderUpdate={fetchOrders}
+        />
+      )}
     </div>
   );
 
@@ -215,36 +181,43 @@ function UserDashboard() {
 
       <div className="dashboard-tabs">
         <button
-          className={activeTab === 'overview' ? 'active' : ''}
-          onClick={() => setActiveTab('overview')}
-        >
-          Overview
-        </button>
-        <button
-          className={activeTab === 'products' ? 'active' : ''}
-          onClick={() => setActiveTab('products')}
-        >
-          Products
-        </button>
-        <button
-          className={activeTab === 'farmers' ? 'active' : ''}
-          onClick={() => setActiveTab('farmers')}
-        >
-          Farmers
-        </button>
-        <button
           className={activeTab === 'orders' ? 'active' : ''}
           onClick={() => setActiveTab('orders')}
         >
           My Orders
         </button>
+        <button
+          className={activeTab === 'wishlist' ? 'active' : ''}
+          onClick={() => setActiveTab('wishlist')}
+        >
+          Wishlist
+        </button>
+        <button
+          className={activeTab === 'pricing' ? 'active' : ''}
+          onClick={() => setActiveTab('pricing')}
+        >
+          Pricing & Payments
+        </button>
+        <button
+          className={activeTab === 'chat' ? 'active' : ''}
+          onClick={() => setActiveTab('chat')}
+        >
+          Chat
+        </button>
+        <button
+          className={activeTab === 'settings' ? 'active' : ''}
+          onClick={() => setActiveTab('settings')}
+        >
+          Settings
+        </button>
       </div>
 
       <div className="user-dashboard-content">
-        {activeTab === 'overview' && renderOverview()}
-        {activeTab === 'products' && renderProducts()}
-        {activeTab === 'farmers' && renderFarmers()}
         {activeTab === 'orders' && renderOrders()}
+        {activeTab === 'wishlist' && <Wishlist />}
+        {activeTab === 'pricing' && <PricingAndPayments />}
+        {activeTab === 'chat' && <Chat />}
+        {activeTab === 'settings' && <Settings />}
       </div>
     </div>
   );

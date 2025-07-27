@@ -1,0 +1,16 @@
+.settings-container {
+  margin-top: 20px;
+}
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.notification-settings label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.settings-section button {
+  margin-right: 10px;
+}
