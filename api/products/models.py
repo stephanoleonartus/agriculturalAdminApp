@@ -26,6 +26,12 @@ class Category(models.Model):
 from accounts.models import Region
 
 class Product(models.Model):
+    GRADE_CHOICES = [
+        ('A', 'Grade A'),
+        ('B', 'Grade B'),
+        ('C', 'Grade C'),
+    ]
+
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
@@ -34,10 +40,16 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='products')
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='products')
-    is_active = models.BooleanField(default=True)  # Added is_active field
-    is_featured = models.BooleanField(default=False)  # Added is_featured field
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  # Added updated_at field
+    updated_at = models.DateTimeField(auto_now=True)
+    quality_grade = models.CharField(max_length=1, choices=GRADE_CHOICES, blank=True)
+    harvest_date = models.DateField(null=True, blank=True)
+    freshness_indicator = models.CharField(max_length=100, blank=True)
+    stock_quantity = models.PositiveIntegerField(default=0)
+    bulk_pricing = models.JSONField(default=dict, blank=True)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if not self.region and self.owner:
@@ -46,6 +58,29 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ProductCertificate(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='certificates')
+    name = models.CharField(max_length=100)
+    file = models.FileField(upload_to='certificates/')
+    issued_by = models.CharField(max_length=100)
+    issue_date = models.DateField()
+    expiry_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} for {self.product.name}"
+
+
+class SeasonalProduct(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='seasonal_availability')
+    season_name = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    pre_order_available = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.product.name} - {self.season_name}"
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')

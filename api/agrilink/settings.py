@@ -76,9 +76,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'agrilink_db',
-        'USER': 'postgres',
+        'USER': 'postgress',
         'PASSWORD': 'siame2003',
-        'HOST': 'localhost',
+        'HOST': '172.18.0.2',
         'PORT': '5432',
     }
 }

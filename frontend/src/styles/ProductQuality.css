@@ -1,0 +1,37 @@
+.product-quality-container {
+  margin-top: 20px;
+}
+
+.quality-details p {
+  margin: 5px 0;
+}
+
+.quality-certificates {
+  margin-top: 15px;
+}
+
+.quality-certificates ul {
+  list-style: none;
+  padding: 0;
+}
+
+.quality-certificates li {
+  margin-bottom: 5px;
+}
+
+.product-media {
+  margin-top: 15px;
+}
+
+.media-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.media-gallery img,
+.media-gallery video {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 5px;
+}

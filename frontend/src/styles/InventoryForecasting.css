@@ -1,0 +1,31 @@
+.inventory-forecasting-container {
+  margin-top: 20px;
+}
+
+.seasonal-calendar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.seasonal-calendar li {
+  margin-bottom: 10px;
+}
+
+.pre-order-badge {
+  background-color: #28a745;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.low-stock-alerts ul {
+  list-style: none;
+  padding: 0;
+}
+
+.low-stock-alerts li {
+  margin-bottom: 5px;
+  color: #dc3545;
+}
