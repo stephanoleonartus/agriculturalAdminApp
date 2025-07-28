@@ -116,8 +116,26 @@ class BuyerViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(region__name=region)
         return queryset
 
+from .serializers import FarmerDashboardSerializer
+
 class RegionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = None
+
+from .serializers import BuyerDashboardSerializer
+
+class FarmerDashboardView(generics.RetrieveAPIView):
+    serializer_class = FarmerDashboardSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+class BuyerDashboardView(generics.RetrieveAPIView):
+    serializer_class = BuyerDashboardSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

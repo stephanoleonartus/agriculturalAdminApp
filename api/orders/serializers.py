@@ -6,11 +6,14 @@ from accounts.serializers import UserSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
-    
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', write_only=True
+    )
+
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity', 'price', 'total_price']
-        read_only_fields = ['total_price']
+        fields = ['id', 'product', 'product_id', 'quantity', 'price', 'total_price']
+        read_only_fields = ['total_price', 'product']
 
 class OrderHistorySerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
@@ -42,3 +45,13 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         fields = [
             'shipping_address', 'billing_address', 'notes', 'items'
         ]
+
+    def validate_items(self, items):
+        if not items:
+            raise serializers.ValidationError("An order must have at least one item.")
+
+        first_product_owner = items[0]['product'].owner
+        for item in items:
+            if item['product'].owner != first_product_owner:
+                raise serializers.ValidationError("All items in an order must belong to the same farmer.")
+        return items
