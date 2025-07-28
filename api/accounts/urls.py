@@ -1,10 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import FarmerViewSet, BuyerViewSet, RegisterView, LoginView, RegionViewSet, LogoutView, CurrentUserView, ChangePasswordView
+from .views import FarmerViewSet, BuyerViewSet, RegisterView, LoginView, RegionViewSet, LogoutView, CurrentUserView, ChangePasswordView, FarmerDashboardView, BuyerDashboardView
 
 router = DefaultRouter()
 router.register(r'farmers', FarmerViewSet, basename='farmer')
-router.register(r'buyers', BuyerViewSet, basename='buyer')  # Add this line
+router.register(r'buyers', BuyerViewSet, basename='buyer')
 router.register(r'regions', RegionViewSet, basename='region')
 
 urlpatterns = [
@@ -14,4 +14,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='auth_logout'),
     path('me/', CurrentUserView.as_view(), name='auth_me'),
     path('change-password/', ChangePasswordView.as_view(), name='auth_change_password'),
+    path('farmer/dashboard/', FarmerDashboardView.as_view(), name='farmer_dashboard'),
+    path('buyer/dashboard/', BuyerDashboardView.as_view(), name='buyer_dashboard'),
 ]

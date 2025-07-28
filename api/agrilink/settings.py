@@ -78,7 +78,7 @@ DATABASES = {
         'NAME': 'agrilink_db',
         'USER': 'postgress',
         'PASSWORD': 'siame2003',
-        'HOST': '172.18.0.2',
+        'HOST': 'postgres',
         'PORT': '5432',
     }
 }

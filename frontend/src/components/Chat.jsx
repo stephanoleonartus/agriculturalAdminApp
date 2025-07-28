@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from '../api/axios';
 import '../styles/Chat.css';
 
-const Chat = () => {
-  const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
+const Chat = ({ orderId }) => {
+  const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -12,31 +11,34 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      const token = localStorage.getItem('authToken');
+    const fetchChatRoom = async () => {
+      if (!orderId) return;
+      const token = localStorage.getItem('access_token');
       if (!token) {
         setError('Please log in to see your conversations.');
         setLoading(false);
         return;
       }
       try {
-        const response = await axios.get('/v1/chat/rooms/');
-        setConversations(response.data.results);
+        const response = await axios.get(`/api/orders/${orderId}/chat/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setConversation(response.data);
       } catch (err) {
-        setError('There was an error fetching your conversations.');
+        setError('There was an error fetching the chat for this order.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchConversations();
-  }, []);
+    fetchChatRoom();
+  }, [orderId]);
 
   useEffect(() => {
-    if (selectedConversation) {
+    if (conversation) {
       const fetchMessages = async () => {
         try {
-          const response = await axios.get(`/v1/chat/rooms/${selectedConversation.id}/messages/`);
+          const response = await axios.get(`/api/chat/rooms/${conversation.id}/messages/`);
           setMessages(response.data);
         } catch (err) {
           console.error('Error fetching messages:', err);
@@ -44,14 +46,14 @@ const Chat = () => {
       };
       fetchMessages();
     }
-  }, [selectedConversation]);
+  }, [conversation]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !selectedConversation) return;
+    if (!newMessage.trim() || !conversation) return;
 
     try {
-      const response = await axios.post(`/v1/chat/rooms/${selectedConversation.id}/send_message/`, {
+      const response = await axios.post(`/api/chat/rooms/${conversation.id}/send_message/`, {
         content: newMessage,
       });
       setMessages([...messages, response.data]);
@@ -79,20 +81,8 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
-      <div className="conversations-list">
-        <h3>Conversations</h3>
-        {conversations.map((conv) => (
-          <div
-            key={conv.id}
-            className={`conversation-item ${selectedConversation?.id === conv.id ? 'active' : ''}`}
-            onClick={() => setSelectedConversation(conv)}
-          >
-            {conv.participants.map(p => p.username).join(', ')}
-          </div>
-        ))}
-      </div>
       <div className="chat-window">
-        {selectedConversation ? (
+        {conversation ? (
           <>
             <div className="messages-list">
               {messages.map((msg) => (
@@ -115,7 +105,7 @@ const Chat = () => {
           </>
         ) : (
           <div className="no-conversation-selected">
-            <p>Select a conversation to start chatting</p>
+            <p>Loading chat...</p>
           </div>
         )}
       </div>

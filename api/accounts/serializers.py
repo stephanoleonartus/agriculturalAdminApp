@@ -67,6 +67,32 @@ class LoginSerializer(serializers.Serializer):
             return user
         raise serializers.ValidationError("Invalid Credentials")
 
+from orders.serializers import OrderSerializer
+from products.serializers import ProductSerializer
+
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+class FarmerDashboardSerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True, read_only=True)
+    orders = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'region', 'products', 'orders']
+
+    def get_orders(self, obj):
+        orders = obj.orders_as_farmer.all()
+        return OrderSerializer(orders, many=True).data
+
+class BuyerDashboardSerializer(serializers.ModelSerializer):
+    orders = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'region', 'orders']
+
+    def get_orders(self, obj):
+        orders = obj.orders_as_buyer.all()
+        return OrderSerializer(orders, many=True).data

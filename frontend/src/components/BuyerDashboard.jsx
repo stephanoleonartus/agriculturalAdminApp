@@ -3,62 +3,32 @@ import axios from "../api/axios";
 import "../styles/UserDashboard.css";
 import OrderTracking from "./OrderTracking";
 import OrderDetailsModal from "./OrderDetailsModal";
-import OrderDetailsModal from "./OrderDetailsModal";
 
 function UserDashboard() {
   const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetchStats();
-    fetchProducts();
-    fetchOrders();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      const response = await axios.get("/analytics/dashboard-stats/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      setStats(response.data);
-    } catch (error) {
-      setError("Failed to fetch stats.");
-      console.error("Error fetching stats:", error);
-    }
-  };
-
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("/products/products/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      setProducts(response.data.results);
-    } catch (error)
-      {
-          setError("Failed to fetch products.");
-          console.error("Error fetching products:", error);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/auth/buyer/dashboard/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
+        const data = response.data;
+        setUser(data);
+        setOrders(data.orders);
+      } catch (error) {
+        setError("Failed to fetch data.");
+        console.error("Error fetching data:", error);
       }
-  };
-
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get("/orders/orders/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      setOrders(response.data.results);
-    } catch (error) {
-      setError("Failed to fetch orders.");
-      console.error("Error fetching orders:", error);
-    }
-  };
+    };
+    fetchData();
+  }, []);
 
   const handleStatusChange = async (type, id, newStatus) => {
     try {
@@ -86,54 +56,6 @@ function UserDashboard() {
     }
   };
 
-  const StatCard = ({ title, value, icon, color }) => (
-    <div className={`stat-card ${color}`}>
-      <div className="stat-icon">{icon}</div>
-      <div className="stat-info">
-        <h3>{value}</h3>
-        <p>{title}</p>
-      </div>
-    </div>
-  );
-
-  const [farmers, setFarmers] = useState([]);
-
-  useEffect(() => {
-    fetchStats();
-    fetchProducts();
-    fetchOrders();
-    fetchFarmers();
-  }, []);
-
-  const fetchFarmers = async () => {
-    try {
-      const response = await axios.get("/accounts/farmers/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      setFarmers(response.data.results);
-    } catch (error) {
-      setError("Failed to fetch farmers.");
-      console.error("Error fetching farmers:", error);
-    }
-  };
-
-  const renderOverview = () => (
-    <div className="overview-section">
-      <div className="stats-grid">
-        <StatCard title="Total Products" value={stats.total_products} icon="🌾" color="blue" />
-        <StatCard title="Total Orders" value={stats.total_orders} icon="📦" color="orange" />
-      </div>
-      <div className="recent-activities">
-        <h3>Recent Activities</h3>
-        <ul>
-          <li>Product "Fresh Apples" added by Asha Komba</li>
-          <li>Order #001 completed successfully</li>
-        </ul>
-      </div>
-    </div>
-  );
 
 
 
@@ -166,7 +88,6 @@ function UserDashboard() {
         <OrderDetailsModal
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
-          onOrderUpdate={fetchOrders}
         />
       )}
     </div>

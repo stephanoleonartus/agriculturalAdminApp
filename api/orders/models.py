@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from products.models import Product
+from chat.models import ChatRoom
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -9,6 +10,7 @@ class Order(models.Model):
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
         ('cancelled', 'Cancelled'),
+        ('rejected', 'Rejected'),
     ]
     PAYMENT_STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -30,6 +32,7 @@ class Order(models.Model):
     notes = models.TextField(blank=True)
     delivery_schedule = models.DateTimeField(null=True, blank=True)
     is_recurring = models.BooleanField(default=False)
+    chat = models.OneToOneField(ChatRoom, on_delete=models.SET_NULL, null=True, blank=True, related_name='order_chat')
 
     def __str__(self):
         return self.order_id

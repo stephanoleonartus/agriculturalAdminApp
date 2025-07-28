@@ -22,26 +22,15 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const fetchData = async (setUser, setDashboardData, setProducts, setOrders) => {
   try {
-    const [userRes, statsRes, productsRes, ordersRes] = await Promise.all([
-      axios.get('/auth/me/', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      }),
-      axios.get('/analytics/dashboard-stats/', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      }),
-      axios.get('/products/farmer/products/', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      }),
-      axios.get('/orders/mine/', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      })
-    ]);
-
-    setUser(userRes.data);
-    setDashboardData(statsRes.data);
-    setProducts(productsRes.data);
-    setOrders(ordersRes.data);
-    console.log('Fetched orders:', ordersRes.data);
+    const response = await axios.get('/auth/farmer/dashboard/', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+    });
+    const data = response.data;
+    setUser(data);
+    setDashboardData(data);
+    setProducts(data.products);
+    setOrders(data.orders);
+    console.log('Fetched data:', data);
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -181,21 +170,21 @@ const FarmerDashboard = () => {
                   <div className="card-icon"><Package /></div>
                   <div className="card-content">
                     <h3>Total Products</h3>
-                    <p className="value">{dashboardData.total_products}</p>
+                    <p className="value">{products.length}</p>
                   </div>
                 </div>
                 <div className="summary-card green">
                   <div className="card-icon"><ShoppingCart /></div>
                   <div className="card-content">
                     <h3>Active Orders</h3>
-                    <p className="value">{dashboardData.active_orders}</p>
+                    <p className="value">{orders.filter(o => o.status === 'pending' || o.status === 'confirmed').length}</p>
                   </div>
                 </div>
                 <div className="summary-card orange">
                   <div className="card-icon"><Users /></div>
                   <div className="card-content">
                     <h3>Total Customers</h3>
-                    <p className="value">{dashboardData.total_buyers}</p>
+                    <p className="value">{[...new Set(orders.map(o => o.buyer.id))].length}</p>
                   </div>
                 </div>
               </div>

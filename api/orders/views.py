@@ -4,9 +4,12 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Order, OrderItem, OrderHistory
-from .serializers import OrderSerializer, OrderCreateSerializer
+from .serializers import OrderSerializer, OrderCreateSerializer, OrderHistorySerializer
 from .permissions import OrderPermission
 from products.models import Product
+from chat.models import ChatRoom
+from chat.serializers import ChatRoomSerializer
+from notifications.utils import create_notification
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -44,38 +47,92 @@ class OrderViewSet(viewsets.ModelViewSet):
         """
         Create an order and assign the correct farmer based on the product.
         """
-        # The buyer is the request user
-        validated_data = serializer.validated_data
-        validated_data['buyer'] = self.request.user
+        items_data = serializer.validated_data.pop('items')
 
-        items_data = validated_data.pop('items', [])
+        # The validation is now in the serializer, so we can safely get the farmer from the first item
+        farmer = items_data[0]['product'].owner
 
-        # Get the first item to determine the farmer
-        if not items_data:
-            raise serializers.ValidationError("An order must have at least one item.")
-
-        product_id = items_data[0]['product_id']
-        try:
-            product = Product.objects.get(id=product_id)
-            farmer = product.owner
-        except Product.DoesNotExist:
-            raise serializers.ValidationError(f"Product with id {product_id} not found.")
-
-        # Create the order and assign the farmer
-        order = Order.objects.create(farmer=farmer, **validated_data)
+        # Create the order
+        order = serializer.save(buyer=self.request.user, farmer=farmer)
 
         # Create order items
         for item_data in items_data:
-            product = Product.objects.get(id=item_data['product_id'])
             OrderItem.objects.create(
                 order=order,
-                product=product,
+                product=item_data['product'],
                 quantity=item_data['quantity'],
-                price=product.price  # Use the current product price
+                price=item_data['product'].price  # Use the current product price
             )
+
+        # Create a chat room for the order
+        chat_room = ChatRoom.objects.create(
+            name=f"Order #{order.order_id}",
+            room_type='private',
+            created_by=self.request.user
+        )
+        chat_room.participants.add(self.request.user, farmer)
+        order.chat = chat_room
 
         # Recalculate the total amount based on the items
         order.save()
+
+    @action(detail=True, methods=['post'])
+    def confirm(self, request, pk=None):
+        """Confirm a pending order (farmer only)"""
+        order = self.get_object()
+        if order.status != 'pending':
+            return Response(
+                {'error': 'Only pending orders can be confirmed'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Add permission check to ensure only the assigned farmer can confirm
+        if request.user != order.farmer:
+            return Response(
+                {'error': 'You are not authorized to confirm this order'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        order.status = 'confirmed'
+        order.save()
+        self._create_history(order, 'confirmed', request.user)
+        create_notification(
+            actor=request.user,
+            recipient=order.buyer,
+            verb='confirmed your order',
+            target=order,
+            notif_type='order_update'
+        )
+        return Response({'status': 'confirmed'})
+
+    @action(detail=True, methods=['post'])
+    def reject(self, request, pk=None):
+        """Reject a pending order (farmer only)"""
+        order = self.get_object()
+        if order.status != 'pending':
+            return Response(
+                {'error': 'Only pending orders can be rejected'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Add permission check to ensure only the assigned farmer can reject
+        if request.user != order.farmer:
+            return Response(
+                {'error': 'You are not authorized to reject this order'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        order.status = 'rejected'
+        order.save()
+        self._create_history(order, 'rejected', request.user)
+        create_notification(
+            actor=request.user,
+            recipient=order.buyer,
+            verb='rejected your order',
+            target=order,
+            notif_type='order_update'
+        )
+        return Response({'status': 'rejected'})
 
     @action(detail=True, methods=['post'])
     def deliver(self, request, pk=None):
@@ -90,6 +147,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.status = 'delivered'
         order.save()
         self._create_history(order, 'delivered', request.user)
+        create_notification(
+            actor=request.user,
+            recipient=order.buyer,
+            verb='delivered your order',
+            target=order,
+            notif_type='order_update'
+        )
         return Response({'status': 'delivered'})
 
     @action(detail=True, methods=['post'])
@@ -107,6 +171,20 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.status = 'cancelled'
         order.save()
         self._create_history(order, 'cancelled', request.user)
+
+        # Notify the other party
+        if request.user == order.buyer:
+            recipient = order.farmer
+        else:
+            recipient = order.buyer
+
+        create_notification(
+            actor=request.user,
+            recipient=recipient,
+            verb='cancelled an order',
+            target=order,
+            notif_type='order_update'
+        )
         return Response({'status': 'cancelled'})
 
     @action(detail=False, methods=['get'])
@@ -128,6 +206,20 @@ class OrderViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(status=status_filter)
             
         serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def chat(self, request, pk=None):
+        """Retrieve the chat room for an order"""
+        order = self.get_object()
+        if not order.chat:
+            return Response(
+                {'error': 'Chat room not found for this order'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # You might want to use a more specific serializer for the chat room
+        serializer = ChatRoomSerializer(order.chat, context={'request': request})
         return Response(serializer.data)
 
     def _create_history(self, order, status, user):
