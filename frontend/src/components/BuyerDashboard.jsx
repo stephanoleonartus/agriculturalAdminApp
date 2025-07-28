@@ -3,6 +3,10 @@ import axios from "../api/axios";
 import "../styles/UserDashboard.css";
 import OrderTracking from "./OrderTracking";
 import OrderDetailsModal from "./OrderDetailsModal";
+import Wishlist from "./Wishlist";
+import PricingAndPayments from "./PricingAndPayments";
+import Chat from "./Chat";
+import Settings from "./Settings";
 
 function UserDashboard() {
   const [activeTab, setActiveTab] = useState("orders");
@@ -30,6 +34,20 @@ function UserDashboard() {
     fetchData();
   }, []);
 
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get("/orders/mine/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      setOrders(response.data);
+    } catch (error) {
+      setError("Failed to fetch orders.");
+      console.error("Error fetching orders:", error);
+    }
+  };
+
   const handleStatusChange = async (type, id, newStatus) => {
     try {
       let endpoint = '';
@@ -49,7 +67,6 @@ function UserDashboard() {
       alert(`${type} status updated to ${newStatus}`);
       // Refetch data to show updated status
       if (type === "orders") fetchOrders();
-      if (type === "products") fetchProducts();
     } catch (error) {
       alert(`Failed to update ${type} status.`);
       console.error(`Error updating ${type} status:`, error);
